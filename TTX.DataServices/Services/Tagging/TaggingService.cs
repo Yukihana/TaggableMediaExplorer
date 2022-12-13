@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Tagging;
+﻿namespace TTX.Data.Services.Tagging;
 
 /// <summary>
 /// Service to manage asset tags.

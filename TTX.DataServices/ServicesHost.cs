@@ -1,4 +1,4 @@
-﻿namespace TTX.Data.Services;
+﻿namespace TTX.Data;
 
 /// <summary>
 /// Life time manager for services.

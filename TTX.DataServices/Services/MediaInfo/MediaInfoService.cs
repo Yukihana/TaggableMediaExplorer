@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.MediaInfo;
+﻿namespace TTX.Data.Services.MediaInfo;
 
 /// <summary>
 /// Class for scanning codec and media information.

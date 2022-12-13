@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TTX.DataServices;
+using TTX.Data;
 
 namespace TTX.Server;
 

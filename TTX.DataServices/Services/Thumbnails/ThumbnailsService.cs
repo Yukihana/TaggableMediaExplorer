@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Thumbnails;
+﻿namespace TTX.Data.Services.Thumbnails;
 
 /// <summary>
 /// Service to extract, cache and deliver thumbnails.

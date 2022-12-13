@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTX.DataServices\TTX.DataServices.csproj" />
+    <ProjectReference Include="..\TTX.DataServices\TTX.Data.csproj" />
   </ItemGroup>
 
 </Project>

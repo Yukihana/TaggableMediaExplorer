@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Workspace;
+﻿namespace TTX.Data.Services.Workspace;
 
 /// <summary>
 /// Service for coordinate via workspace parameters.

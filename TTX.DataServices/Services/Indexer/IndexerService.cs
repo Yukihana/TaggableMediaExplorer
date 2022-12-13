@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Indexer;
+﻿namespace TTX.Data.Services.Indexer;
 
 /// <summary>
 /// Class to index media assets and make them available for consumption.

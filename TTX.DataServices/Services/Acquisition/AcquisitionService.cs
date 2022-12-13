@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Acquisition;
+﻿namespace TTX.Data.Services.Acquisition;
 
 /// <summary>
 /// Class used for acquiring assets on startup.

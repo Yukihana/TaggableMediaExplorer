@@ -1,4 +1,4 @@
-﻿namespace TTX.DataServices.Services.Integrity;
+﻿namespace TTX.Data.Services.Integrity;
 
 /// <summary>
 /// Class for verifying video integrity and identity.
