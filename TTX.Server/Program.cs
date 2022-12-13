@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TTX.Data;
+using TTX.Server.Bootstrap;
 
 namespace TTX.Server;
 
@@ -9,17 +9,21 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddSingleton<ServicesHost>();
+        builder.Services.SetupWorkspace();
+        builder.SetupDatabase();
+        builder.Services.AttachDataServices();
 
+        // Add core services
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+
+        // Initialize
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
