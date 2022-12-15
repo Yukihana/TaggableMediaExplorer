@@ -14,8 +14,8 @@ public static class StartupExtensions
         services
             .AddOptions<WorkspaceOptions>()
             .BindConfiguration(nameof(WorkspaceOptions))
-            .Validate(options => !string.IsNullOrEmpty(options.ProfilePath),
-            $"The configuration key '{nameof(WorkspaceOptions)}:{nameof(WorkspaceOptions.ProfilePath)} must not be empty.");
+            .Validate(options => !string.IsNullOrEmpty(options.Path),
+            $"The configuration key '{nameof(WorkspaceOptions)}:{nameof(WorkspaceOptions.Path)} must not be empty.");
 
         services.AddSingleton<IWorkspaceService, WorkspaceService>();
 
@@ -28,7 +28,7 @@ public static class StartupExtensions
     public static IServiceCollection SetupDatabase(this WebApplicationBuilder builder)
     {
         string connectionString = builder.Configuration.GetConnectionString("TTXAssets")
-            ?? throw new System.Exception("Workspace path is missing from appsettings.");
+            ?? throw new Exception("Workspace path is missing from appsettings.");
         return builder.Services;
     }
 

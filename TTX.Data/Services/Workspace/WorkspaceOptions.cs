@@ -2,5 +2,7 @@
 
 public class WorkspaceOptions
 {
-    public string ProfilePath { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public string Profile { get; set; } = string.Empty;
+    public string Database { get; set; } = string.Empty;
 }

@@ -1,50 +1,102 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Shared.Messages;
 
 namespace TTX.Data.Shared.BaseClasses;
 
-public abstract class ServiceBase<T> where T : IMessage
+public abstract class ServiceBase
 {
-    private Task? _serviceCycle = null;
-    private CancellationTokenSource _cts = new();
+    // Configuration
 
-    public void TryStart()
-    {
-        if (_serviceCycle != null &&
-            (_serviceCycle.Status == TaskStatus.Running ||
-            _serviceCycle.Status == TaskStatus.WaitingToRun))
-            return;
-        _cts = new CancellationTokenSource();
-        _serviceCycle = Task.Run(() => DoCycle(_cts.Token));
-    }
+    // Queue
 
-    public async Task TryEnd()
+    private readonly ReaderWriterLockSlim _lock = new();
+    private readonly SemaphoreSlim _semaphore = new(1);
+
+    // Task
+
+    private readonly List<Task> _tasks = new();
+
+    // Queueing
+
+    public bool TryProcessMessage(IMessage message)
     {
-        _cts.Cancel();
-        if (_serviceCycle != null)
+        var valid = MessageTypes.Contains(message.GetType());
+
+        if (valid)
         {
-            await _serviceCycle.ConfigureAwait(false);
-            _serviceCycle = null;
-        }
-    }
+            // Purge expired tasks.
+            CleanQueue();
 
-    public async Task DoCycle(CancellationToken token = default)
-    {
-        while (!_cts.IsCancellationRequested)
-        {
+            // Decoupling point: Task has been queued. Source CTS should no longer be able to cancel a queued task. Only the service's own CTS can.
             try
             {
-                T? job = await Task.Run(() => GetNext(token), token).ConfigureAwait(false);
-                if (job == null)
-                    return;
-                await Task.Run(() => ProcessNext(job, token), token).ConfigureAwait(false);
+                _lock.EnterWriteLock();
+                var task = TaskWrapper(message, _cts.Token);
+                task.Start();
+                _tasks.Add(task);
             }
-            catch { }
+            finally { _lock.ExitWriteLock(); }
         }
+
+        return valid;
     }
 
-    public abstract Task<T?> GetNext(CancellationToken token = default);
+    private void CleanQueue()
+    {
+        try
+        {
+            _lock.EnterUpgradeableReadLock();
+            List<Task> expired = new();
+            foreach (Task t in _tasks)
+            {
+                if (t.IsCompleted)
+                    expired.Add(t);
+            }
+            if (expired.Count > 0)
+            {
+                try
+                {
+                    _lock.EnterWriteLock();
+                    _tasks.RemoveAll(x => expired.Contains(x));
+                }
+                finally { _lock.ExitWriteLock(); }
+            }
+        }
+        finally { _lock.ExitUpgradeableReadLock(); }
+    }
 
-    public abstract Task ProcessNext(T job, CancellationToken token = default);
+    // Active Task and Shutdown
+
+    private readonly CancellationTokenSource _cts = new();
+
+    private async Task TaskWrapper(IMessage message, CancellationToken token = default)
+    {
+        try
+        {
+            await _semaphore.WaitAsync(token);
+
+            if (_cts.IsCancellationRequested)
+                return;
+
+            // execute new task
+            await ProcessMessage(message, _cts.Token);
+        }
+        finally { _semaphore.Release(); }
+    }
+
+    public void Shutdown()
+    {
+        _cts.Cancel();
+        Task.WhenAll(_tasks).GetAwaiter().GetResult();
+    }
+
+    // Override
+
+    public abstract ReadOnlyCollection<Type> MessageTypes { get; }
+
+    protected abstract Task<bool> ProcessMessage(IMessage message, CancellationToken token = default);
 }

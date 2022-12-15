@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TTX.Data.Shared.BaseClasses;
 using TTX.Data.Shared.Messages;
 
 namespace TTX.Data.Services.Communications;
@@ -10,6 +14,27 @@ public class MessageBus : IMessageBus
     private readonly SemaphoreSlim _gate = new(1);
 
     private readonly List<IMessage> _queue = new();
+
+
+    public void RegisterService(ServiceBase service, Type[] messageTypes)
+    {
+
+    }
+
+
+    private async Task QueueTask(IMessage message)
+    {
+        foreach(MessageProcessor service in MessageProcessors)
+        {
+            if(service.MessageTypes.Contains(message.GetType()))
+            {
+                service.
+            }
+        }
+    }
+
+
+
 
     public async Task Queue(IMessage message)
     {
