@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,29 +14,34 @@ namespace TTX.Data.Services.Acquisition;
 /// <summary>
 /// Class used for acquiring assets on startup.
 /// </summary>
-public class AcquisitionService : ServiceBase<AcquisitionCommand>, IAcquisitionService
+public class AcquisitionService : ServiceBase, IAcquisitionService
 {
-    private readonly IMessageBus _bus;
     private readonly ILoggerService _logger;
 
     private readonly AcquisitionOptions _options;
 
-    public AcquisitionService(IMessageBus bus, ILoggerService logger, AcquisitionOptions options)
+    private readonly HashSet<Type> _messageTypes = new() { typeof(AcquisitionCommand) };
+    public override HashSet<Type> MessageTypes => _messageTypes;
+
+    public AcquisitionService(IMessageBus bus, ILoggerService logger, AcquisitionOptions options) : base(bus, 1)
     {
-        _bus = bus;
         _logger = logger;
         _options = options;
     }
 
-    public override async Task<AcquisitionCommand> GetNext(CancellationToken token = default)
+    protected override async Task ProcessMessage(IMessage message, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        if(message is AcquisitionCommand command)
+        {
+            if (command.CommandValue == AcquisitionCommands.ScanAll)
+                await ScanAllFiles();
+        }
     }
 
-    public override async Task ProcessNext(AcquisitionCommand message, CancellationToken token = default)
-    {
-        throw new NotImplementedException();
-    }
+
+
+
+    // JOBS
 
     public async Task ScanAllFiles()
     {
@@ -61,7 +67,7 @@ public class AcquisitionService : ServiceBase<AcquisitionCommand>, IAcquisitionS
                 finallist.Add(file);
             }
         }
-        await _bus.Queue(new AssetQueue() { Paths = finallist.ToArray() }).ConfigureAwait(false);
+        await SendMessage(new AssetQueue() { Paths = finallist.ToArray() }).ConfigureAwait(false);
     }
 
     public async Task StartWatcher()
@@ -70,11 +76,5 @@ public class AcquisitionService : ServiceBase<AcquisitionCommand>, IAcquisitionS
 
     public async Task StopWatcher()
     {
-    }
-
-    public bool ValidatePath(string path)
-    {
-        throw new NotImplementedException();
-        // Check blacklist/whitelist here (for individual paths)
     }
 }

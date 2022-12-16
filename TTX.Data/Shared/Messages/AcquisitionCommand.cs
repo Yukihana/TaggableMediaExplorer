@@ -1,6 +1,8 @@
-﻿namespace TTX.Data.Shared.Messages;
+﻿using TTX.Data.Services.Acquisition;
+
+namespace TTX.Data.Shared.Messages;
 
 public struct AcquisitionCommand : IMessage
 {
-    public byte CommandValue;
+    public AcquisitionCommands CommandValue;
 }

@@ -34,6 +34,6 @@ public static class StartupExtensions
 
     public static void AttachDataServices(this IServiceCollection services)
     {
-        services.AddTransient<IAcquisitionService, AcquisitionService>();
+        services.AddSingleton<IAcquisitionService, AcquisitionService>();
     }
 }

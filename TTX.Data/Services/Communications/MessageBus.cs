@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,77 +9,34 @@ namespace TTX.Data.Services.Communications;
 
 public class MessageBus : IMessageBus
 {
-    private readonly SemaphoreSlim _gate = new(1);
+    private readonly List<ServiceBase> _services = new();
 
-    private readonly List<IMessage> _queue = new();
-
-
-    public void RegisterService(ServiceBase service, Type[] messageTypes)
+    public async Task Queue(IMessage message, CancellationToken token = default)
     {
-
-    }
-
-
-    private async Task QueueTask(IMessage message)
-    {
-        foreach(MessageProcessor service in MessageProcessors)
+        foreach (ServiceBase service in _services)
         {
-            if(service.MessageTypes.Contains(message.GetType()))
+            if (service.MessageTypes.Contains(message.GetType()))
             {
-                service.
+                await service.TryProcessMessage(message, token);
             }
         }
     }
-
-
-
-
-    public async Task Queue(IMessage message)
+    public async Task Queue(IEnumerable<IMessage> messages, CancellationToken token = default)
     {
-        try
+        List<IMessage> msg = new(messages);
+        foreach (ServiceBase service in _services)
         {
-            await _gate.WaitAsync().ConfigureAwait(false);
-            _queue.Add(message);
-        }
-        finally { _gate.Release(); }
-    }
-
-    public async Task Queue(IEnumerable<IMessage> messages)
-    {
-        try
-        {
-            await _gate.WaitAsync().ConfigureAwait(false);
-            foreach (IMessage message in messages)
+            var selected = msg.Where(x => service.MessageTypes.Contains(x.GetType()));
+            foreach (IMessage message in selected)
             {
-                _queue.Add(message);
+                await service.TryProcessMessage(message, token);
             }
+            msg.RemoveAll(x => selected.Contains(x));
         }
-        finally { _gate.Release(); }
     }
 
-    public async Task<T?> GetNextQueued<T>() where T : struct, IMessage
+    public void RegisterService(ServiceBase service)
     {
-        try
-        {
-            await _gate.WaitAsync().ConfigureAwait(false);
-            for (int i = 0; i < _queue.Count; i++)
-            {
-                if (_queue[i] is T message)
-                    return message;
-            }
-            return null;
-        }
-        finally { _gate.Release(); }
-    }
-
-    public async Task Unqueue(IMessage message)
-    {
-        try
-        {
-            await _gate.WaitAsync().ConfigureAwait(false);
-            if (_queue.Contains(message))
-                _queue.Remove(message);
-        }
-        finally { _gate.Release(); }
+        _services.Add(service);
     }
 }
