@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 
 namespace TTX.Data.Shared.Helpers;
@@ -16,11 +18,91 @@ public static class ObjectHelpers
         => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(source))
         ?? throw new NullReferenceException();
 
-    public static T Extract<T>(this object Obj) where T : struct
+    /// <summary>
+    /// Extract relevant properties and fields into a new instance of the required type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="Obj"></param>
+    /// <returns></returns>
+    public static T Extract<T>(this object Obj) where T : new()
     {
-        // TODO
-        return new T()
+        T result = new();
+
+        foreach (var prop in Obj.GetType().GetProperties())
         {
-        };
+            if (prop.CanWrite && prop.CanRead)
+            {
+                prop.SetValue(result, prop.GetValue(Obj));
+            }
+        }
+
+        foreach (var field in Obj.GetType().GetFields())
+        {
+            field.SetValue(result, field.GetValue(Obj));
+        }
+
+        return result.MakeDeepCopy();
+    }
+
+    /*
+    internal static DbSet<AssetRecord> NullCheckAssetsTable(TTXContext? db)
+    {
+        if (db != null)
+        {
+            if (db.Assets != null)
+            {
+                return db.Assets;
+            }
+        }
+        throw new NullReferenceException();
+    }*/
+
+    internal static void CopyFieldValuesTo<T>(this T source, T target) where T : class
+    {
+        foreach (var field in typeof(T).GetFields())
+        {
+            field.SetValue(target, field.GetValue(source));
+        }
+    }
+
+    internal static void CopyPropertyValuesTo<T>(this T source, T target) where T : class
+    {
+        foreach (var prop in typeof(T).GetProperties())
+        {
+            if (prop.CanWrite && prop.CanRead)
+            {
+                prop.SetValue(target, prop.GetValue(source));
+            }
+        }
+    }
+
+    internal static int CopyValues(this object source, object target)
+    {
+        int count = 0;
+        foreach (var prop in source.GetType().GetProperties().Where(x => x.CanRead))
+        {
+            if (target.GetType().GetProperty(prop.Name) is PropertyInfo targetProp)
+            {
+                if (targetProp.CanWrite)
+                    targetProp.SetValue(target, prop.GetValue(source));
+                count++;
+            }
+        }
+        return count;
+    }
+
+    internal static int CopyPropertyValuesUnsafe(this object source, object target)
+    {
+        int count = 0;
+        foreach (var prop in source.GetType().GetProperties().Where(x => x.CanRead))
+        {
+            if (target.GetType().GetProperty(prop.Name) is PropertyInfo targetProp)
+            {
+                if (targetProp.CanWrite)
+                    targetProp.SetValue(target, prop.GetValue(source));
+                count++;
+            }
+        }
+        return count;
     }
 }

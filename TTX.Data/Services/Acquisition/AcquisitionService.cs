@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,15 +30,12 @@ public class AcquisitionService : ServiceBase, IAcquisitionService
 
     protected override async Task ProcessMessage(IMessage message, CancellationToken token = default)
     {
-        if(message is AcquisitionCommand command)
+        if (message is AcquisitionCommand command)
         {
             if (command.CommandValue == AcquisitionCommands.ScanAll)
                 await ScanAllFiles();
         }
     }
-
-
-
 
     // JOBS
 

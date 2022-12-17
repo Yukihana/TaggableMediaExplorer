@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TTX.Data.Shared.Helpers;
 
 namespace TTX.Data.Services.Acquisition;
 
@@ -7,7 +8,11 @@ public static class AcquisitionHelper
 {
     public static AcquisitionOptions ExtractOptions(object profile)
     {
-        return (AcquisitionOptions)profile;
+        var options = profile.Extract<AcquisitionOptions>().MakeDeepCopy();
+
+        options.Initialize();
+
+        return options;
     }
 
     public static HashSet<string> GetLocalFilePathsByPatterns(this string directory, IEnumerable<string> patterns)

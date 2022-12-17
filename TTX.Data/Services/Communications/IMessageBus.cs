@@ -7,7 +7,7 @@ namespace TTX.Data.Services.Communications;
 
 public interface IMessageBus
 {
-    Task Queue(IMessage message, CancellationToken token = default);
+    Task Enqueue(IMessage message, CancellationToken token = default);
 
-    Task Queue(IEnumerable<IMessage> messages, CancellationToken token = default);
+    Task Enqueue(IEnumerable<IMessage> messages, CancellationToken token = default);
 }

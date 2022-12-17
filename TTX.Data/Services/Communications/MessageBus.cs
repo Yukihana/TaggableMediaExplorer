@@ -11,7 +11,7 @@ public class MessageBus : IMessageBus
 {
     private readonly List<ServiceBase> _services = new();
 
-    public async Task Queue(IMessage message, CancellationToken token = default)
+    public async Task Enqueue(IMessage message, CancellationToken token = default)
     {
         foreach (ServiceBase service in _services)
         {
@@ -21,7 +21,8 @@ public class MessageBus : IMessageBus
             }
         }
     }
-    public async Task Queue(IEnumerable<IMessage> messages, CancellationToken token = default)
+
+    public async Task Enqueue(IEnumerable<IMessage> messages, CancellationToken token = default)
     {
         List<IMessage> msg = new(messages);
         foreach (ServiceBase service in _services)

@@ -12,7 +12,6 @@ public abstract class ServiceBase
 {
     protected readonly IMessageBus _bus;
 
-
     private readonly TaskQueue _taskQueue;
 
     public ServiceBase(IMessageBus bus, int concurrent)
@@ -27,11 +26,10 @@ public abstract class ServiceBase
         _taskQueue.WaitForFinish().GetAwaiter().GetResult();
     }
 
-
     // Send
 
     protected async Task SendMessage(IMessage message, CancellationToken token = default)
-        => await _bus.Queue(message, token);
+        => await _bus.Enqueue(message, token);
 
     // Receive
 
@@ -40,7 +38,7 @@ public abstract class ServiceBase
         if (!MessageTypes.Contains(message.GetType()))
             return;
 
-        if(token.IsCancellationRequested)
+        if (token.IsCancellationRequested)
             return;
 
         await _taskQueue.Add(new Task(async () => await ProcessMessage(message, _taskQueue.Token)));
