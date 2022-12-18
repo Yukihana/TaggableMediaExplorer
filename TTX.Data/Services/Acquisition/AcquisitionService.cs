@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Services.Communications;
-using TTX.Data.Services.Logger;
+using TTX.Data.Services.Notification;
 using TTX.Data.Shared.BaseClasses;
 using TTX.Data.Shared.Messages;
 
@@ -15,16 +15,16 @@ namespace TTX.Data.Services.Acquisition;
 /// </summary>
 public class AcquisitionService : ServiceBase, IAcquisitionService
 {
-    private readonly ILoggerService _logger;
+    private readonly INotificationService _notifier;
 
-    private readonly AcquisitionOptions _options;
+    private readonly IAcquisitionOptions _options;
 
     private readonly HashSet<Type> _messageTypes = new() { typeof(AcquisitionCommand) };
     public override HashSet<Type> MessageTypes => _messageTypes;
 
-    public AcquisitionService(IMessageBus bus, ILoggerService logger, AcquisitionOptions options) : base(bus, 1)
+    public AcquisitionService(IMessageBus bus, INotificationService logger, IAcquisitionOptions options) : base(bus, 1)
     {
-        _logger = logger;
+        _notifier = logger;
         _options = options;
     }
 

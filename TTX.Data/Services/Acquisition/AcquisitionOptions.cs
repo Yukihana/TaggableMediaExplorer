@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace TTX.Data.Services.Acquisition;
 
-public class AcquisitionOptions
+public class AcquisitionOptions : IAcquisitionOptions
 {
     public void Initialize()
     {
@@ -20,5 +21,6 @@ public class AcquisitionOptions
 
     // Derived
 
+    [JsonIgnore]
     public string AssetsPathFull { get; set; } = string.Empty;
 }

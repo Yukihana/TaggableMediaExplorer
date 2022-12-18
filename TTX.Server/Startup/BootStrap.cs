@@ -5,6 +5,10 @@ using System;
 using System.IO;
 using System.Text.Json;
 using TTX.Data.Services.Acquisition;
+using TTX.Data.Services.Communications;
+using TTX.Data.Services.Notification;
+using TTX.Data.Shared.BaseClasses;
+using TTX.Data.Shared.Helpers;
 
 namespace TTX.Server.Startup;
 
@@ -45,8 +49,22 @@ public static class BootStrap
         return builder.Services;
     }
 
+    public static void AttachOptions(this WebApplicationBuilder builder, WorkspaceProfile profile)
+    {
+        builder.Services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
+    }
+
     public static void AttachDataServices(this IServiceCollection services, WorkspaceProfile profile)
     {
-        services.AddSingleton<IAcquisitionService>();
+        services.AddSingleton<INotificationService, NotificationService>();
+        services.AddSingleton<IMessageBus, MessageBus>();
+        services.AddSingleton<IAcquisitionService, AcquisitionService>();
+    }
+
+    public static TOptions ExtractOptions<TOptions>(this WorkspaceProfile profile) where TOptions : IServiceOptions, new()
+    {
+        var options = profile.Extract<TOptions>().CopyFullyDecoupled();
+        options.Initialize();
+        return options;
     }
 }

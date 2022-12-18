@@ -18,8 +18,9 @@ public class Program
             throw new InvalidDataException("Unable to load profile. If this is a first run, then a new profile would have been created. Please run the program again after configuring the values in the profile.");
 
         // Add services to the container.
-        builder.SetupDatabase(profile.ServerRoot);
+        builder.AttachOptions(profile);
         builder.Services.AttachDataServices(profile);
+        builder.SetupDatabase(profile.ServerRoot);
 
         // Add core services
         builder.Services.AddControllers();

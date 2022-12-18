@@ -14,7 +14,7 @@ public static class ObjectHelpers
     /// <param name="source">The object to be copied.</param>
     /// <returns>A fully decoupled true deep copy.</returns>
     /// <exception cref="NullReferenceException">Returned when the copy operation fails.</exception>
-    public static T MakeDeepCopy<T>(this T source)
+    public static T CopyFullyDecoupled<T>(this T source)
         => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(source))
         ?? throw new NullReferenceException();
 
@@ -28,20 +28,27 @@ public static class ObjectHelpers
     {
         T result = new();
 
-        foreach (var prop in Obj.GetType().GetProperties())
+        foreach (var prop in Obj.GetType().GetProperties().Where(x => x.CanRead))
         {
-            if (prop.CanWrite && prop.CanRead)
+            if (typeof(T).GetProperty(prop.Name) is PropertyInfo targetProp &&
+                targetProp.CanWrite &&
+                prop.PropertyType == targetProp.PropertyType)
             {
-                prop.SetValue(result, prop.GetValue(Obj));
+                targetProp.SetValue(result, prop.GetValue(Obj));
             }
         }
 
+        // Fields after properties incase setters aren't identical.
         foreach (var field in Obj.GetType().GetFields())
         {
-            field.SetValue(result, field.GetValue(Obj));
+            if (typeof(T).GetField(field.Name) is FieldInfo targetField &&
+                field.FieldType == targetField.FieldType)
+            {
+                targetField.SetValue(result, field.GetValue(Obj));
+            }
         }
 
-        return result.MakeDeepCopy();
+        return result.CopyFullyDecoupled();
     }
 
     /*
