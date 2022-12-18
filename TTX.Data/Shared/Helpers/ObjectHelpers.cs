@@ -24,7 +24,7 @@ public static class ObjectHelpers
     /// <typeparam name="T"></typeparam>
     /// <param name="Obj"></param>
     /// <returns></returns>
-    public static T Extract<T>(this object Obj) where T : new()
+    public static T CopyValues<T>(this object Obj) where T : new()
     {
         T result = new();
 

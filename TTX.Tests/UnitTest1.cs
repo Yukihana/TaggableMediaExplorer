@@ -16,7 +16,7 @@ namespace TTX.Tests
             Parallel.ForEach(shorts, (x) =>
             {
                 var source = new MyClass1() { ASMO = x };
-                var result = source.Extract<MyClass2>();
+                var result = source.CopyValues<MyClass2>();
                 Assert.AreEqual(source.ASMO, result.ASMO);
             });
         }

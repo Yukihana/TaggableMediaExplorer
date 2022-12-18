@@ -12,15 +12,15 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        // Load Config
+        // Load runtime workspace profile
         var profile = builder.Configuration.LoadWorkspaceProfile();
         if (profile == null)
             throw new InvalidDataException("Unable to load profile. If this is a first run, then a new profile would have been created. Please run the program again after configuring the values in the profile.");
 
         // Add services to the container.
+        builder.AttachDatabase(profile);
         builder.AttachOptions(profile);
         builder.Services.AttachDataServices(profile);
-        builder.SetupDatabase(profile.ServerRoot);
 
         // Add core services
         builder.Services.AddControllers();
@@ -29,6 +29,7 @@ public class Program
 
         var app = builder.Build();
 
+        app.InitializeServices();
         // Initialize (verify if here or later)
         // send start database load (it'll load to dormant list)
         // send first scan to acquiservice (items will validate and move db entries to live list)

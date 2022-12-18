@@ -39,6 +39,15 @@ public class AcquisitionService : ServiceBase, IAcquisitionService
 
     // JOBS
 
+    public void DoStartup()
+    {
+        _ = Task.Run(async () =>
+        {
+            await ScanAllFiles();
+            await StartWatcher();
+        });
+    }
+
     public async Task ScanAllFiles()
     {
         HashSet<string> allfiles = _options.AssetsPathFull.GetLocalFilePathsByPatterns(new string[] { "*.*" });

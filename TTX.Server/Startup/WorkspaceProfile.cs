@@ -5,6 +5,10 @@ namespace TTX.Server.Startup;
 
 public class WorkspaceProfile
 {
+    // Database
+
+    public string AssetsDbFilename { get; set; } = "Assets.sqlite";
+
     // Shared
 
     public string AssetsPath { get; set; } = "Assets";

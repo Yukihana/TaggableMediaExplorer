@@ -2,4 +2,5 @@
 
 public interface IAcquisitionService
 {
+    void DoStartup();
 }

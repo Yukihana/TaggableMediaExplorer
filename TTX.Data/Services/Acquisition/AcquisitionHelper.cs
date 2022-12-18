@@ -8,7 +8,7 @@ public static class AcquisitionHelper
 {
     public static AcquisitionOptions ExtractOptions(object profile)
     {
-        var options = profile.Extract<AcquisitionOptions>().CopyFullyDecoupled();
+        var options = profile.CopyValues<AcquisitionOptions>().CopyFullyDecoupled();
 
         options.Initialize();
 
