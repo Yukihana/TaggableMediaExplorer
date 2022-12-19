@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TTX.Data\TTX.Data.csproj" />
+    <ProjectReference Include="..\TTX.Library\TTX.Library.csproj" />
   </ItemGroup>
 
 </Project>

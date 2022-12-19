@@ -12,7 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Data", "TTX.Data\TTX.Data.csproj", "{8FE45502-5983-4038-AE5D-F96236C6756E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTX.Tests", "TTX.Tests\TTX.Tests.csproj", "{6C354A04-EF0D-4CA1-A0B4-37F367E70682}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Tests", "TTX.Tests\TTX.Tests.csproj", "{6C354A04-EF0D-4CA1-A0B4-37F367E70682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTX.Services", "TTX.Services\TTX.Services.csproj", "{99FB39BC-C5B0-408A-B747-69E8FA73F09F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTX.Library", "TTX.Library\TTX.Library.csproj", "{A774BFAC-0BF8-4BC8-BFCD-013DC5ED3366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +36,14 @@ Global
 		{6C354A04-EF0D-4CA1-A0B4-37F367E70682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C354A04-EF0D-4CA1-A0B4-37F367E70682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C354A04-EF0D-4CA1-A0B4-37F367E70682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99FB39BC-C5B0-408A-B747-69E8FA73F09F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99FB39BC-C5B0-408A-B747-69E8FA73F09F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99FB39BC-C5B0-408A-B747-69E8FA73F09F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99FB39BC-C5B0-408A-B747-69E8FA73F09F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A774BFAC-0BF8-4BC8-BFCD-013DC5ED3366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A774BFAC-0BF8-4BC8-BFCD-013DC5ED3366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A774BFAC-0BF8-4BC8-BFCD-013DC5ED3366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A774BFAC-0BF8-4BC8-BFCD-013DC5ED3366}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

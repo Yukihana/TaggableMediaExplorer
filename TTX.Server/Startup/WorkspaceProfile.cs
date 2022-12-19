@@ -38,4 +38,9 @@ public class WorkspaceProfile
 
     [JsonIgnore]
     public string ServerRoot { get; set; } = string.Empty;
+
+
+    // Service Identifiers
+
+    public string AcquisitionSID { get; set; } = "acq";
 }

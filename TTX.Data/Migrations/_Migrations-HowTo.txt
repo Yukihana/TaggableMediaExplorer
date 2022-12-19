@@ -1,0 +1,7 @@
+﻿To create migration checkpoints, type in the package manager console:
+Add-Migration <CheckpointName> -OutputDir <LocalDirectoryPath>
+
+For this folder and project the first checkpoint should be created using
+Add-Migration FirstRun
+
+*FirstRun is the preferred first checkpoint

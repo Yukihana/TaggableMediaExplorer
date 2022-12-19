@@ -20,7 +20,7 @@ public class Program
         // Add services to the container.
         builder.AttachDatabase(profile);
         builder.AttachOptions(profile);
-        builder.Services.AttachDataServices(profile);
+        builder.Services.AttachDataServices();
 
         // Add core services
         builder.Services.AddControllers();

@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Text.Json;
-using TTX.Data.Services.Acquisition;
-using TTX.Data.Services.Communications;
-using TTX.Data.Services.Notification;
-using TTX.Data.Shared.BaseClasses;
-using TTX.Data.Shared.Helpers;
-using TTX.Server.Database;
+using TTX.Services.Acquisition;
+using TTX.Services.Communications;
+using TTX.Services.Notification;
+using TTX.Library.Helpers;
+using TTX.Data;
+using TTX.Services;
 
 namespace TTX.Server.Startup;
 
@@ -76,7 +76,7 @@ public static class BootStrap
     /// </summary>
     /// <param name="services"></param>
     /// <param name="profile"></param>
-    public static void AttachDataServices(this IServiceCollection services, WorkspaceProfile profile)
+    public static void AttachDataServices(this IServiceCollection services)
     {
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IMessageBus, MessageBus>();
