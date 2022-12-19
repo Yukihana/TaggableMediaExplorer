@@ -13,7 +13,7 @@ namespace TTX.Data.Services.Acquisition;
 /// <summary>
 /// Class used for acquiring assets on startup.
 /// </summary>
-public class AcquisitionService : ServiceBase, IAcquisitionService
+public partial class AcquisitionService : ServiceBase, IAcquisitionService
 {
     private readonly INotificationService _notifier;
 
@@ -44,7 +44,7 @@ public class AcquisitionService : ServiceBase, IAcquisitionService
         _ = Task.Run(async () =>
         {
             await ScanAllFiles();
-            await StartWatcher();
+            StartWatcher();
         });
     }
 
@@ -73,13 +73,5 @@ public class AcquisitionService : ServiceBase, IAcquisitionService
             }
         }
         await SendMessage(new AssetQueue() { Paths = finallist.ToArray() }).ConfigureAwait(false);
-    }
-
-    public async Task StartWatcher()
-    {
-    }
-
-    public async Task StopWatcher()
-    {
     }
 }

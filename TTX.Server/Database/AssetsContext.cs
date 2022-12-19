@@ -9,7 +9,7 @@ public class AssetsContext : DbContext
     { }
 
     public DbSet<AssetIdentity> Identities => Set<AssetIdentity>();
-    public DbSet<FileIntegrityInfo> Hashes => Set<FileIntegrityInfo>();
-    public DbSet<FileMetadata> Metadatas => Set<FileMetadata>();
+    public DbSet<AssetIntegrity> Hashes => Set<AssetIntegrity>();
+    public DbSet<AssetMetadata> Metadatas => Set<AssetMetadata>();
     public DbSet<TagInfo> Tags => Set<TagInfo>();
 }

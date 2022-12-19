@@ -31,7 +31,7 @@ public static class BootStrap
                 File.ReadAllText(profilePath), JsonOptions)
                 ?? throw new InvalidDataException($"Unable to load data from profile at '{profilePath}'");
             profile.ServerRoot = Path.GetDirectoryName(profilePath)
-                ?? throw new InvalidDataException($"Unable to infer a server root director path from '{profilePath}'");
+                ?? throw new InvalidDataException($"Unable to infer a server root directory path from '{profilePath}'");
             return profile;
         }
 

@@ -3,6 +3,6 @@
 /// <summary>
 /// Class to index media assets and make them available for consumption.
 /// </summary>
-public class IndexerService
+public class IndexerService : IIndexerService
 {
 }

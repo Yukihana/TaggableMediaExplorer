@@ -12,7 +12,7 @@ public class WorkspaceProfile
     // Shared
 
     public string AssetsPath { get; set; } = "Assets";
-    public string ThumbsPath { get; set; } = "Thumbs";
+    public string ThumbsPath { get; set; } = "Thumbnails";
     public string CachePath { get; set; } = "Cache";
 
     // Acquisition
@@ -24,6 +24,11 @@ public class WorkspaceProfile
     // Integrity
 
     public TimeSpan HashExpiry { get; set; } = new(30, 0, 0, 0);
+
+    // Thumbnails
+
+    public float ThumbnailTime { get; set; } = 0.2f;
+    public string ThumbnailFormat { get; set; } = "PNG";
 
     // Config
 
