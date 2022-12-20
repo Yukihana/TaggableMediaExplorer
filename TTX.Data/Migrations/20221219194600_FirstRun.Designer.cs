@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20221219185924_FirstRun")]
+    [Migration("20221219194600_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
@@ -61,7 +61,7 @@ namespace TTX.Data.Migrations
                     b.Property<byte[]>("GUID")
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastLocation")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -88,6 +88,45 @@ namespace TTX.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Hashes");
+                });
+
+            modelBuilder.Entity("TTX.Data.Entities.AssetMediaInfo", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Container")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultAudioTrackCodec")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultSubtitlesFormat")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultVideoTrackCodec")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("GUID")
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("MediaInfos");
                 });
 
             modelBuilder.Entity("TTX.Data.Entities.AssetMetadata", b =>
@@ -118,6 +157,20 @@ namespace TTX.Data.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllowAssign")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ID");
 

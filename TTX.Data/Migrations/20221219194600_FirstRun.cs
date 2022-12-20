@@ -50,12 +50,32 @@ namespace TTX.Data.Migrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    GUID = table.Column<byte[]>(type: "BLOB", nullable: true)
+                    GUID = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    LastLocation = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Identities", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MediaInfos",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GUID = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    Height = table.Column<int>(type: "INTEGER", nullable: false),
+                    Width = table.Column<int>(type: "INTEGER", nullable: false),
+                    Length = table.Column<int>(type: "INTEGER", nullable: false),
+                    Container = table.Column<string>(type: "TEXT", nullable: false),
+                    DefaultVideoTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
+                    DefaultAudioTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
+                    DefaultSubtitlesFormat = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaInfos", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -79,7 +99,11 @@ namespace TTX.Data.Migrations
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AllowAssign = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,6 +122,9 @@ namespace TTX.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Identities");
+
+            migrationBuilder.DropTable(
+                name: "MediaInfos");
 
             migrationBuilder.DropTable(
                 name: "Metadatas");

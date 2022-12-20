@@ -22,4 +22,8 @@
     <ProjectReference Include="..\TTX.Services\TTX.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

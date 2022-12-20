@@ -19,6 +19,16 @@ namespace TTX.Tests
                 var result = source.CopyValues<MyClass2>();
                 Assert.AreEqual(source.ASMO, result.ASMO);
             });
+
+            switch(shorts[1])
+            {
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

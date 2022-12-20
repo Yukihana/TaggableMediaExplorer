@@ -10,6 +10,9 @@ public class AssetDescription
 {
     public int ID { get; set; } = 0;
     public byte[]? UUID { get; set; } = null;
+
+    // Description
+
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string TagsString { get; set; } = string.Empty;
