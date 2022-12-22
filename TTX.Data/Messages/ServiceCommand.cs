@@ -2,6 +2,6 @@
 
 public struct ServiceCommand : IMessage
 {
-    public string CommandString;
-    public string TargetService;
+    public string TargetService { get; set; }
+    public string CommandString { get; set; }
 }

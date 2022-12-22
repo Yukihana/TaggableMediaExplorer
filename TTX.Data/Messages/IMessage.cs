@@ -2,4 +2,5 @@
 
 public interface IMessage
 {
+    string TargetService { get; set; }
 }

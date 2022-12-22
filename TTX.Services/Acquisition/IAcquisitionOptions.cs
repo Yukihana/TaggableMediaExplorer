@@ -2,10 +2,6 @@
 
 public interface IAcquisitionOptions : IServiceOptions
 {
-    // SID
-
-    string AcquisitionSID { get; set; }
-
     // Base options
 
     string ServerRoot { get; set; }
@@ -13,6 +9,11 @@ public interface IAcquisitionOptions : IServiceOptions
     string[] Whitelist { get; set; }
     string[] Blacklist { get; set; }
     string[] FinalAdds { get; set; }
+
+    // Service IDs
+
+    string AcquisitionSID { get; set; }
+    string MetadataSID { get; set; }
 
     // Derived
 

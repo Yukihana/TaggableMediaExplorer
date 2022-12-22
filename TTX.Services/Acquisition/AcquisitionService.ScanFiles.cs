@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Messages;
 
@@ -7,7 +8,7 @@ namespace TTX.Services.Acquisition;
 
 public partial class AcquisitionService
 {
-    public async Task ScanAllFiles()
+    public async Task ScanAllFiles(CancellationToken token = default)
     {
         HashSet<string> allfiles = _options.AssetsPathFull.GetLocalFilePathsByPatterns(new string[] { "*.*" });
         HashSet<string> whitelist = _options.AssetsPathFull.GetLocalFilePathsByPatterns(_options.Whitelist);
@@ -31,6 +32,13 @@ public partial class AcquisitionService
                 finallist.Add(file);
             }
         }
-        await SendMessage(new AssetQueue() { Paths = finallist.ToArray() }).ConfigureAwait(false);
+
+        var message = new AssetQueue()
+        {
+            TargetService = _options.MetadataSID,
+            Paths = finallist.ToArray()
+        };
+
+        await SendMessage(message, token).ConfigureAwait(false);
     }
 }

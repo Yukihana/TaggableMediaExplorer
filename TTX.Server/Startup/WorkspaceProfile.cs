@@ -34,13 +34,14 @@ public class WorkspaceProfile
 
     public bool UpdateConfirmations { get; set; } = false;
 
+    // Service Identifiers
+
+    public string AcquisitionSID { get; set; } = "acq";
+    public string MetadataSID { get; set; } = "mtd";
+    public string IndexerSID { get; set; } = "idx";
+
     // Runtime
 
     [JsonIgnore]
     public string ServerRoot { get; set; } = string.Empty;
-
-
-    // Service Identifiers
-
-    public string AcquisitionSID { get; set; } = "acq";
 }

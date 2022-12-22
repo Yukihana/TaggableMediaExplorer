@@ -37,9 +37,6 @@ public abstract class ServiceBase
 
     public async Task TryProcessMessage(IMessage message, CancellationToken token = default)
     {
-        if (!MessageTypes.Contains(message.GetType()))
-            return;
-
         if (token.IsCancellationRequested)
             return;
 
@@ -47,8 +44,6 @@ public abstract class ServiceBase
     }
 
     // Override
-
-    public abstract HashSet<Type> MessageTypes { get; }
 
     protected abstract Task ProcessMessage(IMessage message, CancellationToken token = default);
 }

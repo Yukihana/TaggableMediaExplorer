@@ -11,6 +11,10 @@ using TTX.Services.Notification;
 using TTX.Library.Helpers;
 using TTX.Data;
 using TTX.Services;
+using TTX.Services.Metadata;
+using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
+using System.Diagnostics;
 
 namespace TTX.Server.Startup;
 
@@ -69,6 +73,7 @@ public static class BootStrap
     public static void AttachOptions(this WebApplicationBuilder builder, WorkspaceProfile profile)
     {
         builder.Services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
+        builder.Services.AddSingleton<IMetadataOptions>(profile.ExtractOptions<MetadataOptions>());
     }
 
     /// <summary>
@@ -78,9 +83,12 @@ public static class BootStrap
     /// <param name="profile"></param>
     public static void AttachDataServices(this IServiceCollection services)
     {
-        services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IMessageBus, MessageBus>();
+
+        // ServiceBase services
+        services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IAcquisitionService, AcquisitionService>();
+        services.AddSingleton<IMetadataService, MetadataService>();
     }
 
     /// <summary>
@@ -93,10 +101,22 @@ public static class BootStrap
         using var scope = app.Services.CreateScope();
         scope.ServiceProvider.GetRequiredService<AssetsContext>().Database.Migrate();
 
+        // Register ServiceBase services with the MessageBus
+        app.Services.GetRequiredService<IMessageBus>().RegisterServiceBaseServices(app.Services);
+
         // Load database into memory (TODO: Indexing Service)
+
 
         // Scan files (TODO: followed by starting filesystem watcher)
         app.Services.GetRequiredService<IAcquisitionService>().DoStartup();
+    }
+
+    public static void RegisterServiceBaseServices(this IMessageBus messageBus, IServiceProvider services)
+    {
+        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IAcquisitionService>());
+        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IMetadataService>());
+
+        Trace.WriteLine($"Registered {messageBus.ServicesCount()} services with the message bus.");
     }
 
     // Helper methods

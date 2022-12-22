@@ -2,5 +2,6 @@
 
 public struct AssetQueue : IMessage
 {
-    public string[] Paths;
+    public string TargetService { get; set; }
+    public string[] Paths { get; set; }
 }
