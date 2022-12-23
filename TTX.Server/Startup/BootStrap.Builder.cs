@@ -6,17 +6,19 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using TTX.Data;
 using TTX.Library.Helpers;
 using TTX.Services;
 using TTX.Services.Acquisition;
 using TTX.Services.Communications;
+using TTX.Services.DbSync;
 using TTX.Services.Metadata;
 using TTX.Services.Notification;
 
 namespace TTX.Server.Startup;
 
-public static class BootStrap
+public static partial class BootStrap
 {
     /// <summary>
     /// Loads or creates a workspace profile at the specified path. Returns null on fail.
@@ -72,6 +74,7 @@ public static class BootStrap
     {
         builder.Services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
         builder.Services.AddSingleton<IMetadataOptions>(profile.ExtractOptions<MetadataOptions>());
+        builder.Services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
     }
 
     /// <summary>
@@ -87,33 +90,7 @@ public static class BootStrap
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IAcquisitionService, AcquisitionService>();
         services.AddSingleton<IMetadataService, MetadataService>();
-    }
-
-    /// <summary>
-    /// Validate the database (Migration Update if applicable) and send initial data to the relevant services.
-    /// </summary>
-    /// <param name="app"></param>
-    public static void InitializeServices(this WebApplication app)
-    {
-        // Validate Database
-        using var scope = app.Services.CreateScope();
-        scope.ServiceProvider.GetRequiredService<AssetsContext>().Database.Migrate();
-
-        // Register ServiceBase services with the MessageBus
-        app.Services.GetRequiredService<IMessageBus>().RegisterServiceBaseServices(app.Services);
-
-        // Load database into memory (TODO: Indexing Service)
-
-        // Scan files (TODO: followed by starting filesystem watcher)
-        app.Services.GetRequiredService<IAcquisitionService>().DoStartup();
-    }
-
-    public static void RegisterServiceBaseServices(this IMessageBus messageBus, IServiceProvider services)
-    {
-        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IAcquisitionService>());
-        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IMetadataService>());
-
-        Trace.WriteLine($"Registered {messageBus.ServicesCount()} services with the message bus.");
+        services.AddSingleton<IDbSyncService, DbSyncService>();
     }
 
     // Helper methods
