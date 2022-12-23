@@ -9,7 +9,7 @@ namespace TTX.Tests
         public void TestMethod1()
         {
             short[] shorts = new short[short.MaxValue];
-            for(short i = 0; i<short.MaxValue; i++)
+            for (short i = 0; i < short.MaxValue; i++)
             {
                 shorts[i] = i;
             }
@@ -20,12 +20,13 @@ namespace TTX.Tests
                 Assert.AreEqual(source.ASMO, result.ASMO);
             });
 
-            switch(shorts[1])
+            switch (shorts[1])
             {
                 case 1:
                 case 2:
                 case 3:
                     break;
+
                 default:
                     break;
             }

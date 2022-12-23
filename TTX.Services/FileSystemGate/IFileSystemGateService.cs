@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TTX.Services.FileSystemGate;
+﻿namespace TTX.Services.FileSystemGate;
 
 public interface IFileSystemGateService
 {

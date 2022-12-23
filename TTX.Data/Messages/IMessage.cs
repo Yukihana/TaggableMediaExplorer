@@ -2,5 +2,5 @@
 
 public interface IMessage
 {
-    string TargetService { get; set; }
+    string TargetSID { get; set; }
 }

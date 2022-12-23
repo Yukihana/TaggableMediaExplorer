@@ -10,6 +10,16 @@ public class TaskQueue
     private readonly List<Task> _queue = new();
     private CancellationTokenSource _cts = new();
 
+    // Properties
+
+    public CancellationToken Token => _cts.Token;
+
+    public void Cancel() => _cts.Cancel();
+
+    public void RenewCancellationTokenSource() => _cts = new();
+
+    public async Task WaitForFinish() => await Task.WhenAll(_queue);
+
     // public
 
     public TaskQueue(int concurrent)
@@ -49,14 +59,6 @@ public class TaskQueue
         return wrapper;
     }
 
-    public CancellationToken Token => _cts.Token;
-
-    public void Cancel() => _cts.Cancel();
-
-    public void RenewCancellationTokenSource() => _cts = new();
-
-    public async Task WaitForFinish() => await Task.WhenAll(_queue);
-
     // private
 
     private async Task TaskWaiter(Task task, CancellationToken token = default)
@@ -68,6 +70,7 @@ public class TaskQueue
             if (_cts.IsCancellationRequested)
                 return;
 
+            task.Start();
             await task;
         }
         finally { _semaphoreConcurrency.Release(); }

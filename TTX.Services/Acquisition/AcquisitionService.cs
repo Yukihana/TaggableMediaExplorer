@@ -38,7 +38,7 @@ public partial class AcquisitionService : ServiceBase, IAcquisitionService
     protected override async Task ProcessMessage(IMessage message, CancellationToken token = default)
     {
         if (message is ServiceCommand command &&
-            command.TargetService.Equals(_options.AcquisitionSID, StringComparison.OrdinalIgnoreCase))
+            command.TargetSID.Equals(_options.AcquisitionSID, StringComparison.OrdinalIgnoreCase))
         {
             if (command.CommandString.Equals(AcquisitionCommands.ScanAll, StringComparison.OrdinalIgnoreCase))
                 await ScanAllFiles(token);

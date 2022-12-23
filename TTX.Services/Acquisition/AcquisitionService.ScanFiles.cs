@@ -35,7 +35,7 @@ public partial class AcquisitionService
 
         var message = new AssetQueue()
         {
-            TargetService = _options.MetadataSID,
+            TargetSID = _options.MetadataSID,
             Paths = finallist.ToArray()
         };
 

@@ -5,6 +5,6 @@
 /// </summary>
 public struct HashedAssetFile : IMessage
 {
-    public string TargetService { get; set; }
+    public string TargetSID { get; set; }
     public string FullPath { get; set; }
 }

@@ -3,18 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using TTX.Data;
+using TTX.Library.Helpers;
+using TTX.Services;
 using TTX.Services.Acquisition;
 using TTX.Services.Communications;
-using TTX.Services.Notification;
-using TTX.Library.Helpers;
-using TTX.Data;
-using TTX.Services;
 using TTX.Services.Metadata;
-using Microsoft.EntityFrameworkCore.Internal;
-using System.Linq;
-using System.Diagnostics;
+using TTX.Services.Notification;
 
 namespace TTX.Server.Startup;
 
@@ -105,7 +103,6 @@ public static class BootStrap
         app.Services.GetRequiredService<IMessageBus>().RegisterServiceBaseServices(app.Services);
 
         // Load database into memory (TODO: Indexing Service)
-
 
         // Scan files (TODO: followed by starting filesystem watcher)
         app.Services.GetRequiredService<IAcquisitionService>().DoStartup();

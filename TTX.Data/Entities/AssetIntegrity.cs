@@ -8,5 +8,5 @@ public class AssetIntegrity
     // Integrity
 
     public byte[]? SHA2 { get; set; } = null;
-    public byte[]? FileCrumbs { get; set;} = null;
+    public byte[]? FileCrumbs { get; set; } = null;
 }

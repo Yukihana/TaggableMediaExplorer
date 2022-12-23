@@ -12,14 +12,19 @@ public interface IQueryApiService
     // Metadata
 
     string? GetDescription(string uuid);
+
     string? GetMetadata(string uuid);
+
     string? GetIntegrityInfo(string uuid);
+
     string? GetMediaInfo(string uuid);
 
     // Tags
 
     string? GetTags(string uuid);
+
     int? AddTags(string uuid, string[] tags);
+
     int? RemoveTags(string uuid, string[] tags);
 
     // Primary data

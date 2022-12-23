@@ -21,7 +21,7 @@ public class MessageBus : IMessageBus
     {
         foreach (ServiceBase service in _services)
         {
-            if (service.Identifier.Equals(message.TargetService))
+            if (service.Identifier.Equals(message.TargetSID))
             {
                 await service.TryProcessMessage(message, token);
             }
@@ -38,7 +38,7 @@ public class MessageBus : IMessageBus
     {
         var sc = new ServiceCommand()
         {
-            TargetService = service,
+            TargetSID = service,
             CommandString = command
         };
         await Enqueue(sc, token);
