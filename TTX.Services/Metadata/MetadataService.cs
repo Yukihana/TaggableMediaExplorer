@@ -39,7 +39,7 @@ public class MetadataService : ServiceBase, IMetadataService
 
         AssetFile file = new()
         {
-            TargetSID = _options.IndexerSID,
+            TargetSID = _options.AssetsIndexerSID,
             FullPath = info.FullName,
             CreatedUtc = info.CreationTimeUtc,
             ModifiedUtc = info.LastWriteTimeUtc,

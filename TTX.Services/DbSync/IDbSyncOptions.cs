@@ -2,6 +2,7 @@
 
 public interface IDbSyncOptions : IServiceOptions
 {
-    public string DbSyncSID { get; set; }
-    public string IndexerSID { get; set; }
+    string DbSyncSID { get; set; }
+    string AssetsIndexerSID { get; set; }
+    string TagsIndexerSID { get; set; }
 }

@@ -1,5 +1,5 @@
 ﻿namespace TTX.Services.Indexer;
 
-public interface IIndexerService
+public interface IAssetsIndexerService
 {
 }

@@ -39,7 +39,8 @@ public class WorkspaceProfile
     public string AcquisitionSID { get; set; } = "acq";
     public string MetadataSID { get; set; } = "mtd";
     public string DbSyncSID { get; set; } = "dbs";
-    public string IndexerSID { get; set; } = "idx";
+    public string AssetsIndexerSID { get; set; } = "aix";
+    public string TagsIndexerSID { get; set; } = "tix";
 
     // Runtime
 

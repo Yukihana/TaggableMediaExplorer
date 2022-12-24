@@ -3,7 +3,8 @@
 public class DbSyncOptions : IDbSyncOptions
 {
     public string DbSyncSID { get; set; } = "dbs";
-    public string IndexerSID { get; set; } = "idx";
+    public string AssetsIndexerSID { get; set; } = "aix";
+    public string TagsIndexerSID { get; set; } = "tix";
 
     public void Initialize()
     { }

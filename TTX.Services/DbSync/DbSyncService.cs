@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TTX.Data;
 using TTX.Data.Messages;
-using TTX.Services.Acquisition;
 using TTX.Services.Communications;
 
 namespace TTX.Services.DbSync;
@@ -13,10 +14,12 @@ namespace TTX.Services.DbSync;
 public partial class DbSyncService : ServiceBase, IDbSyncService
 {
     private readonly IDbSyncOptions _options;
+    private readonly IDbContextFactory<AssetsContext> _contextFactory;
     public override string Identifier => _options.DbSyncSID;
 
-    public DbSyncService(IMessageBus bus, IDbSyncOptions options) : base(bus, 1)
+    public DbSyncService(IMessageBus bus, IDbContextFactory<AssetsContext> contextFactory, IDbSyncOptions options) : base(bus, 1)
     {
+        _contextFactory = contextFactory;
         _options = options;
     }
 

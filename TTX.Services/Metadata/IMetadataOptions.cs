@@ -3,5 +3,5 @@
 public interface IMetadataOptions : IServiceOptions
 {
     string MetadataSID { get; set; }
-    string IndexerSID { get; set; }
+    string AssetsIndexerSID { get; set; }
 }
