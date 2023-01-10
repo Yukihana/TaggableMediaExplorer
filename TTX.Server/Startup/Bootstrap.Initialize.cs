@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TTX.Data;
-using TTX.Services;
-using TTX.Services.Acquisition;
-using TTX.Services.Communications;
-using TTX.Services.DbSync;
-using TTX.Services.Metadata;
+using TTX.Services.Indexer;
+using TTX.Services.TagsIndexer;
 
 namespace TTX.Server.Startup;
 
@@ -21,45 +16,25 @@ public static partial class BootStrap
     /// <param name="app"></param>
     public static void InitializeServices(this WebApplication app, WorkspaceProfile profile)
     {
-        // Validate Database
         using var scope = app.Services.CreateScope();
+
+        // Database setup
         scope.ServiceProvider.GetRequiredService<AssetsContext>().Database.Migrate();
 
-        IMessageBus messageBus = app.Services.GetRequiredService<IMessageBus>();
-
-        // Register ServiceBase services with the MessageBus
-        messageBus.RegisterServiceBaseServices(app.Services);
-
-        // Load database into memory
-        messageBus.StartLoadingDatabase(profile.DbSyncSID);
-
-        // Scan files
-        messageBus.StartSyncingAssets(profile.AcquisitionSID);
+        // Load
+        scope.LoadAssets();
+        scope.LoadTags();
     }
 
-    public static void RegisterServiceBaseServices(this IMessageBus messageBus, IServiceProvider services)
+    public static void LoadAssets(this IServiceScope scope)
     {
-        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IAcquisitionService>());
-        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IMetadataService>());
-        messageBus.RegisterService((ServiceBase)services.GetRequiredService<IDbSyncService>());
-
-        Trace.WriteLine($"Registered {messageBus.ServicesCount()} services with the message bus.");
+        var indexer = scope.ServiceProvider.GetRequiredService<IAssetsIndexerService>();
+        _ = Task.Run(indexer.Reload);
     }
 
-    public static void StartLoadingDatabase(this IMessageBus messageBus, string targetSID)
+    public static void LoadTags(this IServiceScope scope)
     {
-        _ = Task.Run(async () =>
-        {
-            await messageBus.SendCommand(targetSID, DbSyncCommands.ReadAssetsInfoTable);
-            await messageBus.SendCommand(targetSID, DbSyncCommands.ReadTagsInfoTable);
-        });
-    }
-
-    public static void StartSyncingAssets(this IMessageBus messageBus, string targetSID)
-    {
-        _ = Task.Run(async () =>
-        {
-            await messageBus.SendCommand(targetSID, AcquisitionCommands.ScanAll);
-        });
+        var indexer = scope.ServiceProvider.GetRequiredService<ITagsIndexerService>();
+        _ = Task.Run(indexer.Reload);
     }
 }

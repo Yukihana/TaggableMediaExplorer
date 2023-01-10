@@ -11,10 +11,14 @@ using TTX.Data;
 using TTX.Library.Helpers;
 using TTX.Services;
 using TTX.Services.Acquisition;
+using TTX.Services.AssetsIndexer;
 using TTX.Services.Communications;
 using TTX.Services.DbSync;
+using TTX.Services.Indexer;
 using TTX.Services.Metadata;
 using TTX.Services.Notification;
+using TTX.Services.TagsIndexer;
+using TTX.Services.Watcher;
 
 namespace TTX.Server.Startup;
 
@@ -70,11 +74,18 @@ public static partial class BootStrap
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="profile"></param>
-    public static void AttachOptions(this WebApplicationBuilder builder, WorkspaceProfile profile)
+    public static void AttachOptions(this IServiceCollection services, WorkspaceProfile profile)
     {
-        builder.Services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
-        builder.Services.AddSingleton<IMetadataOptions>(profile.ExtractOptions<MetadataOptions>());
-        builder.Services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
+        services.AddSingleton<IAssetsIndexerOptions>(profile.ExtractOptions<AssetsIndexerOptions>());
+        services.AddSingleton<ITagsIndexerOptions>(profile.ExtractOptions<TagsIndexerOptions>());
+
+        services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
+        services.AddSingleton<IWatcherOptions>(profile.ExtractOptions<WatcherOptions>());
+
+        // Legacy
+        services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
+        services.AddSingleton<IMetadataOptions>(profile.ExtractOptions<MetadataOptions>());
+        services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
     }
 
     /// <summary>
@@ -84,6 +95,13 @@ public static partial class BootStrap
     /// <param name="profile"></param>
     public static void AttachDataServices(this IServiceCollection services)
     {
+        services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
+        services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
+
+        services.AddSingleton<IDbSyncService, DbSyncService>();
+        services.AddSingleton<IWatcherService, WatcherService>();
+
+        // Legacy
         services.AddSingleton<IMessageBus, MessageBus>();
 
         // ServiceBase services
