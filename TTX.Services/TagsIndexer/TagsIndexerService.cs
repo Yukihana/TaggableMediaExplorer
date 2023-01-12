@@ -1,22 +1,17 @@
-﻿using Microsoft.Extensions.Options;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TTX.Data.Messages;
-using TTX.Services.Communications;
+﻿using System.Threading.Tasks;
 
 namespace TTX.Services.TagsIndexer;
 
 /// <summary>
 /// Storage service for TagInfo entities.
 /// </summary>
-public class TagsIndexerService : ITagsIndexerService
+public partial class TagsIndexerService : ITagsIndexerService
 {
-    private readonly ITagsIndexerOptions _options;
+    private readonly TagsIndexerOptions _options;
 
-    public TagsIndexerService(ITagsIndexerOptions options)
+    public TagsIndexerService(IOptionsSet options)
     {
-        _options = options;
+        _options = options.ExtractValues<TagsIndexerOptions>();
     }
 
     public async Task Reload()
@@ -27,23 +22,11 @@ public class TagsIndexerService : ITagsIndexerService
         await Validate();
     }
 
-    private async Task Validate()
-    {
-        
-    }
-
     private async Task LoadRecords()
     {
-        
     }
 
     private async Task Purge()
     {
-        
-    }
-
-    private async Task Invalidate()
-    {
-       
     }
 }

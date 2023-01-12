@@ -1,9 +1,8 @@
 ﻿namespace TTX.Services.Metadata;
 
-public class MetadataOptions : IMetadataOptions
+public class MetadataOptions : IServiceOptions
 {
-    public string MetadataSID { get; set; } = "mtd";
-    public string AssetsIndexerSID { get; set; } = "aix";
+    public int MetadataConcurrency { get; set; } = 4;
 
     public void Initialize()
     {

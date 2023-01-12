@@ -1,20 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using TTX.Library.Helpers;
 
-namespace TTX.Services.Acquisition;
+namespace TTX.Services.Watcher;
 
-public static class AcquisitionHelper
+public static class WatcherHelper
 {
-    public static AcquisitionOptions ExtractOptions(object profile)
-    {
-        var options = profile.CopyValues<AcquisitionOptions>().CopyFullyDecoupled();
-
-        options.Initialize();
-
-        return options;
-    }
-
     public static HashSet<string> GetLocalFilePathsByPatterns(this string directory, IEnumerable<string> patterns)
     {
         HashSet<string> paths = new();
@@ -28,7 +18,6 @@ public static class AcquisitionHelper
         }
 
         // Localize paths
-
         return paths;
     }
 }

@@ -8,12 +8,12 @@ namespace TTX.Services.DbSync;
 /// </summary>
 public partial class DbSyncService : IDbSyncService
 {
-    private readonly IDbSyncOptions _options;
+    private readonly DbSyncOptions _options;
     private readonly IDbContextFactory<AssetsContext> _contextFactory;
 
-    public DbSyncService(IDbContextFactory<AssetsContext> contextFactory, IDbSyncOptions options)
+    public DbSyncService(IDbContextFactory<AssetsContext> contextFactory, IOptionsSet options)
     {
         _contextFactory = contextFactory;
-        _options = options;
+        _options = options.ExtractValues<DbSyncOptions>();
     }
 }

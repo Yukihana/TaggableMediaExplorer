@@ -22,29 +22,29 @@ public static class ObjectHelpers
     /// Extract relevant properties and fields into a new instance of the required type.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="Obj"></param>
+    /// <param name="source"></param>
     /// <returns></returns>
-    public static T CopyValues<T>(this object Obj) where T : new()
+    public static T CopyValues<T>(this object source) where T : new()
     {
         T result = new();
 
-        foreach (var prop in Obj.GetType().GetProperties().Where(x => x.CanRead))
+        foreach (var prop in source.GetType().GetProperties().Where(x => x.CanRead))
         {
             if (typeof(T).GetProperty(prop.Name) is PropertyInfo targetProp &&
                 targetProp.CanWrite &&
                 prop.PropertyType == targetProp.PropertyType)
             {
-                targetProp.SetValue(result, prop.GetValue(Obj));
+                targetProp.SetValue(result, prop.GetValue(source));
             }
         }
 
         // Fields after properties incase setters aren't identical.
-        foreach (var field in Obj.GetType().GetFields())
+        foreach (var field in source.GetType().GetFields())
         {
             if (typeof(T).GetField(field.Name) is FieldInfo targetField &&
                 field.FieldType == targetField.FieldType)
             {
-                targetField.SetValue(result, field.GetValue(Obj));
+                targetField.SetValue(result, field.GetValue(source));
             }
         }
 
@@ -62,7 +62,7 @@ public static class ObjectHelpers
             }
         }
         throw new NullReferenceException();
-    }*/
+    }
 
     internal static void CopyFieldValuesTo<T>(this T source, T target) where T : class
     {
@@ -112,4 +112,12 @@ public static class ObjectHelpers
         }
         return count;
     }
+    public static TOptions ExtractOptions<TOptions>(this WorkspaceProfile profile) where TOptions : IServiceOptions, new()
+    {
+        var options = profile.CopyValues<TOptions>().CopyFullyDecoupled();
+        options.Initialize();
+        return options;
+    }
+
+    */
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TTX.Services.DbSync;
+﻿namespace TTX.Services.DbSync;
 
 public static class DbSyncCommands
 {

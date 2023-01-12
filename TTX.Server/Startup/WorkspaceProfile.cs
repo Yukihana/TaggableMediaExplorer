@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using TTX.Services;
 
 namespace TTX.Server.Startup;
 
-public class WorkspaceProfile
+public class WorkspaceProfile : IOptionsSet
 {
     // Database
 
@@ -33,14 +34,6 @@ public class WorkspaceProfile
     // Config
 
     public bool UpdateConfirmations { get; set; } = false;
-
-    // Service Identifiers
-
-    public string AcquisitionSID { get; set; } = "acq";
-    public string MetadataSID { get; set; } = "mtd";
-    public string DbSyncSID { get; set; } = "dbs";
-    public string AssetsIndexerSID { get; set; } = "aix";
-    public string TagsIndexerSID { get; set; } = "tix";
 
     // Runtime
 

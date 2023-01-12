@@ -30,9 +30,6 @@ public class Program
         var app = builder.Build();
 
         app.InitializeServices(profile);
-        // Initialize (verify if here or later)
-        // send start database load (it'll load to dormant list)
-        // send first scan to acquiservice (items will validate and move db entries to live list)
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

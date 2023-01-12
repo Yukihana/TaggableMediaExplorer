@@ -1,51 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Messages;
-using TTX.Services.Communications;
+using TTX.Library.Helpers;
 
 namespace TTX.Services.Metadata;
 
-public class MetadataService : ServiceBase, IMetadataService
+public class MetadataService : IMetadataService
 {
-    private readonly IMetadataOptions _options;
+    private readonly MetadataOptions _options;
+    private readonly ILogger _logger;
 
-    public override string Identifier => _options.MetadataSID;
+    private readonly SemaphoreSlim _semaphore;
 
-    public MetadataService(IMessageBus bus, IMetadataOptions options) : base(bus, 5)
+    public MetadataService(ILogger logger, IOptionsSet options)
     {
-        _options = options;
+        _logger = logger;
+        _options = options.ExtractValues<MetadataOptions>();
+        _semaphore = new SemaphoreSlim(_options.MetadataConcurrency);
     }
 
-    protected override async Task ProcessMessage(IMessage message, CancellationToken token = default)
-    {
-        List<Task> tasks = new();
-
-        if (message is AssetQueue queue)
-        {
-            foreach (string path in queue.Paths)
-            {
-                tasks.Add(ForwardMetadata(path, token));
-            }
-        }
-
-        await Task.WhenAll(tasks).ConfigureAwait(false);
-    }
-
-    private async Task ForwardMetadata(string path, CancellationToken token = default)
+    private static AssetFile ReadFrom(string path)
     {
         FileInfo info = new(path);
-
-        AssetFile file = new()
+        return new AssetFile()
         {
-            TargetSID = _options.AssetsIndexerSID,
             FullPath = info.FullName,
             CreatedUtc = info.CreationTimeUtc,
             ModifiedUtc = info.LastWriteTimeUtc,
             SizeBytes = info.Length,
         };
+    }
 
-        await SendMessage(file, token);
+    public async Task<AssetFile?> Fetch(string path, CancellationToken token = default)
+    {
+        try
+        {
+            await _semaphore.WaitAsync(token).ConfigureAwait(false);
+            return await Task.Factory.StartNew(
+                () => ReadFrom(path),
+                token,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(LogLevel.Warning, "Error reading metadata", ex);
+            return null;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public async Task<List<AssetFile>> Fetch(IEnumerable<string> paths, CancellationToken token = default)
+    {
+        ParallelOptions options = new()
+        {
+            MaxDegreeOfParallelism = _options.MetadataConcurrency,
+            CancellationToken = token
+        };
+        ConcurrentBag<AssetFile> results = new();
+
+        await Parallel.ForEachAsync(paths, options,
+            async (data, token) => (await Fetch(data, token))?.AddTo(results));
+
+        return results.ToList();
     }
 }

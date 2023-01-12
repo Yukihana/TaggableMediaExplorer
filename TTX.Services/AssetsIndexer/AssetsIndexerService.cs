@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using TTX.Data.Messages;
-using TTX.Services.AssetsIndexer;
+﻿using System.Threading;
+using TTX.Services.Metadata;
 using TTX.Services.Watcher;
 
-namespace TTX.Services.Indexer;
+namespace TTX.Services.AssetsIndexer;
 
 /// <summary>
 /// Storage class for AssetInfo entities.
@@ -13,46 +10,15 @@ namespace TTX.Services.Indexer;
 public partial class AssetsIndexerService : IAssetsIndexerService
 {
     private readonly IWatcherService _watcher;
-    private readonly IAssetsIndexerOptions _options;
+    private readonly IMetadataService _metadata;
+    private readonly AssetsIndexerOptions _options;
+    private readonly SemaphoreSlim _semaphore;
 
-    public AssetsIndexerService(IWatcherService watcher, IAssetsIndexerOptions options)
+    public AssetsIndexerService(IWatcherService watcher, IMetadataService metadata, IOptionsSet options)
     {
         _watcher = watcher;
-        _options = options;
-    }
-
-    public async Task Reload()
-    {
-        await Invalidate();
-        await Purge();
-        await LoadRecords();
-        await ScanFiles();
-        await Validate();
-    }
-
-    private async Task Validate()
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task ScanFiles()
-    {
-        List<AssetFile> files = await _watcher.GetFiles();
-        throw new NotImplementedException();
-    }
-
-    private async Task LoadRecords()
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task Purge()
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task Invalidate()
-    {
-        throw new NotImplementedException();
+        _metadata = metadata;
+        _options = options.ExtractValues<AssetsIndexerOptions>();
+        _semaphore = new(1);
     }
 }

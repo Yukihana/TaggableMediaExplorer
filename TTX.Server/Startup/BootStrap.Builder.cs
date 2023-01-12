@@ -3,18 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using TTX.Data;
-using TTX.Library.Helpers;
 using TTX.Services;
-using TTX.Services.Acquisition;
 using TTX.Services.AssetsIndexer;
-using TTX.Services.Communications;
 using TTX.Services.DbSync;
-using TTX.Services.Indexer;
 using TTX.Services.Metadata;
 using TTX.Services.Notification;
 using TTX.Services.TagsIndexer;
@@ -76,16 +70,7 @@ public static partial class BootStrap
     /// <param name="profile"></param>
     public static void AttachOptions(this IServiceCollection services, WorkspaceProfile profile)
     {
-        services.AddSingleton<IAssetsIndexerOptions>(profile.ExtractOptions<AssetsIndexerOptions>());
-        services.AddSingleton<ITagsIndexerOptions>(profile.ExtractOptions<TagsIndexerOptions>());
-
-        services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
-        services.AddSingleton<IWatcherOptions>(profile.ExtractOptions<WatcherOptions>());
-
-        // Legacy
-        services.AddSingleton<IAcquisitionOptions>(profile.ExtractOptions<AcquisitionOptions>());
-        services.AddSingleton<IMetadataOptions>(profile.ExtractOptions<MetadataOptions>());
-        services.AddSingleton<IDbSyncOptions>(profile.ExtractOptions<DbSyncOptions>());
+        services.AddSingleton<IOptionsSet>(profile);
     }
 
     /// <summary>
@@ -95,20 +80,16 @@ public static partial class BootStrap
     /// <param name="profile"></param>
     public static void AttachDataServices(this IServiceCollection services)
     {
+        services.AddSingleton<IMetadataService, MetadataService>();
+
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
 
         services.AddSingleton<IDbSyncService, DbSyncService>();
         services.AddSingleton<IWatcherService, WatcherService>();
 
-        // Legacy
-        services.AddSingleton<IMessageBus, MessageBus>();
-
-        // ServiceBase services
+        // Unimplemented
         services.AddSingleton<INotificationService, NotificationService>();
-        services.AddSingleton<IAcquisitionService, AcquisitionService>();
-        services.AddSingleton<IMetadataService, MetadataService>();
-        services.AddSingleton<IDbSyncService, DbSyncService>();
     }
 
     // Helper methods
@@ -116,11 +97,4 @@ public static partial class BootStrap
     {
         WriteIndented = true
     };
-
-    public static TOptions ExtractOptions<TOptions>(this WorkspaceProfile profile) where TOptions : IServiceOptions, new()
-    {
-        var options = profile.CopyValues<TOptions>().CopyFullyDecoupled();
-        options.Initialize();
-        return options;
-    }
 }

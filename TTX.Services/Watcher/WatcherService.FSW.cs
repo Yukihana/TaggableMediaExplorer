@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System;
 
-namespace TTX.Services.Acquisition;
+namespace TTX.Services.Watcher;
 
-public partial class AcquisitionService
+public partial class WatcherService
 {
     private FileSystemWatcher? _watcher = null;
 

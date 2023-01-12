@@ -1,9 +1,7 @@
 ﻿namespace TTX.Services.AssetsIndexer;
 
-public class AssetsIndexerOptions : IAssetsIndexerOptions
+public class AssetsIndexerOptions : IServiceOptions
 {
-    public string AssetsIndexerSID { get; set; } = "aix";
-
     public void Initialize()
     { }
 }

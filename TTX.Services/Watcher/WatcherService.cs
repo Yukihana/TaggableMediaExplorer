@@ -4,10 +4,12 @@ using TTX.Data.Messages;
 
 namespace TTX.Services.Watcher;
 
-public class WatcherService : IWatcherService
+public partial class WatcherService : IWatcherService
 {
-    public async Task<List<AssetFile>> GetFiles()
+    private readonly WatcherOptions _options;
+
+    public WatcherService(IOptionsSet options)
     {
-        throw new System.NotImplementedException();
+        _options = options.ExtractValues<WatcherOptions>();
     }
 }
