@@ -24,9 +24,11 @@ public partial class TagsIndexerService : ITagsIndexerService
 
     private async Task LoadRecords()
     {
+        await Task.Delay(1);
     }
 
     private async Task Purge()
     {
+        await Task.Delay(1);
     }
 }

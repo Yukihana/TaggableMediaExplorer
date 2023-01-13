@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using TTX.Services.DbSync;
 using TTX.Services.Metadata;
 using TTX.Services.Watcher;
 
@@ -11,14 +11,14 @@ public partial class AssetsIndexerService : IAssetsIndexerService
 {
     private readonly IWatcherService _watcher;
     private readonly IMetadataService _metadata;
+    private readonly IDbSyncService _dbsync;
     private readonly AssetsIndexerOptions _options;
-    private readonly SemaphoreSlim _semaphore;
 
-    public AssetsIndexerService(IWatcherService watcher, IMetadataService metadata, IOptionsSet options)
+    public AssetsIndexerService(IWatcherService watcher, IMetadataService metadata, IDbSyncService dbsync, IOptionsSet options)
     {
         _watcher = watcher;
         _metadata = metadata;
+        _dbsync = dbsync;
         _options = options.ExtractValues<AssetsIndexerOptions>();
-        _semaphore = new(1);
     }
 }

@@ -6,35 +6,26 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Messages;
+using TTX.Data.Models;
 using TTX.Library.Helpers;
+using TTX.Services.Integrity;
 
 namespace TTX.Services.Metadata;
 
 public class MetadataService : IMetadataService
 {
-    private readonly MetadataOptions _options;
+    private readonly IIntegrityService _integrity;
     private readonly ILogger _logger;
 
+    private readonly MetadataOptions _options;
     private readonly SemaphoreSlim _semaphore;
 
-    public MetadataService(ILogger logger, IOptionsSet options)
+    public MetadataService(IIntegrityService integrity, ILogger<MetadataService> logger, IOptionsSet options)
     {
+        _integrity = integrity;
         _logger = logger;
         _options = options.ExtractValues<MetadataOptions>();
         _semaphore = new SemaphoreSlim(_options.MetadataConcurrency);
-    }
-
-    private static AssetFile ReadFrom(string path)
-    {
-        FileInfo info = new(path);
-        return new AssetFile()
-        {
-            FullPath = info.FullName,
-            CreatedUtc = info.CreationTimeUtc,
-            ModifiedUtc = info.LastWriteTimeUtc,
-            SizeBytes = info.Length,
-        };
     }
 
     public async Task<AssetFile?> Fetch(string path, CancellationToken token = default)
@@ -42,15 +33,20 @@ public class MetadataService : IMetadataService
         try
         {
             await _semaphore.WaitAsync(token).ConfigureAwait(false);
-            return await Task.Factory.StartNew(
-                () => ReadFrom(path),
-                token,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+
+            FileInfo info = new(path);
+            return new()
+            {
+                FullPath = info.FullName,
+                CreatedUtc = info.CreationTimeUtc,
+                ModifiedUtc = info.LastWriteTimeUtc,
+                SizeBytes = info.Length,
+                Crumbs = await _integrity.GetCrumbsAsync(path, token).ConfigureAwait(false)
+            };
         }
         catch (Exception ex)
         {
-            _logger.Log(LogLevel.Warning, "Error reading metadata", ex);
+            _logger.LogWarning("Error reading metadata", ex);
             return null;
         }
         finally

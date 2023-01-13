@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTX.Data;
@@ -23,23 +24,23 @@ public static partial class BootStrap
         scope.ServiceProvider.GetRequiredService<AssetsContext>().Database.Migrate();
 
         // Load
-        scope.LoadData();
+        app.Services.LoadData();
     }
 
     private static readonly List<Task> _loadTasks = new();
 
-    public static void LoadData(this IServiceScope scope)
+    public static void LoadData(this IServiceProvider provider)
     {
         // Assets
-        var assetsIndexer = scope.ServiceProvider.GetRequiredService<IAssetsIndexerService>();
+        var assetsIndexer = provider.GetRequiredService<IAssetsIndexerService>();
         Task assetsTask = Task.Run(assetsIndexer.Reload);
         _loadTasks.Add(assetsTask);
-        assetsTask.ContinueWith(task => _loadTasks.Remove(assetsTask));
+        assetsTask.ContinueWith(_loadTasks.Remove);
 
         // Tags
-        var tagsIndexer = scope.ServiceProvider.GetRequiredService<ITagsIndexerService>();
+        var tagsIndexer = provider.GetRequiredService<ITagsIndexerService>();
         Task tagsTask = Task.Run(tagsIndexer.Reload);
         _loadTasks.Add(tagsTask);
-        tagsTask.ContinueWith(task => _loadTasks.Remove(tagsTask));
+        tagsTask.ContinueWith(_loadTasks.Remove);
     }
 }

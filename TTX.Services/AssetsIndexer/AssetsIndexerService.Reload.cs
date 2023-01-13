@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Threading;
-using System;
-using TTX.Data.Messages;
+using System.Threading.Tasks;
+using TTX.Data.Entities;
+using TTX.Data.Models;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -10,28 +10,27 @@ public partial class AssetsIndexerService
 {
     public async Task Reload()
     {
-        await Invalidate();
-        await Purge();
-        await LoadRecords();
-        await ScanFiles();
-        await Validate();
+        await RefreshRecords();
+        await SyncFiles();
     }
 
-    private async Task LoadRecords()
+    private async Task RefreshRecords(CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        List<AssetInfo> loaded = await _dbsync.LoadAssets(token);
+        try
+        {
+            await _semaphore.WaitAsync(token);
+            _liveSet.Clear();
+            _stashed.Clear();
+            for (int i = 0; i < loaded.Count; i++)
+                _stashed.Add(loaded[i]);
+        }
+        finally { _semaphore.Release(); }
     }
 
-    private async Task ScanFiles(CancellationToken token = default)
+    private async Task SyncFiles(CancellationToken token = default)
     {
         HashSet<string> paths = await _watcher.GetAllFiles(token);
         List<AssetFile> files = await _metadata.Fetch(paths, token);
-
-        throw new NotImplementedException();
-    }
-
-    private async Task Purge()
-    {
-        throw new NotImplementedException();
     }
 }

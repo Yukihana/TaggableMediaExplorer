@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using TTX.Data.Messages;
-
-namespace TTX.Services.Watcher;
+﻿namespace TTX.Services.Watcher;
 
 public partial class WatcherService : IWatcherService
 {

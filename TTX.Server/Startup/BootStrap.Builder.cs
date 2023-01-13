@@ -11,6 +11,7 @@ using TTX.Services.AssetsIndexer;
 using TTX.Services.DbSync;
 using TTX.Services.Metadata;
 using TTX.Services.Notification;
+using TTX.Services.QueryApi;
 using TTX.Services.TagsIndexer;
 using TTX.Services.Watcher;
 
@@ -46,20 +47,22 @@ public static partial class BootStrap
     /// Setup database connections.
     /// </summary>
     /// <param name="builder">WebApplicationBuilder</param>
-    /// <param name="serverRoot">Current Path</param>
+    /// <param name="profile">Current Path</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     public static IServiceCollection AttachDatabase(this WebApplicationBuilder builder, WorkspaceProfile profile)
     {
         string connectionString = builder.Configuration.GetConnectionString("AssetsDbString")
             ?? throw new Exception("Workspace path is missing from appsettings.");
+
         string pathToDbFile = Path.IsPathFullyQualified(profile.AssetsDbFilename)
             ? profile.AssetsDbFilename
             : Path.Combine(profile.ServerRoot, profile.AssetsDbFilename);
-        connectionString = connectionString.Replace("@", pathToDbFile);
 
-        builder.Services.AddDbContext<AssetsContext>(
-            options => options.UseSqlite(connectionString.Replace("@", pathToDbFile)));
+        connectionString = connectionString.Replace("@", pathToDbFile);
+        builder.Services.AddDbContext<AssetsContext>(options => options.UseSqlite(connectionString), optionsLifetime: ServiceLifetime.Singleton);
+        builder.Services.AddDbContextFactory<AssetsContext>(options => options.UseSqlite(connectionString));
+
         return builder.Services;
     }
 
@@ -80,13 +83,19 @@ public static partial class BootStrap
     /// <param name="profile"></param>
     public static void AttachDataServices(this IServiceCollection services)
     {
+        // Independent layer
+        services.AddSingleton<IDbSyncService, DbSyncService>();
+        services.AddSingleton<IWatcherService, WatcherService>();
         services.AddSingleton<IMetadataService, MetadataService>();
 
+        // Second layer
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
 
-        services.AddSingleton<IDbSyncService, DbSyncService>();
-        services.AddSingleton<IWatcherService, WatcherService>();
+        // Third layer
+
+        // Topmost layer (Query Services)
+        services.AddSingleton<IQueryApiService, QueryApiService>();
 
         // Unimplemented
         services.AddSingleton<INotificationService, NotificationService>();
