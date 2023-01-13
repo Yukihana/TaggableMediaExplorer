@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -17,13 +17,13 @@ namespace TTX.Data.Migrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    GUID = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    GUID = table.Column<byte[]>(type: "BLOB", nullable: false),
                     LastLocation = table.Column<string>(type: "TEXT", nullable: false),
-                    Created = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Modified = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
                     SizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
-                    SHA2 = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    FileCrumbs = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    SHA2 = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Crumbs = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Height = table.Column<int>(type: "INTEGER", nullable: false),
                     Width = table.Column<int>(type: "INTEGER", nullable: false),
                     Length = table.Column<int>(type: "INTEGER", nullable: false),

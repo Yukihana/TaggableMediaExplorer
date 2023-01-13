@@ -2,4 +2,6 @@
 
 public partial class AssetsIndexerService
 {
+
+
 }

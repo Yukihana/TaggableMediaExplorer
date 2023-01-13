@@ -10,6 +10,6 @@ public class AssetsContext : DbContext
 
     // Tables
 
-    public DbSet<AssetInfo> Assets => Set<AssetInfo>();
-    public DbSet<TagInfo> Tags => Set<TagInfo>();
+    public DbSet<AssetRecord> Assets => Set<AssetRecord>();
+    public DbSet<TagRecord> Tags => Set<TagRecord>();
 }

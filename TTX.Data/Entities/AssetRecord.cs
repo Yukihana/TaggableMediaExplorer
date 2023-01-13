@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 namespace TTX.Data.Entities;
 
-public class AssetInfo
+public class AssetRecord
 {
     public int ID { get; set; } = 0;
-    public byte[]? GUID { get; set; } = null;
+    public byte[] GUID { get; set; } = Array.Empty<byte>();
 
     // Identity
 
@@ -17,14 +18,14 @@ public class AssetInfo
 
     // Metadata
 
-    public DateTime Created { get; set; } = DateTime.Now;
-    public DateTime Modified { get; set; } = DateTime.Now;
+    public DateTime CreatedUtc { get; set; } = DateTime.Now;
+    public DateTime ModifiedUtc { get; set; } = DateTime.Now;
     public long SizeBytes { get; set; } = 0;
 
     // Integrity
 
-    public byte[]? SHA2 { get; set; } = null;
-    public byte[]? FileCrumbs { get; set; } = null;
+    public byte[] SHA2 { get; set; } = Array.Empty<byte>();
+    public byte[] Crumbs { get; set; } = Array.Empty<byte>();
 
     // Media Info
 
@@ -56,4 +57,12 @@ public class AssetInfo
         get => TagsString.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToHashSet();
         set => TagsString = string.Join(' ', value);
     }
+
+    [NotMapped]
+    [JsonIgnore]
+    public bool IsValid { get; set; } = false;
+
+    [NotMapped]
+    [JsonIgnore]
+    public SemaphoreSlim Semaphore { get; set; } = new(1);
 }

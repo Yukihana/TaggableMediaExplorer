@@ -8,17 +8,17 @@ namespace TTX.Services.DbSync;
 
 public partial class DbSyncService
 {
-    public async Task<List<AssetInfo>> LoadAssets(CancellationToken token = default)
+    public async Task<List<AssetRecord>> LoadAssets(CancellationToken token = default)
     {
         using var dbContext = _contextFactory.CreateDbContext();
-        DbSet<AssetInfo> AssetsTable = dbContext.Assets;
+        DbSet<AssetRecord> AssetsTable = dbContext.Assets;
         return await AssetsTable.AsNoTracking().ToListAsync(cancellationToken: token).ConfigureAwait(false);
     }
 
-    public async Task<List<TagInfo>> LoadTags(CancellationToken token = default)
+    public async Task<List<TagRecord>> LoadTags(CancellationToken token = default)
     {
         using var dbContext = _contextFactory.CreateDbContext();
-        DbSet<TagInfo> TagsTable = dbContext.Tags;
+        DbSet<TagRecord> TagsTable = dbContext.Tags;
         return await TagsTable.AsNoTracking().ToListAsync(cancellationToken: token).ConfigureAwait(false);
     }
 }

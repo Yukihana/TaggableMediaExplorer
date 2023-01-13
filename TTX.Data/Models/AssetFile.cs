@@ -5,12 +5,11 @@ namespace TTX.Data.Models;
 /// <summary>
 /// Asset file metadata.
 /// </summary>
-public struct AssetFile
+public class AssetFile
 {
-    public string TargetSID { get; set; }
-    public string FullPath { get; set; }
-    public DateTime CreatedUtc { get; set; }
-    public DateTime ModifiedUtc { get; set; }
-    public long SizeBytes { get; set; }
-    public byte[] Crumbs { get; set; }
+    public string FullPath { get; set; } = string.Empty;
+    public DateTime CreatedUtc { get; set; } = DateTime.Now;
+    public DateTime ModifiedUtc { get; set; } = DateTime.Now;
+    public long SizeBytes { get; set; } = 0;
+    public byte[] Crumbs { get; set; } = Array.Empty<byte>();
 }

@@ -19,6 +19,18 @@ public static class ObjectHelpers
         ?? throw new NullReferenceException();
 
     /// <summary>
+    /// Makes a deep copy using the Json Serializer
+    /// </summary>
+    /// <typeparam name="TIn">The object type.</typeparam>
+    /// <typeparam name="TOut">The object type to be copied to.</typeparam>
+    /// <param name="source">The object to be copied.</param>
+    /// <returns>A fully decoupled true deep copy.</returns>
+    /// <exception cref="NullReferenceException">Returned when the copy operation fails.</exception>
+    public static TOut Reshape<TIn, TOut>(this TIn source)
+        => JsonSerializer.Deserialize<TOut>(JsonSerializer.Serialize(source))
+        ?? throw new NullReferenceException();
+
+    /// <summary>
     /// Extract relevant properties and fields into a new instance of the required type.
     /// </summary>
     /// <typeparam name="T"></typeparam>

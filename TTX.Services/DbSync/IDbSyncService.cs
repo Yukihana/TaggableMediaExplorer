@@ -10,7 +10,7 @@ namespace TTX.Services.DbSync;
 /// </summary>
 public interface IDbSyncService
 {
-    Task<List<AssetInfo>> LoadAssets(CancellationToken token = default);
+    Task<List<AssetRecord>> LoadAssets(CancellationToken token = default);
 
-    Task<List<TagInfo>> LoadTags(CancellationToken token = default);
+    Task<List<TagRecord>> LoadTags(CancellationToken token = default);
 }

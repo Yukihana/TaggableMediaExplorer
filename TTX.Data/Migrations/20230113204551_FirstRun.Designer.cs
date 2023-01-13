@@ -11,16 +11,16 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20221223045616_FirstRun")]
+    [Migration("20230113204551_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
-            modelBuilder.Entity("TTX.Data.Entities.AssetInfo", b =>
+            modelBuilder.Entity("TTX.Data.Entities.AssetRecord", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -33,8 +33,12 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Crumbs")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("DefaultAudioTrackCodec")
                         .IsRequired()
@@ -52,10 +56,8 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("FileCrumbs")
-                        .HasColumnType("BLOB");
-
                     b.Property<byte[]>("GUID")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<int>("Height")
@@ -68,7 +70,7 @@ namespace TTX.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("Modified")
+                    b.Property<DateTime>("ModifiedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -76,6 +78,7 @@ namespace TTX.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("SHA2")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<long>("SizeBytes")
@@ -96,7 +99,7 @@ namespace TTX.Data.Migrations
                     b.ToTable("Assets");
                 });
 
-            modelBuilder.Entity("TTX.Data.Entities.TagInfo", b =>
+            modelBuilder.Entity("TTX.Data.Entities.TagRecord", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()

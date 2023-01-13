@@ -9,6 +9,7 @@ using TTX.Data;
 using TTX.Services;
 using TTX.Services.AssetsIndexer;
 using TTX.Services.DbSync;
+using TTX.Services.Integrity;
 using TTX.Services.Metadata;
 using TTX.Services.Notification;
 using TTX.Services.QueryApi;
@@ -87,6 +88,7 @@ public static partial class BootStrap
         services.AddSingleton<IDbSyncService, DbSyncService>();
         services.AddSingleton<IWatcherService, WatcherService>();
         services.AddSingleton<IMetadataService, MetadataService>();
+        services.AddSingleton<IIntegrityService, IntegrityService>();
 
         // Second layer
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
