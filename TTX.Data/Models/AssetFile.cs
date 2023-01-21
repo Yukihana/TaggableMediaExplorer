@@ -12,4 +12,5 @@ public class AssetFile
     public DateTime ModifiedUtc { get; set; } = DateTime.Now;
     public long SizeBytes { get; set; } = 0;
     public byte[] Crumbs { get; set; } = Array.Empty<byte>();
+    public byte[]? SHA2 { get; set; } = null;
 }

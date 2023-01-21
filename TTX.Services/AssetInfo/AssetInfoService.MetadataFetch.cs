@@ -8,26 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Models;
 using TTX.Library.Helpers;
-using TTX.Services.Integrity;
 
-namespace TTX.Services.Metadata;
+namespace TTX.Services.AssetInfo;
 
-public class MetadataService : IMetadataService
+public partial class AssetInfoService
 {
-    private readonly IIntegrityService _integrity;
-    private readonly ILogger _logger;
-
-    private readonly MetadataOptions _options;
-    private readonly SemaphoreSlim _semaphore;
-
-    public MetadataService(IIntegrityService integrity, ILogger<MetadataService> logger, IOptionsSet options)
-    {
-        _integrity = integrity;
-        _logger = logger;
-        _options = options.ExtractValues<MetadataOptions>();
-        _semaphore = new SemaphoreSlim(_options.MetadataConcurrency);
-    }
-
     public async Task<AssetFile?> Fetch(string path, CancellationToken token = default)
     {
         try
@@ -35,14 +20,18 @@ public class MetadataService : IMetadataService
             await _semaphore.WaitAsync(token).ConfigureAwait(false);
 
             FileInfo info = new(path);
-            return new()
+            AssetFile result = new()
             {
                 FullPath = info.FullName,
                 CreatedUtc = info.CreationTimeUtc,
                 ModifiedUtc = info.LastWriteTimeUtc,
                 SizeBytes = info.Length,
-                Crumbs = await _integrity.GetCrumbsAsync(path, token).ConfigureAwait(false)
             };
+
+            long[] crumbsIndices = GetSpreadIndices(result.SizeBytes, _options.CrumbsCount);
+            result.Crumbs = await GetCrumbsAsync(path, crumbsIndices, token).ConfigureAwait(false);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -65,7 +54,7 @@ public class MetadataService : IMetadataService
         ConcurrentBag<AssetFile> results = new();
 
         await Parallel.ForEachAsync(paths, options,
-            async (data, token) => (await Fetch(data, token))?.AddTo(results));
+            async (data, token) => (await Fetch(data, token).ConfigureAwait(false))?.AddTo(results)).ConfigureAwait(false);
 
         return results.ToList();
     }

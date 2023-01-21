@@ -26,6 +26,7 @@ public class AssetRecord
 
     public byte[] SHA2 { get; set; } = Array.Empty<byte>();
     public byte[] Crumbs { get; set; } = Array.Empty<byte>();
+    public string[] MatchIgnore { get; set; } = Array.Empty<string>();
 
     // Media Info
 
@@ -57,6 +58,10 @@ public class AssetRecord
         get => TagsString.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToHashSet();
         set => TagsString = string.Join(' ', value);
     }
+
+    [NotMapped]
+    [JsonIgnore]
+    public HashSet<string> Duplicates { get; set; } = new();
 
     [NotMapped]
     [JsonIgnore]

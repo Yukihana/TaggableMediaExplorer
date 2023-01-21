@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace TTX.Services.TagsIndexer;
 
 public interface ITagsIndexerService
 {
-    Task Reload();
+    Task Reload(CancellationToken token = default);
 }

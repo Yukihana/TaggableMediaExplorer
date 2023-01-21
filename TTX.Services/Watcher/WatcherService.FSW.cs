@@ -1,5 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
 using System.IO;
+using TTX.Services.AssetsIndexer;
 
 namespace TTX.Services.Watcher;
 
@@ -7,7 +8,7 @@ public partial class WatcherService
 {
     private FileSystemWatcher? _watcher = null;
 
-    public void StartWatcher()
+    public void StartWatcher(IAssetsIndexerService indexer)
     {
         try { StopWatcher(); }
         finally
@@ -27,10 +28,10 @@ public partial class WatcherService
                 | NotifyFilters.Size,
             };
 
-            _watcher.Changed += OnChanged;
-            _watcher.Created += OnCreated;
-            _watcher.Deleted += OnDeleted;
-            _watcher.Renamed += OnRenamed;
+            _watcher.Created += indexer.OnCreated;
+            _watcher.Renamed += indexer.OnRenamed;
+            _watcher.Changed += indexer.OnChanged;
+            _watcher.Deleted += indexer.OnDeleted;
             _watcher.Error += OnError;
 
             _watcher.EnableRaisingEvents = true;
@@ -46,28 +47,6 @@ public partial class WatcherService
         }
     }
 
-    private void OnError(object sender, ErrorEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void OnRenamed(object sender, RenamedEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void OnDeleted(object sender, FileSystemEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void OnCreated(object sender, FileSystemEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void OnChanged(object sender, FileSystemEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
+    public void OnError(object sender, ErrorEventArgs e)
+        => _logger.LogError(e.GetException(), "File system watcher has encountered an error.", e);
 }

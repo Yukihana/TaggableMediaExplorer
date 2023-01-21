@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,30 +9,14 @@ namespace TTX.Services.AssetsIndexer;
 
 public partial class AssetsIndexerService
 {
-    private async Task SyncProvisionally(List<AssetFile> files, CancellationToken token = default)
-    {
-        List<AssetFile> validated = new();
-
-        foreach (AssetFile file in files)
-        {
-            if (token.IsCancellationRequested)
-                return;
-
-            if (await QuickMatch(file, token))
-                validated.Add(file);
-        }
-
-        files.RemoveAll(validated.Contains);
-    }
-
     private async Task<bool> QuickMatch(AssetFile file, CancellationToken token = default)
     {
         string localPath = Path.GetRelativePath(_options.AssetsPathFull, file.FullPath);
-        foreach (AssetRecord rec in await _records.Snapshot(_semaphore, token).ConfigureAwait(false))
+        foreach (AssetRecord rec in await _records.Snapshot(_semaphoreRecords, token).ConfigureAwait(false))
         {
             try
             {
-                await rec.Semaphore.WaitAsync(token);
+                await rec.Semaphore.WaitAsync(token).ConfigureAwait(false);
 
                 if (rec.IsValid)
                     continue;
@@ -55,14 +38,16 @@ public partial class AssetsIndexerService
         return false;
     }
 
+    // Deep Match
+
     private async Task<bool> DeepMatch(HashedAssetFile file, CancellationToken token = default)
     {
         string localPath = Path.GetRelativePath(_options.AssetsPathFull, file.FullPath);
-        foreach (AssetRecord rec in await _records.Snapshot(_semaphore, token).ConfigureAwait(false))
+        foreach (AssetRecord rec in await _records.Snapshot(_semaphoreRecords, token).ConfigureAwait(false))
         {
             try
             {
-                await rec.Semaphore.WaitAsync(token);
+                await rec.Semaphore.WaitAsync(token).ConfigureAwait(false);
 
                 if (rec.IsValid)
                     continue;

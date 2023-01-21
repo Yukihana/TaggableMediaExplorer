@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace TTX.Services.TagsIndexer;
 
@@ -14,21 +15,21 @@ public partial class TagsIndexerService : ITagsIndexerService
         _options = options.ExtractValues<TagsIndexerOptions>();
     }
 
-    public async Task Reload()
+    public async Task Reload(CancellationToken token = default)
     {
-        await Invalidate();
-        await Purge();
-        await LoadRecords();
-        await Validate();
+        await Invalidate().ConfigureAwait(false);
+        await Purge().ConfigureAwait(false);
+        await LoadRecords().ConfigureAwait(false);
+        await Validate().ConfigureAwait(false);
     }
 
     private async Task LoadRecords()
     {
-        await Task.Delay(1);
+        await Task.Delay(1).ConfigureAwait(false);
     }
 
     private async Task Purge()
     {
-        await Task.Delay(1);
+        await Task.Delay(1).ConfigureAwait(false);
     }
 }

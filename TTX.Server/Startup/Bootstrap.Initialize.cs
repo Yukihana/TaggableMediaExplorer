@@ -33,13 +33,13 @@ public static partial class BootStrap
     {
         // Assets
         var assetsIndexer = provider.GetRequiredService<IAssetsIndexerService>();
-        Task assetsTask = Task.Run(assetsIndexer.Reload);
+        Task assetsTask = Task.Run(async() => await assetsIndexer.StartIndexing().ConfigureAwait(false));
         _loadTasks.Add(assetsTask);
         assetsTask.ContinueWith(_loadTasks.Remove);
 
         // Tags
         var tagsIndexer = provider.GetRequiredService<ITagsIndexerService>();
-        Task tagsTask = Task.Run(tagsIndexer.Reload);
+        Task tagsTask = Task.Run(async () => await tagsIndexer.Reload().ConfigureAwait(false));
         _loadTasks.Add(tagsTask);
         tagsTask.ContinueWith(_loadTasks.Remove);
     }
