@@ -30,7 +30,7 @@ public partial class AssetInfoService
     {
         try
         {
-            await _semaphoreCrumbs.WaitAsync(token);
+            await _semaphoreIO.WaitAsync(token).ConfigureAwait(false);
 
             byte[] buffer = new byte[1];
             byte[] crumbs = new byte[indices.Length];
@@ -40,7 +40,7 @@ public partial class AssetInfoService
             for (int i = 0; i < indices.Length; i++)
             {
                 fs.Position = indices[i];
-                await fs.ReadAsync(buffer, token);
+                await fs.ReadAsync(buffer, token).ConfigureAwait(false);
                 crumbs[i] = buffer[0];
             }
 
@@ -48,6 +48,6 @@ public partial class AssetInfoService
 
             return crumbs;
         }
-        finally { _semaphoreCrumbs.Release(); }
+        finally { _semaphoreIO.Release(); }
     }
 }

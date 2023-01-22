@@ -1,24 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Models;
-using TTX.Library.Helpers;
 
 namespace TTX.Services.AssetInfo;
 
 public partial class AssetInfoService
 {
-    public async Task<AssetFile?> Fetch(string path, CancellationToken token = default)
+    public async Task<AssetFile?> Fetch(string path, bool computeHash = false, CancellationToken token = default)
     {
         try
         {
-            await _semaphore.WaitAsync(token).ConfigureAwait(false);
+            await _semaphoreMetadata.WaitAsync(token).ConfigureAwait(false);
 
+            // Metadata
             FileInfo info = new(path);
             AssetFile result = new()
             {
@@ -28,8 +25,13 @@ public partial class AssetInfoService
                 SizeBytes = info.Length,
             };
 
+            // Crumbs
             long[] crumbsIndices = GetSpreadIndices(result.SizeBytes, _options.CrumbsCount);
             result.Crumbs = await GetCrumbsAsync(path, crumbsIndices, token).ConfigureAwait(false);
+
+            // Hash
+            if (computeHash && await ComputeSHA256Async(result, token).ConfigureAwait(false) is byte[] sha256)
+                result.SHA256 = sha256;
 
             return result;
         }
@@ -38,24 +40,17 @@ public partial class AssetInfoService
             _logger.LogWarning("Error reading metadata", ex);
             return null;
         }
-        finally
-        {
-            _semaphore.Release();
-        }
+        finally { _semaphoreMetadata.Release(); }
     }
 
-    public async Task<List<AssetFile>> Fetch(IEnumerable<string> paths, CancellationToken token = default)
+    public async Task<bool> ComputeHash(AssetFile file, CancellationToken token = default)
     {
-        ParallelOptions options = new()
-        {
-            MaxDegreeOfParallelism = _options.MetadataConcurrency,
-            CancellationToken = token
-        };
-        ConcurrentBag<AssetFile> results = new();
+        byte[]? sha256 = await ComputeSHA256Async(file, token).ConfigureAwait(false);
 
-        await Parallel.ForEachAsync(paths, options,
-            async (data, token) => (await Fetch(data, token).ConfigureAwait(false))?.AddTo(results)).ConfigureAwait(false);
+        if (sha256 == null)
+            return false;
 
-        return results.ToList();
+        file.SHA256 = sha256;
+        return true;
     }
 }

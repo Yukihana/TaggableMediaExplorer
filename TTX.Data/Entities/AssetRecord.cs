@@ -24,9 +24,9 @@ public class AssetRecord
 
     // Integrity
 
-    public byte[] SHA2 { get; set; } = Array.Empty<byte>();
+    public byte[] SHA256 { get; set; } = Array.Empty<byte>();
     public byte[] Crumbs { get; set; } = Array.Empty<byte>();
-    public string[] MatchIgnore { get; set; } = Array.Empty<string>();
+    public string MatchIgnore { get; set; } = string.Empty;
 
     // Media Info
 
@@ -69,5 +69,5 @@ public class AssetRecord
 
     [NotMapped]
     [JsonIgnore]
-    public SemaphoreSlim Semaphore { get; set; } = new(1);
+    public ReaderWriterLockSlim Lock { get; set; } = new();
 }

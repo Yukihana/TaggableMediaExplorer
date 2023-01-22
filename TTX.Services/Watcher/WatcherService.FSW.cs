@@ -28,10 +28,10 @@ public partial class WatcherService
                 | NotifyFilters.Size,
             };
 
-            _watcher.Created += indexer.OnCreated;
-            _watcher.Renamed += indexer.OnRenamed;
-            _watcher.Changed += indexer.OnChanged;
-            _watcher.Deleted += indexer.OnDeleted;
+            _watcher.Created += indexer.OnWatcherEvent;
+            _watcher.Renamed += indexer.OnWatcherEvent;
+            _watcher.Changed += indexer.OnWatcherEvent;
+            _watcher.Deleted += indexer.OnWatcherEvent;
             _watcher.Error += OnError;
 
             _watcher.EnableRaisingEvents = true;

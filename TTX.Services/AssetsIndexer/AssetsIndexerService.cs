@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using TTX.Data.Entities;
 using TTX.Services.AssetInfo;
+using TTX.Services.Auxiliary;
 using TTX.Services.DbSync;
 using TTX.Services.Watcher;
 
@@ -19,6 +15,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
     private readonly IDbSyncService _dbsync;
     private readonly IAssetInfoService _assetInfo;
 
+    private readonly IAuxiliaryService _auxiliary;
     private readonly ILogger<AssetsIndexerService> _logger;
     private readonly AssetsIndexerOptions _options;
 
@@ -26,12 +23,14 @@ public partial class AssetsIndexerService : IAssetsIndexerService
         IWatcherService watcher,
         IDbSyncService dbsync,
         IAssetInfoService assetinfo,
+        IAuxiliaryService auxiliary,
         ILogger<AssetsIndexerService> logger,
         IOptionsSet options)
     {
         _watcher = watcher;
         _dbsync = dbsync;
         _assetInfo = assetinfo;
+        _auxiliary = auxiliary;
         _logger = logger;
         _options = options.ExtractValues<AssetsIndexerOptions>();
 
@@ -40,31 +39,5 @@ public partial class AssetsIndexerService : IAssetsIndexerService
 
     // Readiness
 
-    private int _isReady = 0;
-
-    public bool IsReady
-    {
-        get => Interlocked.CompareExchange(ref _isReady, 1, 1) == 1;
-        private set
-        {
-            if (value) Interlocked.CompareExchange(ref _isReady, 1, 0);
-            else Interlocked.CompareExchange(ref _isReady, 0, 1);
-        }
-    }
-
-    // Records
-
-    private readonly SemaphoreSlim _semaphoreRecords = new(1);
-
-    private readonly HashSet<AssetRecord> _records = new();
-
-    private async Task<HashSet<AssetRecord>> Snapshot(CancellationToken token = default)
-    {
-        try
-        {
-            await _semaphoreRecords.WaitAsync(token).ConfigureAwait(false);
-            return _records.ToHashSet();
-        }
-        finally { _semaphoreRecords.Release(); }
-    }
+    public bool IsReady { get; set; } = false;
 }

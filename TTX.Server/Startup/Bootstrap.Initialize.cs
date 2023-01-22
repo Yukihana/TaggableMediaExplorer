@@ -33,7 +33,7 @@ public static partial class BootStrap
     {
         // Assets
         var assetsIndexer = provider.GetRequiredService<IAssetsIndexerService>();
-        Task assetsTask = Task.Run(async() => await assetsIndexer.StartIndexing().ConfigureAwait(false));
+        Task assetsTask = Task.Run(async () => await assetsIndexer.StartIndexing().ConfigureAwait(false));
         _loadTasks.Add(assetsTask);
         assetsTask.ContinueWith(_loadTasks.Remove);
 

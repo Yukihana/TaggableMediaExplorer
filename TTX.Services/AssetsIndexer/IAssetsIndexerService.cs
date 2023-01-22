@@ -14,11 +14,7 @@ public interface IAssetsIndexerService
 
     // FSW
 
-    void OnCreated(object sender, FileSystemEventArgs e);
+    void OnWatcherEvent(object sender, FileSystemEventArgs e);
 
-    void OnDeleted(object sender, FileSystemEventArgs e);
-
-    void OnRenamed(object sender, RenamedEventArgs e);
-
-    void OnChanged(object sender, FileSystemEventArgs e);
+    void OnWatcherEvent(object sender, RenamedEventArgs e);
 }

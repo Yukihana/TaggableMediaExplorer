@@ -8,10 +8,9 @@ public partial class AssetInfoService : IAssetInfoService
     private readonly AssetInfoOptions _options;
     private readonly ILogger<AssetInfoService> _logger;
 
-    private readonly SemaphoreSlim _semaphore;
+    private readonly SemaphoreSlim _semaphoreMetadata;
     private readonly SemaphoreSlim _semaphoreProc;
     private readonly SemaphoreSlim _semaphoreIO;
-    private readonly SemaphoreSlim _semaphoreCrumbs = new(1);
 
     public AssetInfoService(ILogger<AssetInfoService> logger, IOptionsSet options)
     {
@@ -21,6 +20,6 @@ public partial class AssetInfoService : IAssetInfoService
         _semaphoreProc = new(_options.HashProcessingConcurrency);
         _semaphoreIO = new(_options.HashIOConcurrency);
 
-        _semaphore = new SemaphoreSlim(_options.MetadataConcurrency);
+        _semaphoreMetadata = new SemaphoreSlim(_options.MetadataConcurrency);
     }
 }

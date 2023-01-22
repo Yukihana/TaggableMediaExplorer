@@ -67,6 +67,10 @@ namespace TTX.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("MatchIgnore")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModifiedUtc")
                         .HasColumnType("TEXT");
 
@@ -74,7 +78,7 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("SHA2")
+                    b.Property<byte[]>("SHA256")
                         .IsRequired()
                         .HasColumnType("BLOB");
 

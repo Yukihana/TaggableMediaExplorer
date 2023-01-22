@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Models;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -87,25 +85,30 @@ public partial class AssetsIndexerService
                 return;
 
             _cts = new();
-            _processingTask = Task.Run(async () => await ProcessAll(_cts.Token).ConfigureAwait(false), token);
+            _processingTask = Task.Run(async () => await ProcessByBatches(_cts.Token).ConfigureAwait(false), token);
         }
         finally { _semaphoreCurrent.Release(); }
     }
 
-    // Tasks
+    // Batch Processing
 
-    private async Task ProcessAll(CancellationToken token = default)
+    private async Task ProcessByBatches(CancellationToken token = default)
     {
-        //TODO FIX
-        // Change this to parallel, to allow multiple hash calculations together, but allow only one _semCompare for records processing
-        // No need for queue (change it back to hashset, if using parallel)
-
-        while (await DequeueAllPending(token).ConfigureAwait(false) is WatcherUpdate[] pending
+        while (await DequeueAllPending(token).ConfigureAwait(false) is string[] pending
             && pending.Length > 0
             && !token.IsCancellationRequested)
         {
-            await Parallel.ForEachAsync(pending, token,
-                async (update, token) => await ProcessUpdate(update, token).ConfigureAwait(false)).ConfigureAwait(false);
+            await ProcessBatch(pending, token).ConfigureAwait(false);
         }
+    }
+
+    private async Task ProcessBatch(string[] pending, CancellationToken token)
+    {
+        Stopwatch timer = Stopwatch.StartNew();
+        int pathCount = pending.Length;
+        await Parallel.ForEachAsync(pending, token,
+            async (update, token) => await ProcessUpdate(update, token).ConfigureAwait(false)).ConfigureAwait(false);
+        timer.Stop();
+        _logger.LogInformation("Processing Batch: {pathCount} paths processed in {elapsed} ms.", pathCount, timer.Elapsed);
     }
 }

@@ -13,7 +13,7 @@ public partial class AssetsIndexerService
 {
     // Create
 
-    private async Task CreateRecord(HashedAssetFile file, CancellationToken token = default)
+    private async Task CreateRecord(AssetFile file, CancellationToken token = default)
     {
         // Process
         AssetRecord rec = new();
@@ -23,10 +23,10 @@ public partial class AssetsIndexerService
         // Update In-Memory
         try
         {
-            await _semaphoreRecords.WaitAsync(token).ConfigureAwait(false);
+            _lockRecords.EnterWriteLock();
             _records.Add(rec);
         }
-        finally { _semaphoreRecords.Release(); }
+        finally { _lockRecords.ExitWriteLock(); }
     }
 
     // Reload
@@ -38,12 +38,12 @@ public partial class AssetsIndexerService
         List<AssetRecord> loaded = await _dbsync.LoadAssets(token).ConfigureAwait(false);
         try
         {
-            await _semaphoreRecords.WaitAsync(token).ConfigureAwait(false);
+            _lockRecords.EnterWriteLock();
             _records.Clear();
             for (int i = 0; i < loaded.Count; i++)
                 _records.Add(loaded[i]);
         }
-        finally { _semaphoreRecords.Release(); }
+        finally { _lockRecords.ExitWriteLock(); }
 
         timer.Stop();
         _logger.LogInformation("Records loaded in {elapsed} ms.", timer.Elapsed);
@@ -53,31 +53,11 @@ public partial class AssetsIndexerService
 
     private async Task UpdateRecord(byte[] guid, Action<AssetRecord> action, CancellationToken token = default)
     {
-        // Process
-        AssetRecord rec = new();
-
-        // Push to DB
-
-        // Update In-Memory
-        try
-        {
-            await _semaphoreRecords.WaitAsync(token).ConfigureAwait(false);
-            _records.Add(rec);
-        }
-        finally { _semaphoreRecords.Release(); }
     }
 
     // Delete
 
     private async Task DeleteRecord(byte[] guid, CancellationToken token = default)
     {
-        // Push to DB (Find record by GUID, Delete)
-
-        // Update In-Memory (Find record by GUID, Delete)
-        try
-        {
-            await _semaphoreRecords.WaitAsync(token).ConfigureAwait(false);
-        }
-        finally { _semaphoreRecords.Release(); }
     }
 }
