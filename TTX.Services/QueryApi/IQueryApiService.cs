@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TTX.Data.QueryObjects;
 
 namespace TTX.Services.QueryApi;
 
@@ -7,7 +8,7 @@ namespace TTX.Services.QueryApi;
 /// </summary>
 public interface IQueryApiService
 {
-    List<string> Search(string keywords);
+    SearchResponse Search(SearchQuery query);
 
     // Metadata
 

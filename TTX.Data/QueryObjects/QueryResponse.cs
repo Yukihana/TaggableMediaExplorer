@@ -1,4 +1,4 @@
-﻿namespace TTX.Services.QueryApi;
+﻿namespace TTX.Data.QueryObjects;
 
 public class QueryResponse
 {

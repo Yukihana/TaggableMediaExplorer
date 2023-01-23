@@ -1,28 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Text.Json;
+using TTX.Data.QueryObjects;
+using TTX.Services.QueryApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TTX.Server.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/[Controller]")]
 [ApiController]
 public class SearchController : ControllerBase
 {
-    // GET: api/<SearchController>
+    private readonly IQueryApiService _queryApi;
+
+    public SearchController(IQueryApiService queryApi)
+    {
+        _queryApi = queryApi;
+    }
+
     [HttpGet]
-    public IEnumerable<string> Get()
-    {
-        return new string[] { "value1", "value2" };
-    }
+    public string Get([FromQuery] SearchQuery query)
+        => JsonSerializer.Serialize(_queryApi.Search(query));
 
-    // GET api/<SearchController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
-
+    /*
     // POST api/<SearchController>
     [HttpPost]
     public void Post([FromBody] string value)
@@ -40,4 +40,5 @@ public class SearchController : ControllerBase
     public void Delete(int id)
     {
     }
+    */
 }

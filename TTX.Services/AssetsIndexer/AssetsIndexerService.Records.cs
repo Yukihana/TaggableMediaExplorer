@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using TTX.Data.Entities;
@@ -29,5 +30,18 @@ public partial class AssetsIndexerService
             _records.Add(rec);
         }
         finally { _lockRecords.ExitWriteLock(); }
+    }
+
+    // Query Api
+
+    public TOutput PerformQuery<TInput, TOutput>(TInput input, Func<TInput, IEnumerable<AssetRecord>, TOutput> func)
+    {
+        try
+        {
+            _lockRecords.EnterReadLock();
+
+            return func.Invoke(input, _records);
+        }
+        finally { _lockRecords.ExitReadLock(); }
     }
 }

@@ -1,12 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using TTX.Services.AssetsIndexer;
 
 namespace TTX.Services.QueryApi;
 
 /// <summary>
 /// Implementation for primary In-Memory Db Storage and web request handler.
 /// </summary>
-public class QueryApiService : IQueryApiService
+public partial class QueryApiService : IQueryApiService
 {
+    private readonly IAssetsIndexerService _assetsIndexer;
+
+    public QueryApiService(IAssetsIndexerService assetsIndexer)
+    {
+        _assetsIndexer = assetsIndexer;
+    }
+
     public int? AddTags(string uuid, string[] tags)
     {
         throw new System.NotImplementedException();
@@ -48,11 +55,6 @@ public class QueryApiService : IQueryApiService
     }
 
     public int? RemoveTags(string uuid, string[] tags)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public List<string> Search(string keywords)
     {
         throw new System.NotImplementedException();
     }
