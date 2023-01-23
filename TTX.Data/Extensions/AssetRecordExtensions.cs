@@ -1,5 +1,9 @@
-﻿using TTX.Data.Encoding;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using TTX.Data.Encoding;
 using TTX.Data.Entities;
+using TTX.Data.Models;
 
 namespace TTX.Data.Extensions;
 
@@ -19,49 +23,28 @@ public static partial class AssetRecordExtensions
         finally { rec.Lock.ExitReadLock(); }
     }
 
-    // Validation
-
-    public static bool TryValidate(this AssetRecord rec)
+    public static string GetDefaultNameFromPath(this string path)
     {
-        try
-        {
-            rec.Lock.EnterUpgradeableReadLock();
-            if (rec.IsValid)
-                return false;
-            rec.SetValid(true);
-            return true;
-        }
-        finally { rec.Lock.ExitUpgradeableReadLock(); }
+        string rawname = Path.GetFileNameWithoutExtension(path);
+        TextInfo ti = new CultureInfo("en-GB", false).TextInfo;
+        string sanitized = rawname
+            .Replace('-', ' ')
+            .Replace('_', ' ');
+        return ti.ToTitleCase(sanitized);
     }
 
-    public static bool GetValid(this AssetRecord rec)
+    public static AssetRecord GenerateAssetRecord(this AssetFile file, string localPath) => new()
     {
-        try
-        {
-            rec.Lock.EnterReadLock();
-            return rec.IsValid;
-        }
-        finally { rec.Lock.ExitReadLock(); }
-    }
+        GUID = Guid.NewGuid().ToByteArray(),
 
-    public static void SetValid(this AssetRecord rec, bool valid)
-    {
-        try
-        {
-            rec.Lock.EnterWriteLock();
-            rec.IsValid = valid;
-        }
-        finally { rec.Lock.ExitWriteLock(); }
-    }
+        LastLocation = localPath,
+        SizeBytes = file.SizeBytes,
+        Crumbs = file.Crumbs,
+        SHA256 = file.SHA256 ?? throw new NullReferenceException($"Missing SHA256 when creating {nameof(AssetRecord)}"),
 
-    public static void InvalidateByLocalPath(this AssetRecord rec, string localPath)
-    {
-        try
-        {
-            rec.Lock.EnterUpgradeableReadLock();
-            if (rec.IsValid && rec.LastLocation.Equals(localPath))
-                rec.SetValid(false);
-        }
-        finally { rec.Lock.ExitUpgradeableReadLock(); }
-    }
+        CreatedUtc = file.CreatedUtc,
+        ModifiedUtc = file.ModifiedUtc,
+
+        Name = GetDefaultNameFromPath(localPath),
+    };
 }

@@ -28,7 +28,7 @@ public partial class AssetsIndexerService
         finally { rec.Lock.ExitReadLock(); }
     }
 
-    private static bool ContentMatch(AssetRecord rec, AssetFile file)
+    private static bool IntegrityMatch(AssetRecord rec, AssetFile file)
     {
         try
         {
@@ -44,6 +44,16 @@ public partial class AssetsIndexerService
                 return false;
 
             return true;
+        }
+        finally { rec.Lock.ExitReadLock(); }
+    }
+
+    private static bool PathMatch(string localPath, AssetRecord rec)
+    {
+        try
+        {
+            rec.Lock.EnterReadLock();
+            return rec.LastLocation.Equals(localPath);
         }
         finally { rec.Lock.ExitReadLock(); }
     }

@@ -31,4 +31,14 @@ public partial class AuxiliaryService : IAuxiliaryService
     }
 
     // Readers (will be needed for query api)
+
+    public int GetDuplicateFilesCount()
+    {
+        try
+        {
+            _lockDuplicateFiles.EnterReadLock();
+            return _duplicateFiles.Count;
+        }
+        finally { _lockDuplicateFiles.ExitReadLock(); }
+    }
 }

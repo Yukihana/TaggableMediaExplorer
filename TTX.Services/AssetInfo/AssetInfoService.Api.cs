@@ -9,6 +9,16 @@ namespace TTX.Services.AssetInfo;
 
 public partial class AssetInfoService
 {
+    public async Task<bool> FileExists(string path, CancellationToken token = default)
+    {
+        try
+        {
+            await _semaphoreMetadata.WaitAsync(token).ConfigureAwait(false);
+            return File.Exists(path);
+        }
+        finally { _semaphoreMetadata.Release(); }
+    }
+
     public async Task<AssetFile?> Fetch(string path, bool computeHash = false, CancellationToken token = default)
     {
         try

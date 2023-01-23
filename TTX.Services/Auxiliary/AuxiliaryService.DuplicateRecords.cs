@@ -56,4 +56,14 @@ public partial class AuxiliaryService : IAuxiliaryService
     }
 
     // Readers (will be needed for query api)
+
+    public int GetDuplicateRecordsCount()
+    {
+        try
+        {
+            _lockDuplicateRecords.EnterReadLock();
+            return _duplicateRecords.Count;
+        }
+        finally { _lockDuplicateRecords.ExitReadLock(); }
+    }
 }

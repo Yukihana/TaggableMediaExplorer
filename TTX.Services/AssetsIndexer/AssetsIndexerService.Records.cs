@@ -1,10 +1,7 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using TTX.Data.Entities;
-using TTX.Data.Extensions;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -24,24 +21,13 @@ public partial class AssetsIndexerService
         finally { _lockRecords.ExitReadLock(); }
     }
 
-    private void ScanDuplicateRecords()
+    private void SafeAddToRecords(AssetRecord rec)
     {
-        ConcurrentBag<(string, AssetRecord)> unordered = new();
-        Parallel.ForEach(Snapshot(), x => unordered.Add((x.ToIdentityString(), x)));
-
-        HashSet<string> identities = new();
-        HashSet<string> duplicateidentities = new();
-
-        foreach ((string, AssetRecord) element in unordered)
+        try
         {
-            if (!identities.Add(element.Item1))
-                duplicateidentities.Add(element.Item1);
+            _lockRecords.EnterWriteLock();
+            _records.Add(rec);
         }
-
-        foreach ((string, AssetRecord) element in unordered)
-        {
-            if (duplicateidentities.Contains(element.Item1))
-                _auxiliary.AddDuplicateRecords(element.Item1, element.Item2);
-        }
+        finally { _lockRecords.ExitWriteLock(); }
     }
 }

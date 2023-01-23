@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,58 +10,55 @@ public partial class AssetsIndexerService
 {
     private readonly HashSet<string> _pending = new();
 
-    private readonly SemaphoreSlim _semaphorePendingList = new(1);
+    private readonly ReaderWriterLockSlim _lockPendingList = new();
 
     // Pending Queue Controls
 
-    private async Task EnqueuePending(string path, CancellationToken token = default)
+    private void EnqueuePending(string path)
     {
         try
         {
-            await _semaphorePendingList.WaitAsync(token).ConfigureAwait(false);
+            _lockPendingList.EnterWriteLock();
             _pending.Add(path);
         }
-        finally { _semaphorePendingList.Release(); }
+        finally { _lockPendingList.ExitWriteLock(); }
 
         if (_queueProcessingEnabled)
-            await ProcessPending(token).ConfigureAwait(false);
+            _ = Task.Run(async () => await ProcessPending().ConfigureAwait(false));
     }
 
-    private async Task<string[]> DequeueAllPending(CancellationToken token = default)
+    private string[] DequeueAllPending()
     {
-        if (token.IsCancellationRequested)
-            return Array.Empty<string>();
-
         try
         {
-            await _semaphorePendingList.WaitAsync(token).ConfigureAwait(false);
+            _lockPendingList.EnterWriteLock();
             return _pending.ToArray();
         }
         finally
         {
             _pending.Clear();
-            _semaphorePendingList.Release();
+            _lockPendingList.ExitWriteLock();
         }
     }
 
-    private async Task ClearPending(CancellationToken token = default)
+    private void ClearPending()
     {
         try
         {
-            await _semaphorePendingList.WaitAsync(token).ConfigureAwait(false);
+            _lockPendingList.EnterWriteLock();
             _pending.Clear();
         }
-        finally { _semaphorePendingList.Release(); }
+        finally { _lockPendingList.ExitWriteLock(); }
     }
 
     // Watcher CRUD Sources
 
-    public async void OnWatcherEvent(object sender, FileSystemEventArgs e)
-        => await EnqueuePending(e.FullPath).ConfigureAwait(false);
+    public void OnWatcherEvent(object sender, FileSystemEventArgs e)
+        => EnqueuePending(e.FullPath);
 
-    public async void OnWatcherEvent(object sender, RenamedEventArgs e)
+    public void OnWatcherEvent(object sender, RenamedEventArgs e)
     {
-        await EnqueuePending(e.OldFullPath).ConfigureAwait(false);
-        await EnqueuePending(e.FullPath).ConfigureAwait(false);
+        EnqueuePending(e.OldFullPath);
+        EnqueuePending(e.FullPath);
     }
 }

@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
+using TTX.Data.Extensions;
 using TTX.Data.Models;
+using TTX.Library.Helpers;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -13,20 +15,18 @@ public partial class AssetsIndexerService
 {
     // Create
 
-    private async Task CreateRecord(AssetFile file, CancellationToken token = default)
+    private async Task<bool> CreateRecord(AssetFile file, string localPath, CancellationToken token = default)
     {
         // Process
-        AssetRecord rec = new();
+        AssetRecord rec = file.GenerateAssetRecord(localPath);
 
         // Push to DB
+        if (!await _dbsync.AddRecord(rec, token).ConfigureAwait(false))
+            return false;
 
         // Update In-Memory
-        try
-        {
-            _lockRecords.EnterWriteLock();
-            _records.Add(rec);
-        }
-        finally { _lockRecords.ExitWriteLock(); }
+        SafeAddToRecords(rec);
+        return true;
     }
 
     // Reload
@@ -51,8 +51,18 @@ public partial class AssetsIndexerService
 
     // Update
 
-    private async Task UpdateRecord(byte[] guid, Action<AssetRecord> action, CancellationToken token = default)
+    private async Task<bool> UpdateRecord(AssetRecord rec, Action<AssetRecord> action, CancellationToken token = default)
     {
+        // Prepare
+        byte[] guid = rec.SafeRead(x => x.GUID, rec.Lock);
+
+        // Update Storage DB
+        if (!await _dbsync.UpdateRecord(guid, action, token).ConfigureAwait(false))
+            return false;
+
+        // Update In-Memory DB
+        rec.SafeWrite(action, rec.Lock);
+        return true;
     }
 
     // Delete

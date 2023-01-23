@@ -4,6 +4,8 @@ namespace TTX.Services.Auxiliary;
 
 public interface IAuxiliaryService
 {
+    void Summarize();
+
     bool AddDuplicateFile(string path);
 
     bool RemoveDuplicateFile(string path);
@@ -11,4 +13,8 @@ public interface IAuxiliaryService
     bool AddDuplicateRecords(string identity, AssetRecord rec);
 
     bool RemoveDuplicateRecords(AssetRecord rec);
+
+    bool AddModifiedFiles(string path);
+
+    bool RemoveModifiedFiles(string path);
 }

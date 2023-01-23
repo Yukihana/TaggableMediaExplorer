@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
@@ -13,4 +14,8 @@ public interface IDbSyncService
     Task<List<AssetRecord>> LoadAssets(CancellationToken token = default);
 
     Task<List<TagRecord>> LoadTags(CancellationToken token = default);
+
+    Task<bool> AddRecord(AssetRecord rec, CancellationToken token = default);
+
+    Task<bool> UpdateRecord(byte[] guid, Action<AssetRecord> action, CancellationToken token = default);
 }

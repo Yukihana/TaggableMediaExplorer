@@ -1,5 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TTX.Library.Helpers;
 
@@ -21,5 +23,13 @@ public static class EnumerableHelpers
     {
         foreach (T item in items)
             collection.Add(item);
+    }
+
+    public static byte[] GenerateSafeGuid(IEnumerable<byte[]> existing)
+    {
+        byte[] result;
+        do { result = Guid.NewGuid().ToByteArray(); }
+        while (existing.Any(x => x.SequenceEqual(result)));
+        return result;
     }
 }

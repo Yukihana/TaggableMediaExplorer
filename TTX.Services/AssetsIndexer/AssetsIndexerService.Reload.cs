@@ -27,7 +27,7 @@ public partial class AssetsIndexerService
         ScanDuplicateRecords();
 
         // Fetch Files
-        await ClearPending(token).ConfigureAwait(false);
+        ClearPending();
         HashSet<string> paths = await _watcher.GetAllFiles(token).ConfigureAwait(false);
 
         // QuickSync and set indexer state to Ready
@@ -39,6 +39,27 @@ public partial class AssetsIndexerService
 
         timer.Stop();
         _logger.LogInformation("Full assets reload completed in {elapsed} ms.", timer.Elapsed);
+    }
+
+    private void ScanDuplicateRecords()
+    {
+        ConcurrentBag<(string, AssetRecord)> unordered = new();
+        Parallel.ForEach(Snapshot(), x => unordered.Add((x.ToIdentityString(), x)));
+
+        HashSet<string> identities = new();
+        HashSet<string> duplicateidentities = new();
+
+        foreach ((string, AssetRecord) element in unordered)
+        {
+            if (!identities.Add(element.Item1))
+                duplicateidentities.Add(element.Item1);
+        }
+
+        foreach ((string, AssetRecord) element in unordered)
+        {
+            if (duplicateidentities.Contains(element.Item1))
+                _auxiliary.AddDuplicateRecords(element.Item1, element.Item2);
+        }
     }
 
     private async Task<HashSet<string>> QuickSyncFiles(HashSet<string> paths, CancellationToken token = default)
@@ -55,7 +76,7 @@ public partial class AssetsIndexerService
                     pending.Add(path);
             }).ConfigureAwait(false);
 
-        _logger.LogInformation("Provisionally synced {synced} out of {total} files.", success, pending.Count);
+        _logger.LogInformation("Provisionally synced {synced} out of {total} files.", success, paths.Count);
         return pending.ToHashSet();
     }
 

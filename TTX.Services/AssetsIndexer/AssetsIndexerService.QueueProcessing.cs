@@ -36,7 +36,7 @@ public partial class AssetsIndexerService
         finally { _semaphoreCurrent.Release(); }
 
         timer.Stop();
-        _logger.LogInformation("StopIndexing operation took {elapsed} milliseconds.", timer.ElapsedMilliseconds);
+        _logger.LogInformation("StopIndexing operation took {elapsed}.", timer.Elapsed);
     }
 
     public async Task StartIndexing(CancellationToken token = default)
@@ -69,7 +69,7 @@ public partial class AssetsIndexerService
         }
 
         timer.Stop();
-        _logger.LogInformation("StartIndexing operation took {elapsed} milliseconds.", timer.ElapsedMilliseconds);
+        _logger.LogInformation("StartIndexing operation took {elapsed}.", timer.Elapsed);
     }
 
     private async Task ProcessPending(CancellationToken token = default)
@@ -94,7 +94,7 @@ public partial class AssetsIndexerService
 
     private async Task ProcessByBatches(CancellationToken token = default)
     {
-        while (await DequeueAllPending(token).ConfigureAwait(false) is string[] pending
+        while (DequeueAllPending() is string[] pending
             && pending.Length > 0
             && !token.IsCancellationRequested)
         {
@@ -106,9 +106,19 @@ public partial class AssetsIndexerService
     {
         Stopwatch timer = Stopwatch.StartNew();
         int pathCount = pending.Length;
-        await Parallel.ForEachAsync(pending, token,
-            async (update, token) => await ProcessUpdate(update, token).ConfigureAwait(false)).ConfigureAwait(false);
+        int successCount = 0;
+        await Parallel.ForEachAsync(pending, token, async (path, token) =>
+        {
+            if (!await ProcessFile(path, token).ConfigureAwait(false))
+            {
+                _logger.LogError("Failed to sync file {path}", path);
+                EnqueuePending(path);
+            }
+            else Interlocked.Increment(ref successCount);
+        }).ConfigureAwait(false);
         timer.Stop();
-        _logger.LogInformation("Processing Batch: {pathCount} paths processed in {elapsed} ms.", pathCount, timer.Elapsed);
+        _logger.LogInformation("Batch processed in {elapsed} ms. No of files: {pathCount}.", timer.Elapsed, pathCount);
+        if (successCount < pathCount)
+            _logger.LogWarning("Failed to sync {failCount} files.", pathCount - successCount);
     }
 }

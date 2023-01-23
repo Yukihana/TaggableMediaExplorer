@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230122055115_FirstRun")]
+    [Migration("20230123045915_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
@@ -120,6 +120,10 @@ namespace TTX.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UniqueText")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

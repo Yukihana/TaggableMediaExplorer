@@ -13,7 +13,7 @@ public partial class WatcherService
         try { StopWatcher(); }
         finally
         {
-            _watcher = new()
+            _watcher = new(_options.AssetsPathFull)
             {
                 IncludeSubdirectories = true,
                 Filter = "",

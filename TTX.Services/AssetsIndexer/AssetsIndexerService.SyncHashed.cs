@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
@@ -13,64 +13,74 @@ public partial class AssetsIndexerService
 {
     private readonly SemaphoreSlim _semaphoreSync = new(1);
 
-    private async Task ProcessUpdate(string path, CancellationToken token = default)
-    {
-        if (token.IsCancellationRequested)
-            return;
-
-        // Fetch info
-        AssetFile? file = await _assetInfo.Fetch(path, true, token).ConfigureAwait(false);
-
-        // If file is inaccessible, invalidate
-        if (file == null)
-        {
-            InvalidatePath(path);
-            return;
-        }
-
-        // Legacy
-        if (!await ProcessFile(path, token).ConfigureAwait(false))
-            _logger.LogError("Failed to sync file {path}", path);
-    }
-
-    // Asset validation
-    private void InvalidatePath(string path)
-    {
-        Parallel.ForEach(Snapshot(),
-            x => x.InvalidateByLocalPath(path));
-
-        _auxiliary.RemoveDuplicateFile(path);
-    }
-
-    // Unknown
-
+    // Add logger messages for every outcome
     private async Task<bool> ProcessFile(string path, CancellationToken token = default)
     {
         if (token.IsCancellationRequested)
             return false;
 
+        // Prepare
+        List<AssetRecord> recs = Snapshot();
+        bool fileExists = await _assetInfo.FileExists(path, token).ConfigureAwait(false);
+        string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
+        AssetFile? file = null;
+        if (fileExists)
+            file = await _assetInfo.Fetch(path, true, token).ConfigureAwait(false);
+
+        // Start sync
         try
         {
-            await _semaphoreCurrent.WaitAsync(token).ConfigureAwait(false);
+            await _semaphoreSync.WaitAsync(token).ConfigureAwait(false);
 
-            // Generate Metadata
-            AssetFile file = new();
+            // If file is inaccessible, invalidate
+            if (file == null)
+            {
+                InvalidatePath(localPath, recs);
 
-            // Generate Hash
-            AssetFile hfile = new();
+                if (fileExists)
+                {
+                    _logger.LogError("Unable to read file. Invalidating and requeueing for next batch: {path}", path);
+                    return false;
+                }
 
-            // Fetch invalids
-            HashSet<AssetRecord> recs = Snapshot().ToHashSet();
+                _logger.LogWarning("Invalidating removed file: {path}", path);
+                return true;
+            }
 
-            // Match by: Size, Crumbs, Hash, Filename => Instant match
+            // Get first content match, validate or duplicate
+            if (FindMatchByDataIntegrity(file, recs) is AssetRecord dataMatch)
+            {
+                if (PathMatch(localPath, dataMatch))
+                {
+                    dataMatch.SetValid(true);
+                    _logger.LogInformation("Activated existing record for file: {path}", path);
+                }
+                else if (dataMatch.TryValidate())
+                {
+                    // TODO add old path for log
+                    await UpdateRecord(dataMatch, x => x.LastLocation = localPath, token).ConfigureAwait(false);
+                    _logger.LogInformation("Updated record for file: {path}", path);
+                }
+                else
+                {
+                    // TODO add original record to add duplicate
+                    _auxiliary.AddDuplicateFile(path);
+                    _logger.LogInformation("Found duplicate file: {path}", path);
+                }
+                return true;
+            }
 
-            //
+            // Check for modified
+            if (FindMatchByPath(localPath, recs).Count > 0)
+            {
+                _auxiliary.AddModifiedFiles(path);
+                _logger.LogInformation("Sync mismatch. Change detected at {path}", path);
+                return true;
+            }
 
-            // If all else fails create new record
-            await CreateRecord(hfile, token).ConfigureAwait(false);
+            // If not already exited, then create a new record, append to local memory
+            return await CreateRecord(file, localPath, token).ConfigureAwait(false);
         }
-        finally { _semaphoreCurrent.Release(); }
-
-        return false;
+        finally { _semaphoreSync.Release(); }
     }
 }
