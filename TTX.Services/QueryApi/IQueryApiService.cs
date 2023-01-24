@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TTX.Data.QueryObjects;
+﻿using TTX.Data.Shared.QueryObjects;
 
 namespace TTX.Services.QueryApi;
 
@@ -9,6 +8,8 @@ namespace TTX.Services.QueryApi;
 public interface IQueryApiService
 {
     SearchResponse Search(SearchQuery query);
+
+    AssetCard? GetAssetCard(string guidString);
 
     // Metadata
 

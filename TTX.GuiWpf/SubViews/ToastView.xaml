@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="TTX.GuiWpf.SubViews.ToastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
+             mc:Ignorable="d">
+    <Grid>
+        <Border Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Margin="10" Opacity=".7" Height="30" CornerRadius="15" Visibility="{Binding ToastVisibility}"
+                Background="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}">
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Margin="15 0 5 4" Text="{Binding ToastMessage}"
+                           Foreground="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <ProgressBar Height="4" Width="50" VerticalAlignment="Center" BorderThickness="0" Maximum="100" Value="100"
+                             Background="Transparent" x:Name="ToastLiner">
+                    <ProgressBar.Foreground>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Offset="0" Color="Transparent" />
+                            <GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+                        </LinearGradientBrush>
+                    </ProgressBar.Foreground>
+                </ProgressBar>
+                <Button Margin="0" Background="Transparent" BorderThickness="0"
+                        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                        Foreground="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                    <Path Height="20" Width="20"  Fill="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+                        Data="M20,10c0,5.522-4.477,10-10,10C4.478,20,0,15.522,0,10C0,4.477,4.478,0,10,0C15.523,0,20,4.477,20,10z M8,10l-4,4l2,2l4-4l4,4l2-2l-4-4l4-4l-2-2l-4,4L6,4L4,6L8,10z" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

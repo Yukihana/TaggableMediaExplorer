@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TTX.Data.QueryObjects;
+using TTX.Data.Shared.QueryObjects;
 
 namespace TTX.Services.QueryApi;
 
@@ -20,6 +20,7 @@ public partial class QueryApiService
                 return true;
             }));
 
+        int total = results.Count();
         List<string> section = results
             .Skip(query.Page * query.Count)
             .Take(query.Count)
@@ -29,9 +30,9 @@ public partial class QueryApiService
         return new()
         {
             Results = section.ToArray(),
-            TotalResults = results.Count(),
-            StartIndex = query.Page * query.Count,
-            EndIndex = query.Page * query.Count + section.Count
+            TotalResults = total,
+            StartIndex = total > 0 ? query.Page * query.Count : -1,
+            EndIndex = total > 0 ? query.Page * query.Count + section.Count - 1 : -1,
         };
     }
 }

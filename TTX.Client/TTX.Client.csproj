@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TTX.Data.Shared\TTX.Data.Shared.csproj" />
-    <ProjectReference Include="..\TTX.Data\TTX.Data.csproj" />
     <ProjectReference Include="..\TTX.Library\TTX.Library.csproj" />
   </ItemGroup>
 

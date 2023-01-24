@@ -9,6 +9,8 @@ namespace TTX.Services.AssetsIndexer;
 
 public interface IAssetsIndexerService
 {
+    // Api
+
     bool IsReady { get; }
 
     TOutput PerformQuery<TInput, TOutput>(TInput input, Func<TInput, IEnumerable<AssetRecord>, TOutput> func);

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using TTX.Data.Entities;
 using TTX.Data.Models;
+using TTX.Library.Helpers;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -57,4 +58,7 @@ public partial class AssetsIndexerService
         }
         finally { rec.Lock.ExitReadLock(); }
     }
+
+    private static bool GuidMatch(byte[] guid, AssetRecord rec)
+        => rec.SafeRead(x => x.GUID.SequenceEqual(guid), rec.Lock);
 }
