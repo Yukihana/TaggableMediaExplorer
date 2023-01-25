@@ -1,29 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using TTX.Client.ViewData;
-using TTX.Data.Shared.QueryObjects;
-using TTX.Library.Helpers;
 
 namespace TTX.Client.ViewLogic;
 
 public partial class BrowserLogic : ObservableObject
 {
     [ObservableProperty]
-    private BrowserData _data = new();
+    private BrowserData _dataModel = new();
 
-    // Async detours
+    // Startup
 
-    internal async Task DoSearch(string query, CancellationToken token = default)
-        => await SessionContext.DataLoader.DoSearch(query, OnSearch, token).ConfigureAwait(false);
-
-    // Sync updates
-
-    private void OnSearch(SearchResponse response)
+    public BrowserLogic()
     {
-        response.Results
-            .Select(x => new AssetLogic() { GUID = x })
-            .AddTo(Data.Items);
+        DataModel.PropertyChanged += BrowserDataChanged;
+    }
+
+    private void BrowserDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        // On page change : immediate dispatch
+        // On text change : wait for ... wait, this goes into the menu bar
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using TTX.Services.QueryApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,8 +18,8 @@ public class AssetDataController : ControllerBase
 
     [HttpGet]
     [Route("Card")]
-    public string Get([FromQuery] string id)
-        => JsonSerializer.Serialize(_queryApi.GetAssetCard(id));
+    public ActionResult Get([FromQuery] string id)
+        => Ok(_queryApi.GetAssetCard(id)); // JsonSerializer.Serialize(_queryApi.GetAssetCard(id))
 
     /*
     // GET: api/<AssetDataController>

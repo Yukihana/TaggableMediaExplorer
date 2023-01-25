@@ -11,7 +11,10 @@ public partial class AssetLogic : ObservableObject
     // Data
 
     [ObservableProperty]
-    private AssetData _data = new();
+    private AssetData _dataModel = new();
+
+    public void LoadDataFrom(AssetCard card)
+        => DataModel = card.CopyValues<AssetData>();
 
     // GUID
     private string _guid = string.Empty;
@@ -30,7 +33,4 @@ public partial class AssetLogic : ObservableObject
                 => await SessionContext.DataLoader.LoadAssetCard(value, LoadDataFrom, SessionContext.CTS.Token).ConfigureAwait(false));
         }
     }
-
-    public void LoadDataFrom(AssetCard card)
-        => Data = card.CopyValues<AssetData>();
 }

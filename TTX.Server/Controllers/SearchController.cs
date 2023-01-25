@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using TTX.Data.Shared.QueryObjects;
 using TTX.Services.QueryApi;
 
@@ -19,8 +18,8 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet]
-    public string Get([FromQuery] SearchQuery query)
-        => JsonSerializer.Serialize(_queryApi.Search(query));
+    public ActionResult Get([FromQuery] SearchQuery query)
+        => Ok(_queryApi.Search(query));  // string : JsonSerializer.Serialize(_queryApi.Search(query));
 
     /*
     // POST api/<SearchController>

@@ -22,6 +22,7 @@ public static class SessionContext
 
     private static SynchronizationContext? _syncContext = null;
     private static DataLoader? _dataLoader = null;
+    private static ApiClient? _apiClient = null;
 
     // Components : Exposed
 
@@ -32,6 +33,7 @@ public static class SessionContext
     }
 
     internal static DataLoader DataLoader => _dataLoader ?? throw new NullReferenceException($"Uninitialized DataLoader");
+    internal static ApiClient ApiClient => _apiClient ?? throw new NullReferenceException($"Uninitialized API Client");
 
     // Component
 
@@ -41,7 +43,8 @@ public static class SessionContext
 
     public static void Build()
     {
-        _dataLoader = new(SyncContext);
+        _apiClient = new();
+        _dataLoader = new(SyncContext, ApiClient);
     }
 
     // Control
