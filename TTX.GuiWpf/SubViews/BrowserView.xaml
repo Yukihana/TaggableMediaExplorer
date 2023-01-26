@@ -3,9 +3,66 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
+             xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
+             xmlns:logic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
+             xmlns:support="clr-namespace:TTX.GuiWpf.Support"
              mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=logic:BrowserLogic}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-    </Grid>
+
+    <DockPanel>
+        <ListView Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" BorderThickness="0" x:Name="FileView" ItemsSource="{Binding DataModel.Items}" SelectionMode="Extended"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectedIndex="{Binding DataModel.SelectedIndex}" SelectedItem="{Binding DataModel.SelectedItem}"
+                  SelectionChanged="FileView_SelectionChanged">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ListView}, Converter={StaticResource support:XamlColumnMaker}}" VerticalAlignment="Top" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="logic:AssetCardLogic">
+                    <subviews:AssetCardView />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ContextMenu>
+                <ContextMenu SnapsToDevicePixels="True" UseLayoutRounding="True">
+                    <MenuItem Header="Watch" />
+                    <!-- Make this the default action (Double Click) on video player implementation -->
+                    <MenuItem Header="Queue" />
+                    <Separator />
+                    <MenuItem Header="Open" Command="{Binding ItemLaunchCommand}" FontWeight="Bold" />
+                    <MenuItem Header="Open with..." />
+                    <MenuItem Header="Open folder" />
+                    <Separator />
+                    <MenuItem Header="Add Tag" ItemsSource="{Binding Tags}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Header" Value="{Binding Name}" />
+                                <Setter Property="Tag" Value="{Binding ColorText}" />
+                                <Setter Property="Icon" Value="{StaticResource TagIcon}" />
+                                <Setter Property="Command" Value="{Binding Converter={StaticResource ApplyTagCommand}}" />
+                                <Setter Property="CommandParameter" Value="{Binding}" />
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                    <MenuItem Header="Remove Tag" ItemsSource="{Binding Tags}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Header" Value="{Binding Name}" />
+                                <Setter Property="Tag" Value="{Binding ColorText}" />
+                                <Setter Property="Icon" Value="{StaticResource TagIcon}" />
+                                <Setter Property="Command" Value="{Binding Converter={StaticResource RemoveTagCommand}}" />
+                                <Setter Property="CommandParameter" Value="{Binding}" />
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Hide" />
+                    <MenuItem Header="Recycle" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </DockPanel>
 </UserControl>

@@ -35,7 +35,7 @@ public static partial class AssetRecordExtensions
 
     public static AssetRecord GenerateAssetRecord(this AssetFile file, string localPath) => new()
     {
-        GUID = Guid.NewGuid().ToByteArray(),
+        ItemId = Guid.NewGuid().ToByteArray(),
 
         LastLocation = localPath,
         SizeBytes = file.SizeBytes,

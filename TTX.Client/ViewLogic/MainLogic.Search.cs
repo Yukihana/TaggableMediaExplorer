@@ -9,15 +9,15 @@ namespace TTX.Client.ViewLogic;
 
 public partial class MainLogic
 {
-    private async Task DoSearch(string keywords, int maxcount, int pageindex, CancellationToken token = default)
+    private async Task DoSearch(CancellationToken token = default)
     {
         SearchQuery query = new()
         {
-            Keywords = keywords,
-            Count = maxcount,
-            Page = pageindex,
+            Keywords = DataModel.Keywords,
+            Count = DataModel.ItemMax,
+            Page = DataModel.PageIndex,
         };
-        await SessionContext.DataLoader
+        await SessionContext.ApiConnectionService
             .QuerySearch(query, OnSearch, token)
             .ConfigureAwait(false);
     }
@@ -35,22 +35,43 @@ public partial class MainLogic
     {
         if (token.IsCancellationRequested)
             return;
-        await DoSearch(keywords, DataModel.ItemMax, 0, token).ConfigureAwait(false);
+        DataModel.Keywords = keywords;
+        await DoSearch(token).ConfigureAwait(false);
     }
 
     public async Task NextPage(CancellationToken token = default)
     {
+        if (token.IsCancellationRequested)
+            return;
+        DataModel.PageIndex += 1;
+        await DoSearch(token).ConfigureAwait(false);
     }
 
     public async Task PreviousPage(CancellationToken token = default)
     {
+        if (token.IsCancellationRequested)
+            return;
+        DataModel.PageIndex = DataModel.PageIndex - 1;
+        if (DataModel.PageIndex < 0)
+            DataModel.PageIndex = 0;
+        await DoSearch(token).ConfigureAwait(false);
     }
 
     public async Task ToPageIndex(int pageIndex, CancellationToken token = default)
     {
+        if (token.IsCancellationRequested)
+            return;
+        DataModel.PageIndex = pageIndex;
+        if (DataModel.PageIndex < 0)
+            DataModel.PageIndex = 0;
+        await DoSearch(token).ConfigureAwait(false);
     }
 
     public async Task ResizePage(int itemCountMax, CancellationToken token = default)
     {
+        if (token.IsCancellationRequested)
+            return;
+        DataModel.ItemMax = itemCountMax;
+        await DoSearch(token).ConfigureAwait(false);
     }
 }

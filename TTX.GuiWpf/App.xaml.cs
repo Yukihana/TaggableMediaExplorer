@@ -21,13 +21,17 @@ public partial class App : Application
         base.OnStartup(e);
 
         // Build
-        SessionContext.SyncContext = SynchronizationContext.Current
-            ?? throw new NullReferenceException($"Require a {nameof(SynchronizationContext)}.");
-        SessionContext.CreateLogin = () => new LoginWindow();
-        SessionContext.CreateMain = () => new MainWindow();
+        SessionContext.SetSyncContext(
+            SynchronizationContext.Current ??
+            throw new NullReferenceException(
+                $"Require a {nameof(SynchronizationContext)}."));
+        SessionContext.SetLoginViewActivator(() => new LoginWindow());
+        SessionContext.SetMainViewActivator(() => new MainWindow());
+        SessionContext.SetExitAction(Shutdown);
+
+        SessionContext.Build();
 
         // Start
         SessionContext.Start();
-        SessionContext.OnExit = Shutdown;
     }
 }

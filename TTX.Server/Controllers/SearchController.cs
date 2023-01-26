@@ -19,7 +19,7 @@ public class SearchController : ControllerBase
 
     [HttpGet]
     public ActionResult Get([FromQuery] SearchQuery query)
-        => Ok(_queryApi.Search(query));  // string : JsonSerializer.Serialize(_queryApi.Search(query));
+        => Ok(_queryApi.Search(query));
 
     /*
     // POST api/<SearchController>

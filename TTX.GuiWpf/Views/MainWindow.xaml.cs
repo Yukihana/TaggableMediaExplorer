@@ -23,6 +23,9 @@ public partial class MainWindow : Window, IMainView
     public void ShowView()
         => Show();
 
-    private async void Window_Loaded(object sender, RoutedEventArgs e)
-        => await _logic.GuiLoaded().ConfigureAwait(true);
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+        => _logic.GuiLoaded();
+
+    private void Window_Closed(object sender, System.EventArgs e)
+        => _logic.GuiClosed();
 }

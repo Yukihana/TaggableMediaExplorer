@@ -13,7 +13,7 @@ public class AssetRecord
     [Key]
     public int ID { get; set; } = 0;
 
-    public byte[] GUID { get; set; } = Array.Empty<byte>();
+    public byte[] ItemId { get; set; } = Array.Empty<byte>(); // TODO, scan all places and remove the term 'guid' from any kind of naming. using ItemId instead. Even change method names if required
 
     // Identity
 

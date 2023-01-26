@@ -7,17 +7,15 @@ namespace TTX.Services.QueryApi;
 
 public partial class QueryApiService
 {
-    public AssetCard? GetAssetCard(string guidString)
+    public AssetCardResponse? GetAssetCard(string guidString)
     {
         byte[] guid = new Guid(guidString).ToByteArray();
         var results = _assetsIndexer.PerformQuery(guid, (guid, list)
-            => list.Where(x => x.GUID.SequenceEqual(guid)));
+            => list.Where(x => x.ItemId.SequenceEqual(guid)));
 
         if (results.Count() != 1)
             return null;
 
-        AssetCard card = results.First().CopyValues<AssetCard>();
-        card.GuidString = guidString;
-        return card;
+        return results.First().CopyValues<AssetCardResponse>();
     }
 }

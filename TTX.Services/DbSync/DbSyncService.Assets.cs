@@ -20,9 +20,9 @@ public partial class DbSyncService
             DbSet<AssetRecord> AssetsTable = dbContext.Assets;
 
             // Check for guid uniqueness
-            List<byte[]> guids = await AssetsTable.Select(x => x.GUID).ToListAsync(token).ConfigureAwait(false);
-            if (guids.Any(x => x.SequenceEqual(rec.GUID)))
-                rec.GUID = EnumerableHelpers.GenerateSafeGuid(guids);
+            List<byte[]> guids = await AssetsTable.Select(x => x.ItemId).ToListAsync(token).ConfigureAwait(false);
+            if (guids.Any(x => x.SequenceEqual(rec.ItemId)))
+                rec.ItemId = EnumerableHelpers.GenerateSafeGuid(guids);
 
             // Add and save changes
             await AssetsTable.AddAsync(rec, token).ConfigureAwait(false);
@@ -43,7 +43,7 @@ public partial class DbSyncService
             using var dbContext = _contextFactory.CreateDbContext();
             DbSet<AssetRecord> AssetsTable = dbContext.Assets;
             List<AssetRecord> matched = await AssetsTable
-                .Where(x => x.GUID.SequenceEqual(guid))
+                .Where(x => x.ItemId.SequenceEqual(guid))
                 .ToListAsync(token)
                 .ConfigureAwait(false);
 

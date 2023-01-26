@@ -3,16 +3,15 @@ using System.Collections.Generic;
 
 namespace TTX.Data.Shared.QueryObjects;
 
-public class AssetCard
+public class AssetCardResponse
 {
-    public byte[] GUID { get; set; } = Array.Empty<byte>();
-    public string GuidString { get; set; } = string.Empty;
+    public byte[] ItemId { get; set; } = Array.Empty<byte>();
     public string Name { get; set; } = string.Empty;
 
     // Metadata
 
     public HashSet<string> Tags { get; set; } = new();
-    public TimeSpan AddedUtc { get; set; } = TimeSpan.Zero;
+    public DateTime AddedUtc { get; set; } = DateTime.UtcNow;
     public long SizeBytes { get; set; } = 0;
 
     // Codec Information

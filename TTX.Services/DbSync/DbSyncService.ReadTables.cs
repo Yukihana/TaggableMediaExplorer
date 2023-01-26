@@ -19,24 +19,24 @@ public partial class DbSyncService
         // Ensure unique guids before operations start
         List<byte[]> unique = new();
         List<byte[]> existing = await AssetsTable
-            .Select(x => x.GUID)
+            .Select(x => x.ItemId)
             .ToListAsync(token)
             .ConfigureAwait(false);
         bool updated = false;
 
         foreach (AssetRecord asset in AssetsTable)
         {
-            if (unique.Any(x => x.SequenceEqual(asset.GUID)))
+            if (unique.Any(x => x.SequenceEqual(asset.ItemId)))
             {
                 byte[] newGuid = EnumerableHelpers.GenerateSafeGuid(existing);
 
-                asset.GUID = newGuid;
+                asset.ItemId = newGuid;
                 existing.Add(newGuid);
                 unique.Add(newGuid);
 
                 updated = true;
             }
-            else unique.Add(asset.GUID);
+            else unique.Add(asset.ItemId);
         }
 
         if (updated)

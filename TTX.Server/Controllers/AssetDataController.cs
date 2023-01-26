@@ -18,8 +18,8 @@ public class AssetDataController : ControllerBase
 
     [HttpGet]
     [Route("Card")]
-    public ActionResult Get([FromQuery] string id)
-        => Ok(_queryApi.GetAssetCard(id)); // JsonSerializer.Serialize(_queryApi.GetAssetCard(id))
+    public ActionResult Get([FromQuery] string guid)
+        => Ok(_queryApi.GetAssetCard(guid));
 
     /*
     // GET: api/<AssetDataController>

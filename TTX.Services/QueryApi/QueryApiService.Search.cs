@@ -20,19 +20,21 @@ public partial class QueryApiService
                 return true;
             }));
 
-        int total = results.Count();
         List<string> section = results
             .Skip(query.Page * query.Count)
             .Take(query.Count)
-            .Select(x => new Guid(x.GUID).ToString())
+            .Select(x => new Guid(x.ItemId).ToString())
             .ToList();
+
+        int total = results.Count();
+        int shown = section.Count;
 
         return new()
         {
             Results = section.ToArray(),
             TotalResults = total,
-            StartIndex = total > 0 ? query.Page * query.Count : -1,
-            EndIndex = total > 0 ? query.Page * query.Count + section.Count - 1 : -1,
+            StartIndex = shown > 0 ? query.Page * query.Count : -1,
+            EndIndex = shown > 0 ? query.Page * query.Count + section.Count - 1 : -1,
         };
     }
 }

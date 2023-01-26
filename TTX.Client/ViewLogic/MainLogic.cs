@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.ViewData;
 
@@ -10,6 +9,9 @@ public partial class MainLogic : ObservableObject
     [ObservableProperty]
     private MainData _dataModel = new();
 
-    public async Task GuiLoaded(CancellationToken token = default)
-        => await SearchNew(string.Empty, token).ConfigureAwait(false);
+    public void GuiLoaded()
+        => _ = Task.Run(async () => await SearchNew(string.Empty, SessionContext.CancellationToken).ConfigureAwait(false));
+
+    public void GuiClosed()
+        => SessionContext.QueryClose(this);
 }

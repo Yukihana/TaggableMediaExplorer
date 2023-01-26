@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:support="clr-namespace:TTX.GuiWpf.Support">
+
+    <support:ColumnMaker x:Key="XamlColumnMaker" />
+</ResourceDictionary>

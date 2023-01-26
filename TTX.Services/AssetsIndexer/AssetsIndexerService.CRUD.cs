@@ -54,7 +54,7 @@ public partial class AssetsIndexerService
     private async Task<bool> UpdateRecord(AssetRecord rec, Action<AssetRecord> action, CancellationToken token = default)
     {
         // Prepare
-        byte[] guid = rec.SafeRead(x => x.GUID, rec.Lock);
+        byte[] guid = rec.SafeRead(x => x.ItemId, rec.Lock);
 
         // Update Storage DB
         if (!await _dbsync.UpdateRecord(guid, action, token).ConfigureAwait(false))

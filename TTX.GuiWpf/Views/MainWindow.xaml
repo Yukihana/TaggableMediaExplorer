@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
         xmlns:viewlogic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
-        Loaded="Window_Loaded"
+        Loaded="Window_Loaded" Closed="Window_Closed"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewlogic:MainLogic,IsDesignTimeCreatable=True}"
         Title="MainWindow" Height="600" Width="800">
@@ -57,7 +57,7 @@
         <!--Queue-->
 
         <!--Browser-->
-        <subviews:BrowserView Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" />
+        <subviews:BrowserView Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding DataModel.BrowserLogic}" />
 
         <!-- Toast Box -->
         <subviews:ToastView Grid.ColumnSpan="3" Grid.RowSpan="4" />

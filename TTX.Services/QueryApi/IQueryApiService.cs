@@ -9,7 +9,7 @@ public interface IQueryApiService
 {
     SearchResponse Search(SearchQuery query);
 
-    AssetCard? GetAssetCard(string guidString);
+    AssetCardResponse? GetAssetCard(string guidString);
 
     // Metadata
 

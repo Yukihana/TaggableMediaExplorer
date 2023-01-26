@@ -11,4 +11,8 @@ public partial class BrowserView : UserControl
     {
         InitializeComponent();
     }
+
+    private void FileView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+    }
 }
