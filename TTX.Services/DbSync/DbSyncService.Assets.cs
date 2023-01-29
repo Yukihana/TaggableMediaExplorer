@@ -31,7 +31,7 @@ public partial class DbSyncService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add {type} to the database for path: {path}", nameof(AssetRecord), rec.LastLocation);
+            _logger.LogError(ex, "Failed to add {type} to the database for path: {path}", nameof(AssetRecord), rec.FilePath);
             return false;
         }
     }

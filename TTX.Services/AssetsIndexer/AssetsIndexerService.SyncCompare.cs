@@ -17,7 +17,7 @@ public partial class AssetsIndexerService
 
             if (rec.SizeBytes != file.SizeBytes)
                 return false;
-            if (rec.LastLocation != localPath)
+            if (rec.FilePath != localPath)
                 return false;
             if (rec.ModifiedUtc != file.ModifiedUtc)
                 return false;
@@ -54,7 +54,7 @@ public partial class AssetsIndexerService
         try
         {
             rec.Lock.EnterReadLock();
-            return rec.LastLocation.Equals(localPath);
+            return rec.FilePath.Equals(localPath);
         }
         finally { rec.Lock.ExitReadLock(); }
     }

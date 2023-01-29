@@ -14,7 +14,7 @@ public partial class QueryApiService
             {
                 foreach (string word in keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if (!x.Name.Contains(word, StringComparison.OrdinalIgnoreCase))
+                    if (!x.Title.Contains(word, StringComparison.OrdinalIgnoreCase))
                         return false;
                 }
                 return true;

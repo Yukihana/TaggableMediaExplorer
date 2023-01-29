@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -17,26 +17,26 @@ namespace TTX.Data.Migrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    GUID = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    LastLocation = table.Column<string>(type: "TEXT", nullable: false),
+                    ItemId = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    FilePath = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
                     SizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
                     SHA256 = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Crumbs = table.Column<byte[]>(type: "BLOB", nullable: false),
                     MatchIgnore = table.Column<string>(type: "TEXT", nullable: false),
-                    Height = table.Column<int>(type: "INTEGER", nullable: false),
-                    Width = table.Column<int>(type: "INTEGER", nullable: false),
-                    Length = table.Column<int>(type: "INTEGER", nullable: false),
+                    MediaWidth = table.Column<int>(type: "INTEGER", nullable: false),
+                    MediaHeight = table.Column<int>(type: "INTEGER", nullable: false),
+                    MediaDuration = table.Column<int>(type: "INTEGER", nullable: false),
                     Container = table.Column<string>(type: "TEXT", nullable: false),
                     DefaultVideoTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
                     DefaultAudioTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
                     DefaultSubtitlesFormat = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     TagsString = table.Column<string>(type: "TEXT", nullable: false),
-                    Added = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Updated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    AddedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,9 +49,12 @@ namespace TTX.Data.Migrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UniqueText = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    TagId = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
+                    VectorIcon = table.Column<string>(type: "TEXT", nullable: false),
+                    Color0 = table.Column<string>(type: "TEXT", nullable: false),
+                    Color1 = table.Column<string>(type: "TEXT", nullable: false),
                     IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     AllowAssign = table.Column<bool>(type: "INTEGER", nullable: false)
                 },

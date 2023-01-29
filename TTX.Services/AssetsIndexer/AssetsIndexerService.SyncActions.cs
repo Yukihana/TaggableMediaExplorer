@@ -18,7 +18,7 @@ public partial class AssetsIndexerService
             try
             {
                 rec.Lock.EnterUpgradeableReadLock();
-                if (rec.IsValid && rec.LastLocation.Equals(localPath))
+                if (rec.IsValid && rec.FilePath.Equals(localPath))
                     rec.SetValid(false);
             }
             finally { rec.Lock.ExitUpgradeableReadLock(); }

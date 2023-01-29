@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230123045915_FirstRun")]
+    [Migration("20230129072709_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace TTX.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("Added")
+                    b.Property<DateTime>("AddedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Container")
@@ -56,29 +56,28 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GUID")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LastLocation")
+                    b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Length")
-                        .HasColumnType("INTEGER");
+                    b.Property<byte[]>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("MatchIgnore")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedUtc")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("MediaDuration")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<int>("MediaHeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MediaWidth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ModifiedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("SHA256")
@@ -92,11 +91,12 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Updated")
+                    b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Width")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ID");
 
@@ -112,6 +112,14 @@ namespace TTX.Data.Migrations
                     b.Property<bool>("AllowAssign")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Color0")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Color1")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -119,11 +127,15 @@ namespace TTX.Data.Migrations
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("TagId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UniqueText")
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VectorIcon")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

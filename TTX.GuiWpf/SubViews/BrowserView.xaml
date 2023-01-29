@@ -7,18 +7,24 @@
              xmlns:logic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
              xmlns:support="clr-namespace:TTX.GuiWpf.Support"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=logic:BrowserLogic}"
+             d:DataContext="{d:DesignInstance Type=logic:BrowserLogic, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <DockPanel>
-        <ListView Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" BorderThickness="0" x:Name="FileView" ItemsSource="{Binding DataModel.Items}" SelectionMode="Extended"
-                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top"
+        <ListView x:Name="FileView"
+                  Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
+                  BorderThickness="0"
+                  SelectionMode="Extended"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Top"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  SelectedIndex="{Binding DataModel.SelectedIndex}" SelectedItem="{Binding DataModel.SelectedItem}"
+                  ItemsSource="{Binding DataModel.Items}"
+                  SelectedIndex="{Binding DataModel.SelectedIndex}"
+                  SelectedItem="{Binding DataModel.SelectedItem}"
                   SelectionChanged="FileView_SelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ListView}, Converter={StaticResource support:XamlColumnMaker}}" VerticalAlignment="Top" />
+                    <UniformGrid Columns="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ListView}, Converter={StaticResource XamlColumnMaker}}" VerticalAlignment="Top" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
@@ -28,39 +34,28 @@
             </ListView.ItemTemplate>
             <ListView.ContextMenu>
                 <ContextMenu SnapsToDevicePixels="True" UseLayoutRounding="True">
+
+                    <!--Add DoubleClick default action to this-->
+                    <MenuItem Header="Queue" FontWeight="Bold" />
                     <MenuItem Header="Watch" />
-                    <!-- Make this the default action (Double Click) on video player implementation -->
-                    <MenuItem Header="Queue" />
+                    <MenuItem Header="Show related" />
+
+                    <!--Server Actions-->
                     <Separator />
-                    <MenuItem Header="Open" Command="{Binding ItemLaunchCommand}" FontWeight="Bold" />
-                    <MenuItem Header="Open with..." />
-                    <MenuItem Header="Open folder" />
-                    <Separator />
-                    <MenuItem Header="Add Tag" ItemsSource="{Binding Tags}">
-                        <MenuItem.ItemContainerStyle>
-                            <Style TargetType="{x:Type MenuItem}">
-                                <Setter Property="Header" Value="{Binding Name}" />
-                                <Setter Property="Tag" Value="{Binding ColorText}" />
-                                <Setter Property="Icon" Value="{StaticResource TagIcon}" />
-                                <Setter Property="Command" Value="{Binding Converter={StaticResource ApplyTagCommand}}" />
-                                <Setter Property="CommandParameter" Value="{Binding}" />
-                            </Style>
-                        </MenuItem.ItemContainerStyle>
-                    </MenuItem>
-                    <MenuItem Header="Remove Tag" ItemsSource="{Binding Tags}">
-                        <MenuItem.ItemContainerStyle>
-                            <Style TargetType="{x:Type MenuItem}">
-                                <Setter Property="Header" Value="{Binding Name}" />
-                                <Setter Property="Tag" Value="{Binding ColorText}" />
-                                <Setter Property="Icon" Value="{StaticResource TagIcon}" />
-                                <Setter Property="Command" Value="{Binding Converter={StaticResource RemoveTagCommand}}" />
-                                <Setter Property="CommandParameter" Value="{Binding}" />
-                            </Style>
-                        </MenuItem.ItemContainerStyle>
-                    </MenuItem>
+                    <MenuItem Header="Details" />
+                    <MenuItem Header="Edit" />
+                    <MenuItem Header="Verify" />
+
+                    <!--Visibility-->
                     <Separator />
                     <MenuItem Header="Hide" />
                     <MenuItem Header="Recycle" />
+
+                    <!--Shell Actions-->
+                    <Separator />
+                    <MenuItem Header="Open" />
+                    <MenuItem Header="Open with..." />
+                    <MenuItem Header="Open folder" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>

@@ -21,10 +21,6 @@ public partial class BrowserData : ObservableObject
     // Multiselect
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ItemCount))]
-    private ObservableCollection<int> _selectedIndices = new();
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedCount))]
     private ObservableCollection<AssetCardLogic> _selectedItems = new();
 

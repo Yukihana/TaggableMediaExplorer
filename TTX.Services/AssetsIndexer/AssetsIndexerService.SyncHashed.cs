@@ -58,7 +58,7 @@ public partial class AssetsIndexerService
                 else if (dataMatch.TryValidate())
                 {
                     // TODO add old path for log
-                    await UpdateRecord(dataMatch, x => x.LastLocation = localPath, token).ConfigureAwait(false);
+                    await UpdateRecord(dataMatch, x => x.FilePath = localPath, token).ConfigureAwait(false);
                     _logger.LogInformation("Updated record for file: {path}", path);
                 }
                 else

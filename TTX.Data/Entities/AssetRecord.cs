@@ -17,7 +17,7 @@ public class AssetRecord
 
     // Identity
 
-    public string LastLocation { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
 
     // Metadata
 
@@ -33,9 +33,9 @@ public class AssetRecord
 
     // Media Info
 
-    public int Height { get; set; } = 0;
-    public int Width { get; set; } = 0;
-    public int Length { get; set; } = 0;
+    public int MediaWidth { get; set; } = 0;
+    public int MediaHeight { get; set; } = 0;
+    public int MediaDuration { get; set; } = 0;
 
     // Codecs
 
@@ -44,13 +44,13 @@ public class AssetRecord
     public string DefaultAudioTrackCodec { get; set; } = string.Empty;
     public string DefaultSubtitlesFormat { get; set; } = string.Empty;
 
-    // Description
+    // User Data
 
-    public string Name { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string TagsString { get; set; } = string.Empty;
-    public DateTime Added { get; set; } = DateTime.Now;
-    public DateTime Updated { get; set; } = DateTime.Now;
+    public DateTime AddedUtc { get; set; } = DateTime.Now;
+    public DateTime UpdatedUtc { get; set; } = DateTime.Now;
 
     // Not Mapped
 

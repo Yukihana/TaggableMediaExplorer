@@ -4,15 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
+             xmlns:viewlogic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
+             xmlns:controls="clr-namespace:TTX.WpfControls;assembly=TTX.WpfControls"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewlogic:AssetCardLogic, IsDesignTimeCreatable=False}"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel>
-        <DockPanel.InputBindings>
-            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ItemLaunchCommand}" />
-        </DockPanel.InputBindings>
-        <Grid Margin="0 0 10 0" Width="96" Height="96" VerticalAlignment="Top" DockPanel.Dock="Left">
-            <Rectangle Width="80" Height="80" ToolTip="{Binding UID}" Stroke="#8888" StrokeThickness="1">
+             d:DesignWidth="600" d:Background="White">
+    <UserControl.InputBindings>
+        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ItemLaunchCommand}" />
+    </UserControl.InputBindings>
+    <DockPanel Margin="5">
+
+        <!--ImageBox-->
+        <Grid Width="128" Height="128" Margin="5 5 10 5" VerticalAlignment="Top">
+
+            <!--Gradient-->
+            <Rectangle  ToolTip="{Binding DataModel.ItemIdString}" Stroke="#8888" StrokeThickness="1">
                 <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="Transparent" Offset="0" />
@@ -20,23 +26,98 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Image Width="80" Height="80" IsHitTestVisible="False" Source="{Binding ThumbPath, Converter={StaticResource XAMLThumbHandler}}" />
+
+            <!--Image-->
+            <Image IsHitTestVisible="False" Source="{Binding DataModel.ThumbPath}" />
+
+            <!--Duration-->
+            <Border Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="5">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.8">
+                        <GradientStop Offset="0" Color="#666" />
+                        <GradientStop Offset="1" Color="#333" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="{Binding DataModel.DurationConcise, FallbackValue='00:00'}"
+                           FontWeight="Bold"
+                           TextTrimming="CharacterEllipsis"
+                           FontSize="14"
+                           Foreground="#FFF" Margin="7 2 7 3">
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="Duration:" />
+                            <Run Text="{Binding DataModel.MediaDuration, FallbackValue='Unknown'}" />
+                        </TextBlock>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+            </Border>
         </Grid>
+
+        <!--Info-Column-->
         <StackPanel VerticalAlignment="Top">
-            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="0 5 0 0" TextTrimming="CharacterEllipsis" />
-            <TextBlock Text="{Binding Path, Converter={StaticResource FileNameConverter}}" Opacity="0.5" TextTrimming="CharacterEllipsis"
-                                       ToolTip ="{Binding Path}" />
+
+            <!--Title-->
+            <TextBlock Text="{Binding DataModel.Title, FallbackValue='Unknown Title'}"
+                       FontWeight="Bold" FontSize="16" Margin="0 5 0 0"
+                       TextTrimming="CharacterEllipsis" />
+
+            <!--Separator-->
+            <Rectangle Height="2" Margin="0 5">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Offset="0" Color="#888" />
+                        <GradientStop Offset="1" Color="Transparent" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <!--Metadata Group-->
             <UniformGrid Rows="2" Columns="2" Opacity="0.5">
-                <TextBlock Text="{Binding Added, Converter={StaticResource DateTimeConverter}, ConverterParameter=added}"
-                                           ToolTip="{Binding Added}" TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding Duration, Converter={StaticResource TimeSpanConverter}}"
-                                           ToolTip="{Binding Duration}" TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding Updated, Converter={StaticResource DateTimeConverter}, ConverterParameter=updated}"
-                                           ToolTip="{Binding Updated}" TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding Size}"
-                                           ToolTip="{Binding Size, Converter={StaticResource ByteSizeConverter}}" />
+
+                <!--Added-->
+                <TextBlock ToolTip="{Binding DataModel.AddedUtc}"
+                           TextTrimming="CharacterEllipsis">
+                    <Run Text="Added" />
+                    <Run Text="{Binding DataModel.AddedDateDiff, FallbackValue='time unknown'}" />
+                </TextBlock>
+
+                <!--Resolution-->
+                <TextBlock TextTrimming="CharacterEllipsis">
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="Width:" />
+                            <Run Text="{Binding DataModel.MediaWidth, FallbackValue='0'}" />
+                            <LineBreak />
+                            <Run Text="Height:" />
+                            <Run Text="{Binding DataModel.MediaHeight,FallbackValue='0'}" />
+                        </TextBlock>
+                    </TextBlock.ToolTip>
+                    <Run Text="Resolution:" />
+                    <Run Text="{Binding DataModel.MediaResolution, FallbackValue='Unknown'}" />
+                </TextBlock>
+
+                <!--Updated-->
+                <TextBlock ToolTip="{Binding DataModel.UpdatedUtc}"
+                           TextTrimming="CharacterEllipsis">
+                    <Run Text="Updated" />
+                    <Run Text="{Binding DataModel.UpdatedDateDiff, FallbackValue='time unknown'}" />
+                </TextBlock>
+
+                <!--Size-->
+                <TextBlock>
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="{Binding DataModel.SizeBytes}" />
+                            <Run Text="bytes" />
+                        </TextBlock>
+                    </TextBlock.ToolTip>
+                    <Run Text="Size:" />
+                    <Run Text="{Binding DataModel.SizeString, FallbackValue='Unknown'}" />
+                </TextBlock>
             </UniformGrid>
-            <ItemsControl ItemsSource="{Binding TagModels}" Background="Transparent" BorderThickness="0" Margin="0 0 0 5">
+
+            <!--Tags-->
+            <ItemsControl ItemsSource="{Binding DataModel.Tags}" Background="Transparent" BorderThickness="0" Margin="0 0 0 5">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel />
@@ -44,7 +125,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <ItemContainerTemplate DataType="string">
-                        <Label Template="{StaticResource TagTemplate}" DataContext="{Binding}" />
+                        <local:TagButtonView />
                     </ItemContainerTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

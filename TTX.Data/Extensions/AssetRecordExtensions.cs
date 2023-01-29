@@ -37,7 +37,7 @@ public static partial class AssetRecordExtensions
     {
         ItemId = Guid.NewGuid().ToByteArray(),
 
-        LastLocation = localPath,
+        FilePath = localPath,
         SizeBytes = file.SizeBytes,
         Crumbs = file.Crumbs,
         SHA256 = file.SHA256 ?? throw new NullReferenceException($"Missing SHA256 when creating {nameof(AssetRecord)}"),
@@ -45,6 +45,6 @@ public static partial class AssetRecordExtensions
         CreatedUtc = file.CreatedUtc,
         ModifiedUtc = file.ModifiedUtc,
 
-        Name = GetDefaultNameFromPath(localPath),
+        Title = GetDefaultNameFromPath(localPath),
     };
 }
