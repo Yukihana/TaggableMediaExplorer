@@ -6,17 +6,21 @@ namespace TTX.Data.Shared.QueryObjects;
 public class AssetCardResponse
 {
     public byte[] ItemId { get; set; } = Array.Empty<byte>();
-    public string Name { get; set; } = string.Empty;
 
     // Metadata
 
-    public HashSet<string> Tags { get; set; } = new();
-    public DateTime AddedUtc { get; set; } = DateTime.UtcNow;
     public long SizeBytes { get; set; } = 0;
 
     // Codec Information
 
-    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
-    public uint Height { get; set; } = 0;
-    public uint Width { get; set; } = 0;
+    public TimeSpan MediaDuration { get; set; } = TimeSpan.Zero;
+    public int MediaWidth { get; set; } = 0;
+    public int MediaHeight { get; set; } = 0;
+
+    // User Data
+
+    public string Title { get; set; } = string.Empty;
+    public HashSet<string> Tags { get; set; } = new();
+    public DateTime AddedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
 }

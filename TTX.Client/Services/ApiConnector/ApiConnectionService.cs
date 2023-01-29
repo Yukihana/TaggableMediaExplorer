@@ -33,7 +33,7 @@ internal class ApiConnectionService
         if (response == null)
             return;
 
-        _syncContext.Send((state) =>
+        _syncContext.Post((state) =>
         {
             if (state is T stateObj)
                 dispatchAction.Invoke(stateObj);
@@ -45,11 +45,6 @@ internal class ApiConnectionService
     internal async Task QuerySearch(SearchQuery search, Action<SearchResponse> dispatchAction, CancellationToken token = default)
         => await PerformGet("api/Search", search.ToQuery(), dispatchAction, token).ConfigureAwait(false);
 
-    internal async Task LoadAssetCard(string guid, Action<AssetCardResponse> dispatchAction, CancellationToken token = default)
-        => await PerformGet("api/AssetData/Card", $"guid={guid}", dispatchAction, token).ConfigureAwait(false);
-
-    internal Task LoadAssetCard(object value, Action<AssetCardResponse> loadDataFrom, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    internal async Task LoadAssetCard(string idString, Action<AssetCardResponse> dispatchAction, CancellationToken token = default)
+        => await PerformGet("api/AssetData/Card", $"id={idString}", dispatchAction, token).ConfigureAwait(false);
 }

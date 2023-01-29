@@ -16,7 +16,7 @@ public partial class DbSyncService
         using var dbContext = _contextFactory.CreateDbContext();
         DbSet<AssetRecord> AssetsTable = dbContext.Assets;
 
-        // Ensure unique guids before operations start
+        // Ensure unique ItemIds before operations start
         List<byte[]> unique = new();
         List<byte[]> existing = await AssetsTable
             .Select(x => x.ItemId)
@@ -28,11 +28,11 @@ public partial class DbSyncService
         {
             if (unique.Any(x => x.SequenceEqual(asset.ItemId)))
             {
-                byte[] newGuid = EnumerableHelpers.GenerateSafeGuid(existing);
+                byte[] newItemId = EnumerableHelpers.GenerateSafeItemId(existing);
 
-                asset.ItemId = newGuid;
-                existing.Add(newGuid);
-                unique.Add(newGuid);
+                asset.ItemId = newItemId;
+                existing.Add(newItemId);
+                unique.Add(newItemId);
 
                 updated = true;
             }

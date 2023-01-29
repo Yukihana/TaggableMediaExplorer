@@ -17,5 +17,5 @@ public interface IDbSyncService
 
     Task<bool> AddRecord(AssetRecord rec, CancellationToken token = default);
 
-    Task<bool> UpdateRecord(byte[] guid, Action<AssetRecord> action, CancellationToken token = default);
+    Task<bool> UpdateRecord(byte[] itemId, Action<AssetRecord> action, CancellationToken token = default);
 }

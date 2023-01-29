@@ -7,11 +7,11 @@ namespace TTX.Services.QueryApi;
 
 public partial class QueryApiService
 {
-    public AssetCardResponse? GetAssetCard(string guidString)
+    public AssetCardResponse? GetAssetCard(string idString)
     {
-        byte[] guid = new Guid(guidString).ToByteArray();
-        var results = _assetsIndexer.PerformQuery(guid, (guid, list)
-            => list.Where(x => x.ItemId.SequenceEqual(guid)));
+        byte[] itemId = new Guid(idString).ToByteArray();
+        var results = _assetsIndexer.PerformQuery(itemId, (id, list)
+            => list.Where(x => x.ItemId.SequenceEqual(id)));
 
         if (results.Count() != 1)
             return null;

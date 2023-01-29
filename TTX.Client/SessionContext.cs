@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using TTX.Client.Services.ApiConnector;
 using TTX.Client.Services.SessionClient;
 using TTX.Client.ViewHandles;

@@ -25,7 +25,7 @@ public static class EnumerableHelpers
             collection.Add(item);
     }
 
-    public static byte[] GenerateSafeGuid(IEnumerable<byte[]> existing)
+    public static byte[] GenerateSafeItemId(IEnumerable<byte[]> existing)
     {
         byte[] result;
         do { result = Guid.NewGuid().ToByteArray(); }

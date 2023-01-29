@@ -54,10 +54,10 @@ public partial class AssetsIndexerService
     private async Task<bool> UpdateRecord(AssetRecord rec, Action<AssetRecord> action, CancellationToken token = default)
     {
         // Prepare
-        byte[] guid = rec.SafeRead(x => x.ItemId, rec.Lock);
+        byte[] itemId = rec.SafeRead(x => x.ItemId, rec.Lock);
 
         // Update Storage DB
-        if (!await _dbsync.UpdateRecord(guid, action, token).ConfigureAwait(false))
+        if (!await _dbsync.UpdateRecord(itemId, action, token).ConfigureAwait(false))
             return false;
 
         // Update In-Memory DB
@@ -67,7 +67,7 @@ public partial class AssetsIndexerService
 
     // Delete
 
-    private async Task DeleteRecord(byte[] guid, CancellationToken token = default)
+    private async Task DeleteRecord(byte[] itemId, CancellationToken token = default)
     {
     }
 }

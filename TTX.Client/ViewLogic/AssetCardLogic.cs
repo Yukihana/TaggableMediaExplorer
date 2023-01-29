@@ -35,6 +35,6 @@ public partial class AssetCardLogic : ObservableObject
         _loadTask.ContinueWith(t => _loadTask = null);
     }
 
-    public void LoadDataFrom(AssetCardResponse card)
-        => DataModel = card.CopyValues<AssetCardData>();
+    public void LoadDataFrom(AssetCardResponse response)
+        => DataModel = response.CopyValues<AssetCardData>();
 }

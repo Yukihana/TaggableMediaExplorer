@@ -78,7 +78,7 @@
                 <TextBlock ToolTip="{Binding DataModel.AddedUtc}"
                            TextTrimming="CharacterEllipsis">
                     <Run Text="Added" />
-                    <Run Text="{Binding DataModel.AddedDateDiff, FallbackValue='time unknown'}" />
+                    <Run Text="{Binding DataModel.AddedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
                 </TextBlock>
 
                 <!--Resolution-->
@@ -93,14 +93,16 @@
                         </TextBlock>
                     </TextBlock.ToolTip>
                     <Run Text="Resolution:" />
-                    <Run Text="{Binding DataModel.MediaResolution, FallbackValue='Unknown'}" />
+                    <Run Text="{Binding DataModel.MediaWidth, FallbackValue='0'}" />
+                    <Run Text="x" />
+                    <Run Text="{Binding DataModel.MediaHeight,FallbackValue='0'}" />
                 </TextBlock>
 
                 <!--Updated-->
                 <TextBlock ToolTip="{Binding DataModel.UpdatedUtc}"
                            TextTrimming="CharacterEllipsis">
                     <Run Text="Updated" />
-                    <Run Text="{Binding DataModel.UpdatedDateDiff, FallbackValue='time unknown'}" />
+                    <Run Text="{Binding DataModel.UpdatedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
                 </TextBlock>
 
                 <!--Size-->
@@ -112,7 +114,7 @@
                         </TextBlock>
                     </TextBlock.ToolTip>
                     <Run Text="Size:" />
-                    <Run Text="{Binding DataModel.SizeString, FallbackValue='Unknown'}" />
+                    <Run Text="{Binding DataModel.SizeString, Mode=OneWay, FallbackValue='Unknown'}" />
                 </TextBlock>
             </UniformGrid>
 

@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.Json.Serialization;
 using TTX.Library.Helpers;
 
@@ -13,23 +12,11 @@ public partial class AssetCardData : ObservableObject
     [NotifyPropertyChangedFor(nameof(ItemIdString))]
     private byte[] _itemId = Array.Empty<byte>();
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(FileName))]
-    private string _filePath = string.Empty;
-
     // Metadata
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SizeString))]
     private long _sizeBytes = 0;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(AddedDateDiff))]
-    private DateTime _addedUtc = DateTime.UtcNow;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(UpdatedDateDiff))]
-    private DateTime _updatedUtc = DateTime.UtcNow;
 
     // Codec Information
 
@@ -38,7 +25,6 @@ public partial class AssetCardData : ObservableObject
     private TimeSpan _mediaDuration = TimeSpan.Zero;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(MediaResolution))]
     private uint _mediaWidth = 0;
 
     [ObservableProperty]
@@ -52,6 +38,14 @@ public partial class AssetCardData : ObservableObject
     [ObservableProperty]
     private HashSet<string> _tags = new();
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AddedDateDiff))]
+    private DateTime _addedUtc = DateTime.UtcNow;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UpdatedDateDiff))]
+    private DateTime _updatedUtc = DateTime.UtcNow;
+
     // ------- //
     // Derived //
     // ------- //
@@ -59,16 +53,13 @@ public partial class AssetCardData : ObservableObject
     [JsonIgnore]
     public string ItemIdString => ItemId.Length == 16 ? new Guid(ItemId).ToString() : string.Empty;
 
-    [JsonIgnore]
-    public string FileName => Path.GetFileName(FilePath) ?? string.Empty;
-
     // Derived : Metadata
 
     [JsonIgnore]
     public string SizeString => SizeBytes.ToSizeString();
 
     [JsonIgnore]
-    public string AddedDateDiff => AddedUtc.GetTimeDiff(true);
+    public string AddedDateDiff => AddedUtc.GetTimeDiff();
 
     [JsonIgnore]
     public string UpdatedDateDiff => UpdatedUtc.GetTimeDiff();
@@ -77,9 +68,6 @@ public partial class AssetCardData : ObservableObject
 
     [JsonIgnore]
     public string DurationConcise => MediaDuration.ToConciseDuration();
-
-    [JsonIgnore]
-    public string MediaResolution => $"{MediaWidth} x {MediaHeight}";
 
     // Gui use
 

@@ -19,10 +19,10 @@ public partial class DbSyncService
             using var dbContext = _contextFactory.CreateDbContext();
             DbSet<AssetRecord> AssetsTable = dbContext.Assets;
 
-            // Check for guid uniqueness
-            List<byte[]> guids = await AssetsTable.Select(x => x.ItemId).ToListAsync(token).ConfigureAwait(false);
-            if (guids.Any(x => x.SequenceEqual(rec.ItemId)))
-                rec.ItemId = EnumerableHelpers.GenerateSafeGuid(guids);
+            // Check for item id uniqueness
+            List<byte[]> itemIds = await AssetsTable.Select(x => x.ItemId).ToListAsync(token).ConfigureAwait(false);
+            if (itemIds.Any(x => x.SequenceEqual(rec.ItemId)))
+                rec.ItemId = EnumerableHelpers.GenerateSafeItemId(itemIds);
 
             // Add and save changes
             await AssetsTable.AddAsync(rec, token).ConfigureAwait(false);
@@ -36,21 +36,21 @@ public partial class DbSyncService
         }
     }
 
-    public async Task<bool> UpdateRecord(byte[] guid, Action<AssetRecord> action, CancellationToken token = default)
+    public async Task<bool> UpdateRecord(byte[] itemId, Action<AssetRecord> action, CancellationToken token = default)
     {
         try
         {
             using var dbContext = _contextFactory.CreateDbContext();
             DbSet<AssetRecord> AssetsTable = dbContext.Assets;
             List<AssetRecord> matched = await AssetsTable
-                .Where(x => x.ItemId.SequenceEqual(guid))
+                .Where(x => x.ItemId.SequenceEqual(itemId))
                 .ToListAsync(token)
                 .ConfigureAwait(false);
 
             if (matched.Count == 0)
-                throw new InvalidOperationException($"No {nameof(AssetRecord)} exists in database with ID: {new Guid(guid)}");
+                throw new InvalidOperationException($"No {nameof(AssetRecord)} exists in database with ID: {new Guid(itemId)}");
             else if (matched.Count > 1)
-                throw new InvalidOperationException($"Ambiguity between multiple {nameof(AssetRecord)} instances with the same ID: {new Guid(guid)}");
+                throw new InvalidOperationException($"Ambiguity between multiple {nameof(AssetRecord)} instances with the same ID: {new Guid(itemId)}");
 
             action.Invoke(matched[0]);
             await dbContext.SaveChangesAsync(token).ConfigureAwait(false);
@@ -58,7 +58,7 @@ public partial class DbSyncService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update {type} in the database for ID: {guid}", nameof(AssetRecord), new Guid(guid));
+            _logger.LogError(ex, "Failed to update {type} in the database for ID: {itemId}", nameof(AssetRecord), new Guid(itemId));
             return false;
         }
     }

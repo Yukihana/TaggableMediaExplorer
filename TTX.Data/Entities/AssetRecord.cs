@@ -13,10 +13,9 @@ public class AssetRecord
     [Key]
     public int ID { get; set; } = 0;
 
-    public byte[] ItemId { get; set; } = Array.Empty<byte>(); // TODO, scan all places and remove the term 'guid' from any kind of naming. using ItemId instead. Even change method names if required
-
     // Identity
 
+    public byte[] ItemId { get; set; } = Array.Empty<byte>();
     public string FilePath { get; set; } = string.Empty;
 
     // Metadata
@@ -35,7 +34,7 @@ public class AssetRecord
 
     public int MediaWidth { get; set; } = 0;
     public int MediaHeight { get; set; } = 0;
-    public int MediaDuration { get; set; } = 0;
+    public TimeSpan MediaDuration { get; set; } = TimeSpan.Zero;
 
     // Codecs
 
@@ -59,7 +58,7 @@ public class AssetRecord
     public HashSet<string> Tags
     {
         get => TagsString.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToHashSet();
-        set => TagsString = string.Join(' ', value);
+        set => TagsString = string.Join(' ', value).ToLowerInvariant();
     }
 
     [NotMapped]

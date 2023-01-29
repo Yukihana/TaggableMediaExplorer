@@ -59,6 +59,6 @@ public partial class AssetsIndexerService
         finally { rec.Lock.ExitReadLock(); }
     }
 
-    private static bool GuidMatch(byte[] guid, AssetRecord rec)
-        => rec.SafeRead(x => x.ItemId.SequenceEqual(guid), rec.Lock);
+    private static bool ItemIdMatch(byte[] itemId, AssetRecord rec)
+        => rec.SafeRead(x => x.ItemId.SequenceEqual(itemId), rec.Lock);
 }
