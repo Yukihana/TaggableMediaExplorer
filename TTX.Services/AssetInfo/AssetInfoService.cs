@@ -14,7 +14,7 @@ public partial class AssetInfoService : IAssetInfoService
 
     public AssetInfoService(ILogger<AssetInfoService> logger, IOptionsSet options)
     {
-        _options = options.ExtractValues<AssetInfoOptions>();
+        _options = options.InitializeServiceOptions<AssetInfoOptions>();
         _logger = logger;
 
         _semaphoreProc = new(_options.HashProcessingConcurrency);

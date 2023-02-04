@@ -17,6 +17,6 @@ public partial class DbSyncService : IDbSyncService
     {
         _contextFactory = contextFactory;
         _logger = logger;
-        _options = options.ExtractValues<DbSyncOptions>();
+        _options = options.InitializeServiceOptions<DbSyncOptions>();
     }
 }

@@ -12,6 +12,6 @@ public partial class WatcherService : IWatcherService
     {
         _logger = logger;
 
-        _options = options.ExtractValues<WatcherOptions>();
+        _options = options.InitializeServiceOptions<WatcherOptions>();
     }
 }

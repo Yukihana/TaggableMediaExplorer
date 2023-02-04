@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TTX.Generators\TTX.Generators.csproj" />
+  </ItemGroup>
+
 </Project>

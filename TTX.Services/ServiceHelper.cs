@@ -4,10 +4,10 @@ namespace TTX.Services;
 
 public static class ServiceHelper
 {
-    internal static T ExtractValues<T>(this object source) where T : IServiceOptions, new()
+    internal static T InitializeServiceOptions<T>(this IOptionsSet options) where T : IServiceOptions, new()
     {
-        T options = source.CopyValues<T>().CopyFullyDecoupled();
-        options.Initialize();
-        return options;
+        var result = options.CopyByReflection<T>();
+        result.Initialize();
+        return result;
     }
 }

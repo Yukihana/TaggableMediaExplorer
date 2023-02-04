@@ -26,9 +26,31 @@ public static class ObjectHelpers
     /// <param name="source">The object to be copied.</param>
     /// <returns>A fully decoupled true deep copy.</returns>
     /// <exception cref="NullReferenceException">Returned when the copy operation fails.</exception>
-    public static TOut CopyImprinted<TIn, TOut>(this TIn source)
-        => JsonSerializer.Deserialize<TOut>(JsonSerializer.Serialize(source))
+    public static TOut CopyBySerialization<TIn, TOut>(this TIn source)
+        => JsonSerializer.Deserialize<TOut>(JsonSerializer.Serialize(source), new JsonSerializerOptions() { })
         ?? throw new NullReferenceException();
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static T CopyByReflection<T>(this object source) where T : new()
+    {
+        T result = new();
+
+        foreach (var field in source.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            if (typeof(T).GetField(field.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) is FieldInfo targetField &&
+                field.FieldType == targetField.FieldType)
+            {
+                targetField.SetValue(result, field.GetValue(source));
+            }
+        }
+
+        return result.CopyFullyDecoupled();
+    }
 
     /// <summary>
     /// Extract relevant properties and fields into a new instance of the required type.
@@ -66,74 +88,4 @@ public static class ObjectHelpers
 
         return result.CopyFullyDecoupled();
     }
-
-    /*
-    internal static DbSet<AssetRecord> NullCheckAssetsTable(TTXContext? db)
-    {
-        if (db != null)
-        {
-            if (db.Assets != null)
-            {
-                return db.Assets;
-            }
-        }
-        throw new NullReferenceException();
-    }
-
-    internal static void CopyFieldValuesTo<T>(this T source, T target) where T : class
-    {
-        foreach (var field in typeof(T).GetFields())
-        {
-            field.SetValue(target, field.GetValue(source));
-        }
-    }
-
-    internal static void CopyPropertyValuesTo<T>(this T source, T target) where T : class
-    {
-        foreach (var prop in typeof(T).GetProperties())
-        {
-            if (prop.CanWrite && prop.CanRead)
-            {
-                prop.SetValue(target, prop.GetValue(source));
-            }
-        }
-    }
-
-    internal static int CopyValues(this object source, object target)
-    {
-        int count = 0;
-        foreach (var prop in source.GetType().GetProperties().Where(x => x.CanRead))
-        {
-            if (target.GetType().GetProperty(prop.Name) is PropertyInfo targetProp)
-            {
-                if (targetProp.CanWrite)
-                    targetProp.SetValue(target, prop.GetValue(source));
-                count++;
-            }
-        }
-        return count;
-    }
-
-    internal static int CopyPropertyValuesUnsafe(this object source, object target)
-    {
-        int count = 0;
-        foreach (var prop in source.GetType().GetProperties().Where(x => x.CanRead))
-        {
-            if (target.GetType().GetProperty(prop.Name) is PropertyInfo targetProp)
-            {
-                if (targetProp.CanWrite)
-                    targetProp.SetValue(target, prop.GetValue(source));
-                count++;
-            }
-        }
-        return count;
-    }
-    public static TOptions ExtractOptions<TOptions>(this WorkspaceProfile profile) where TOptions : IServiceOptions, new()
-    {
-        var options = profile.CopyValues<TOptions>().CopyFullyDecoupled();
-        options.Initialize();
-        return options;
-    }
-
-    */
 }

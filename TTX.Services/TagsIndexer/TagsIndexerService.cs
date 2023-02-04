@@ -12,7 +12,7 @@ public partial class TagsIndexerService : ITagsIndexerService
 
     public TagsIndexerService(IOptionsSet options)
     {
-        _options = options.ExtractValues<TagsIndexerOptions>();
+        _options = options.InitializeServiceOptions<TagsIndexerOptions>();
     }
 
     public async Task Reload(CancellationToken token = default)

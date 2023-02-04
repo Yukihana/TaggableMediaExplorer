@@ -10,7 +10,7 @@ public partial class AuxiliaryService : IAuxiliaryService
     public AuxiliaryService(ILogger<AuxiliaryService> logger, IOptionsSet options)
     {
         _logger = logger;
-        _options = options.ExtractValues<AuxiliaryOptions>();
+        _options = options.InitializeServiceOptions<AuxiliaryOptions>();
     }
 
     public void Summarize()

@@ -1,6 +1,6 @@
 ﻿namespace TTX.Services.DbSync;
 
-public class DbSyncOptions : IServiceOptions
+internal class DbSyncOptions : IDbSyncOptions
 {
     public void Initialize()
     { }

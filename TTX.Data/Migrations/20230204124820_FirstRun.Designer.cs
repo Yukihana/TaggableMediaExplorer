@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230129072709_FirstRun")]
+    [Migration("20230204124820_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
@@ -68,8 +68,8 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MediaDuration")
-                        .HasColumnType("INTEGER");
+                    b.Property<TimeSpan>("MediaDuration")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MediaHeight")
                         .HasColumnType("INTEGER");

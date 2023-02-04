@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -27,7 +27,7 @@ namespace TTX.Data.Migrations
                     MatchIgnore = table.Column<string>(type: "TEXT", nullable: false),
                     MediaWidth = table.Column<int>(type: "INTEGER", nullable: false),
                     MediaHeight = table.Column<int>(type: "INTEGER", nullable: false),
-                    MediaDuration = table.Column<int>(type: "INTEGER", nullable: false),
+                    MediaDuration = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     Container = table.Column<string>(type: "TEXT", nullable: false),
                     DefaultVideoTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
                     DefaultAudioTrackCodec = table.Column<string>(type: "TEXT", nullable: false),

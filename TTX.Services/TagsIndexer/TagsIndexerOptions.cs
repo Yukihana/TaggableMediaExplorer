@@ -1,6 +1,6 @@
 ﻿namespace TTX.Services.TagsIndexer;
 
-public class TagsIndexerOptions : IServiceOptions
+public class TagsIndexerOptions : ITagsIndexerOptions
 {
     public void Initialize()
     { }

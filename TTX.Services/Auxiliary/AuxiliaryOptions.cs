@@ -1,6 +1,6 @@
 ﻿namespace TTX.Services.Auxiliary;
 
-internal class AuxiliaryOptions : IServiceOptions
+internal class AuxiliaryOptions : IAuxiliaryOptions
 {
     public void Initialize()
     { }

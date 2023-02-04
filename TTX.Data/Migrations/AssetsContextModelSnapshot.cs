@@ -65,8 +65,8 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MediaDuration")
-                        .HasColumnType("INTEGER");
+                    b.Property<TimeSpan>("MediaDuration")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MediaHeight")
                         .HasColumnType("INTEGER");

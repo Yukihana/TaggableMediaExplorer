@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace TTX.Services.AssetsIndexer;
 
-public class AssetsIndexerOptions : IServiceOptions
+public class AssetsIndexerOptions : IAssetsIndexerOptions
 {
     public string ServerRoot { get; set; } = string.Empty;
     public string AssetsPath { get; set; } = "Assets";

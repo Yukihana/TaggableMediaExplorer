@@ -32,7 +32,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
         _assetInfo = assetinfo;
         _auxiliary = auxiliary;
         _logger = logger;
-        _options = options.ExtractValues<AssetsIndexerOptions>();
+        _options = options.InitializeServiceOptions<AssetsIndexerOptions>();
 
         _watcher.StartWatcher(this);
     }

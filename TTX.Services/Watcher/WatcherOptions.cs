@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace TTX.Services.Watcher;
 
-public class WatcherOptions : IServiceOptions
+internal class WatcherOptions : IWatcherOptions
 {
     // Base options
 
