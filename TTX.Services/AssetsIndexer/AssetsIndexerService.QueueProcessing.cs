@@ -1,7 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TTX.Library.FileSystemHelpers;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -72,6 +77,12 @@ public partial class AssetsIndexerService
         _logger.LogInformation("StartIndexing operation took {elapsed}.", timer.Elapsed);
     }
 
+    private void IndexPending()
+    {
+        if (_queueProcessingEnabled)
+            _ = Task.Run(async () => await ProcessPending().ConfigureAwait(false));
+    }
+
     private async Task ProcessPending(CancellationToken token = default)
     {
         if (token.IsCancellationRequested)
@@ -92,27 +103,43 @@ public partial class AssetsIndexerService
 
     // Batch Processing
 
-    private async Task ProcessByBatches(CancellationToken token = default)
+    private async Task ProcessByBatches(CancellationToken ctoken = default)
     {
-        while (DequeueAllPending() is string[] pending
-            && pending.Length > 0
-            && !token.IsCancellationRequested)
+        ctoken.ThrowIfCancellationRequested();
+        IEnumerable<string> pending = Array.Empty<string>();
+
+        while (BuildBatch(pending) is string[] { Length: > 0 } batch)
         {
-            await ProcessBatch(pending, token).ConfigureAwait(false);
+            ctoken.ThrowIfCancellationRequested();
+            pending = await DeepSync(batch, ctoken).ConfigureAwait(false);
         }
+
+        _logger.LogInformation("All pending files have been processed.");
     }
 
-    private async Task ProcessBatch(string[] pending, CancellationToken token)
+    private string[] BuildBatch(IEnumerable<string> pending)
+    {
+        List<string> batch = new(pending);
+        batch.AddRange(_assetTracking.Dequeue());
+
+        HashSet<string> distinct = batch.ToHashSet(PlatformNamingHelper.FilenameComparer);
+
+        return distinct.ToArray();
+    }
+
+    private async Task<IEnumerable<string>> DeepSync(string[] batch, CancellationToken token)
     {
         Stopwatch timer = Stopwatch.StartNew();
-        int pathCount = pending.Length;
+        int pathCount = batch.Length;
         int successCount = 0;
-        await Parallel.ForEachAsync(pending, token, async (path, token) =>
+        ConcurrentBag<string> pending = new();
+
+        await Parallel.ForEachAsync(batch, token, async (path, token) =>
         {
             if (!await ProcessFile(path, token).ConfigureAwait(false))
             {
                 _logger.LogError("Failed to sync file {path}", path);
-                EnqueuePending(path);
+                pending.Add(path);
             }
             else Interlocked.Increment(ref successCount);
         }).ConfigureAwait(false);
@@ -120,5 +147,7 @@ public partial class AssetsIndexerService
         _logger.LogInformation("Batch processed in {elapsed} ms. No of files: {pathCount}.", timer.Elapsed, pathCount);
         if (successCount < pathCount)
             _logger.LogWarning("Failed to sync {failCount} files.", pathCount - successCount);
+
+        return pending;
     }
 }

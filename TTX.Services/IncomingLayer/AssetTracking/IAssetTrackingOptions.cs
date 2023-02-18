@@ -1,6 +1,6 @@
-﻿namespace TTX.Services.Watcher;
+﻿namespace TTX.Services.IncomingLayer.AssetTracking;
 
-public interface IWatcherOptions : IServiceOptions
+public interface IAssetTrackingOptions : IServiceOptions
 {
     string ServerRoot { get; set; }
     string AssetsPath { get; set; }

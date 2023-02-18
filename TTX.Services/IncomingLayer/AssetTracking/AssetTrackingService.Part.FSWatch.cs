@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
-using TTX.Services.AssetsIndexer;
 
-namespace TTX.Services.Watcher;
+namespace TTX.Services.IncomingLayer.AssetTracking;
 
-public partial class WatcherService
+public partial class AssetTrackingService
 {
     private FileSystemWatcher? _watcher = null;
 
-    public void StartWatcher(IAssetsIndexerService indexer)
+    public partial void StartWatcher(Action onEnqueueAction)
     {
         try { StopWatcher(); }
         finally
@@ -28,17 +28,19 @@ public partial class WatcherService
                 | NotifyFilters.Size,
             };
 
-            _watcher.Created += indexer.OnWatcherEvent;
-            _watcher.Renamed += indexer.OnWatcherEvent;
-            _watcher.Changed += indexer.OnWatcherEvent;
-            _watcher.Deleted += indexer.OnWatcherEvent;
+            _onEnqueueAction = onEnqueueAction;
+
+            _watcher.Created += (sender, eventargs) => EnqueueValidated(eventargs.FullPath);
+            _watcher.Renamed += (sender, eventargs) => EnqueueValidated(eventargs.OldFullPath, eventargs.FullPath);
+            _watcher.Changed += (sender, eventargs) => EnqueueValidated(eventargs.FullPath);
+            _watcher.Deleted += (sender, eventargs) => EnqueueValidated(eventargs.FullPath);
             _watcher.Error += OnError;
 
             _watcher.EnableRaisingEvents = true;
         }
     }
 
-    public void StopWatcher()
+    public partial void StopWatcher()
     {
         if (_watcher != null)
         {
@@ -47,6 +49,6 @@ public partial class WatcherService
         }
     }
 
-    public void OnError(object sender, ErrorEventArgs e)
+    public partial void OnError(object sender, ErrorEventArgs e)
         => _logger.LogError(e.GetException(), "File system watcher has encountered an error.", e);
 }

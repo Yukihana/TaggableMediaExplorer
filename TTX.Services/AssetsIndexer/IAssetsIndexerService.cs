@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
@@ -20,10 +19,4 @@ public interface IAssetsIndexerService
     Task StartIndexing(CancellationToken token = default);
 
     Task StopIndexing(CancellationToken token = default);
-
-    // FSW
-
-    void OnWatcherEvent(object sender, FileSystemEventArgs e);
-
-    void OnWatcherEvent(object sender, RenamedEventArgs e);
 }

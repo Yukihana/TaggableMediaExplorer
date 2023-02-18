@@ -11,10 +11,10 @@ using TTX.Services.AssetInfo;
 using TTX.Services.AssetsIndexer;
 using TTX.Services.Auxiliary;
 using TTX.Services.DbSync;
+using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Notification;
 using TTX.Services.QueryApi;
 using TTX.Services.TagsIndexer;
-using TTX.Services.Watcher;
 
 namespace TTX.Server.Startup;
 
@@ -86,7 +86,7 @@ public static partial class BootStrap
     {
         // Independent layer
         services.AddSingleton<IDbSyncService, DbSyncService>();
-        services.AddSingleton<IWatcherService, WatcherService>();
+        services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
         services.AddSingleton<IAssetInfoService, AssetInfoService>();
         services.AddSingleton<IAuxiliaryService, AuxiliaryService>();
 

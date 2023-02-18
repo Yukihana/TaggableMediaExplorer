@@ -2,9 +2,9 @@
 using TTX.Services.AssetsIndexer;
 using TTX.Services.Auxiliary;
 using TTX.Services.DbSync;
+using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.TagsIndexer;
 using TTX.Services.Thumbnails;
-using TTX.Services.Watcher;
 
 namespace TTX.Services;
 
@@ -15,6 +15,6 @@ public interface IOptionsSet :
     IDbSyncOptions,
     ITagsIndexerOptions,
     IThumbnailOptions,
-    IWatcherOptions
+    IAssetTrackingOptions
 {
 }

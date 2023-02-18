@@ -14,28 +14,29 @@ namespace TTX.Services.AssetsIndexer;
 
 public partial class AssetsIndexerService
 {
-    private async Task Reload(CancellationToken token = default)
+    private async Task Reload(CancellationToken ctoken = default)
     {
         Stopwatch timer = Stopwatch.StartNew();
 
         IsReady = false;
 
         // Records
-        await ReloadRecords(token).ConfigureAwait(false);
+        await ReloadRecords(ctoken).ConfigureAwait(false);
 
         // Mark records with matching asset integrity data (as this may cause duplication issues during sync)
         ScanDuplicateRecords();
 
         // Fetch Files
-        ClearPending();
-        HashSet<string> paths = await _watcher.GetAllFiles(token).ConfigureAwait(false);
+        _assetTracking.ClearPending();
+        HashSet<string> paths = _assetTracking.GetAllFiles(ctoken);
 
         // QuickSync and set indexer state to Ready
-        HashSet<string> pending = await QuickSyncFiles(paths, token).ConfigureAwait(false);
+        HashSet<string> pending = await QuickSyncFiles(paths, ctoken).ConfigureAwait(false);
         IsReady = true;
 
         // Continue with deep sync
-        await ProcessBatch(pending.ToArray(), token).ConfigureAwait(false);
+        if (pending.Count > 0)
+            await DeepSync(pending.ToArray(), ctoken).ConfigureAwait(false);
 
         timer.Stop();
         _logger.LogInformation("Full assets reload completed in {elapsed} ms.", timer.Elapsed);

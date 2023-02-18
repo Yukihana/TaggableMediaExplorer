@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace TTX.Services.Watcher;
+namespace TTX.Services.IncomingLayer.AssetTracking;
 
 public static class WatcherHelper
 {

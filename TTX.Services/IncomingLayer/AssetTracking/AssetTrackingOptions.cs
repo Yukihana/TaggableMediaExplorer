@@ -2,9 +2,9 @@
 using System.IO;
 using System.Text.Json.Serialization;
 
-namespace TTX.Services.Watcher;
+namespace TTX.Services.IncomingLayer.AssetTracking;
 
-internal class WatcherOptions : IWatcherOptions
+internal class AssetTrackingOptions : IAssetTrackingOptions
 {
     // Base options
 
