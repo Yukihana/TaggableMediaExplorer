@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230204124820_FirstRun")]
+    [Migration("20230221195147_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />

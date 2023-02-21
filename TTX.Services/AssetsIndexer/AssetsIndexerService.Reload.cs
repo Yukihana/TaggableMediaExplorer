@@ -106,7 +106,8 @@ public partial class AssetsIndexerService
         if (matched.Count != 1)
             return false;
 
-        // If already validated, conclude as failed. Possible duplicate file. Hashed sync required
-        return matched[0].TryValidate();
+        // Finally register the asset on the presence registry
+        _assetPresence.Set(localPath, matched[0].ItemId);
+        return true;
     }
 }

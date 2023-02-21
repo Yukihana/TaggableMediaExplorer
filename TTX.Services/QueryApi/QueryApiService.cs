@@ -1,4 +1,5 @@
 ﻿using TTX.Services.AssetsIndexer;
+using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.QueryApi;
 
@@ -7,10 +8,12 @@ namespace TTX.Services.QueryApi;
 /// </summary>
 public partial class QueryApiService : IQueryApiService
 {
+    private readonly IAssetPresenceService _assetPresence;
     private readonly IAssetsIndexerService _assetsIndexer;
 
-    public QueryApiService(IAssetsIndexerService assetsIndexer)
+    public QueryApiService(IAssetPresenceService assetPresence, IAssetsIndexerService assetsIndexer)
     {
+        _assetPresence = assetPresence;
         _assetsIndexer = assetsIndexer;
     }
 

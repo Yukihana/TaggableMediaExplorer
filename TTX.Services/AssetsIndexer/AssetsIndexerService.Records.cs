@@ -41,7 +41,8 @@ public partial class AssetsIndexerService
         {
             _lockRecords.EnterReadLock();
 
-            return func.Invoke(input, _records);
+            // Make this read safe for rec.ItemId
+            return func(input, _records.Where(rec => _assetPresence.GetFirst(rec.ItemId) is not null));
         }
         finally { _lockRecords.ExitReadLock(); }
     }

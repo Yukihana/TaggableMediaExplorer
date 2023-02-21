@@ -63,13 +63,5 @@ public class AssetRecord
 
     [NotMapped]
     [JsonIgnore]
-    public HashSet<string> Duplicates { get; set; } = new();
-
-    [NotMapped]
-    [JsonIgnore]
-    public bool IsValid { get; set; } = false;
-
-    [NotMapped]
-    [JsonIgnore]
     public ReaderWriterLockSlim Lock { get; set; } = new();
 }

@@ -24,8 +24,10 @@ public partial class AssetsIndexerService
         if (!await _dbsync.AddRecord(rec, token).ConfigureAwait(false))
             return false;
 
-        // Update In-Memory
+        // Update In-Memory (pending, fix guid creation process, use universal, as on addpathlist dirty-git branch)
+        _assetPresence.Set(localPath, rec.ItemId);
         SafeAddToRecords(rec);
+
         return true;
     }
 

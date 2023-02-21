@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
-using TTX.Data.Extensions;
 using TTX.Data.Models;
 
 namespace TTX.Services.AssetsIndexer;
@@ -35,7 +34,7 @@ public partial class AssetsIndexerService
             // If file is inaccessible, invalidate
             if (file == null)
             {
-                InvalidatePath(localPath, recs);
+                _assetPresence.Remove(localPath);
 
                 if (fileExists)
                 {
@@ -52,20 +51,17 @@ public partial class AssetsIndexerService
             {
                 if (PathMatch(localPath, dataMatch))
                 {
-                    dataMatch.SetValid(true);
+                    _assetPresence.Set(localPath, dataMatch.ItemId);
                     _logger.LogInformation("Activated existing record for file: {path}", path);
                 }
-                else if (dataMatch.TryValidate())
+                else
                 {
                     // TODO add old path for log
                     await UpdateRecord(dataMatch, x => x.FilePath = localPath, token).ConfigureAwait(false);
                     _logger.LogInformation("Updated record for file: {path}", path);
-                }
-                else
-                {
-                    // TODO add original record to add duplicate
-                    _auxiliary.AddDuplicateFile(path);
-                    _logger.LogInformation("Found duplicate file: {path}", path);
+
+                    if (_assetPresence.GetAll(dataMatch.ItemId).Length > 1)
+                        _logger.LogInformation("Found duplicate for Id:{itemId} at {path}", dataMatch.ItemId, path);
                 }
                 return true;
             }

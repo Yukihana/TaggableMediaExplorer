@@ -14,6 +14,7 @@ using TTX.Services.DbSync;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Notification;
 using TTX.Services.QueryApi;
+using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.TagsIndexer;
 
 namespace TTX.Server.Startup;
@@ -53,14 +54,18 @@ public static partial class BootStrap
     /// <exception cref="Exception"></exception>
     public static IServiceCollection AttachDatabase(this WebApplicationBuilder builder, WorkspaceProfile profile)
     {
+        // Get the connection pattern ("Data Source=@")
         string connectionString = builder.Configuration.GetConnectionString("AssetsDbString")
             ?? throw new Exception("Workspace path is missing from appsettings.");
 
+        // Prepare the path to the Db file
         string pathToDbFile = Path.IsPathFullyQualified(profile.AssetsDbFilename)
             ? profile.AssetsDbFilename
             : Path.Combine(profile.ServerRoot, profile.AssetsDbFilename);
 
+        // Finalize the connection string
         connectionString = connectionString.Replace("@", pathToDbFile);
+
         builder.Services.AddDbContext<AssetsContext>(options => options.UseSqlite(connectionString), optionsLifetime: ServiceLifetime.Singleton);
         builder.Services.AddDbContextFactory<AssetsContext>(options => options.UseSqlite(connectionString));
 
@@ -70,8 +75,6 @@ public static partial class BootStrap
     /// <summary>
     /// Attach options required by various services.
     /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="profile"></param>
     public static void AttachOptions(this IServiceCollection services, WorkspaceProfile profile)
     {
         services.AddSingleton<IOptionsSet>(profile);
@@ -80,10 +83,11 @@ public static partial class BootStrap
     /// <summary>
     /// Attach the services.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="profile"></param>
     public static void AttachDataServices(this IServiceCollection services)
     {
+        // Storage Layer
+        services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
+
         // Independent layer
         services.AddSingleton<IDbSyncService, DbSyncService>();
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();

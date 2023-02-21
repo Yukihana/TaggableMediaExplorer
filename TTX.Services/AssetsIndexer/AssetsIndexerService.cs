@@ -3,6 +3,7 @@ using TTX.Services.AssetInfo;
 using TTX.Services.Auxiliary;
 using TTX.Services.DbSync;
 using TTX.Services.IncomingLayer.AssetTracking;
+using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.AssetsIndexer;
 
@@ -11,6 +12,8 @@ namespace TTX.Services.AssetsIndexer;
 /// </summary>
 public partial class AssetsIndexerService : IAssetsIndexerService
 {
+    private readonly IAssetPresenceService _assetPresence;
+
     private readonly IAssetTrackingService _assetTracking;
     private readonly IDbSyncService _dbsync;
     private readonly IAssetInfoService _assetInfo;
@@ -20,6 +23,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
     private readonly AssetsIndexerOptions _options;
 
     public AssetsIndexerService(
+        IAssetPresenceService assetPresence,
         IAssetTrackingService assetTracking,
         IDbSyncService dbsync,
         IAssetInfoService assetinfo,
@@ -27,6 +31,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
         ILogger<AssetsIndexerService> logger,
         IOptionsSet options)
     {
+        _assetPresence = assetPresence;
         _assetTracking = assetTracking;
         _dbsync = dbsync;
         _assetInfo = assetinfo;
