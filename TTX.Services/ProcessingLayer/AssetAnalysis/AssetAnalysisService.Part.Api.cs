@@ -19,12 +19,12 @@ public partial class AssetAnalysisService
         finally { _semaphoreMetadata.Release(); }
     }
 
-    public async partial Task<AssetQuickSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token)
+    public async partial Task<QuickAssetSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token)
     {
         try
         {
             token.ThrowIfCancellationRequested();
-            return await GetAssetFile<AssetQuickSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
+            return await GetAssetFile<QuickAssetSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -33,12 +33,12 @@ public partial class AssetAnalysisService
         }
     }
 
-    public async partial Task<AssetFullSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token)
+    public async partial Task<FullAssetSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token)
     {
         try
         {
             token.ThrowIfCancellationRequested();
-            AssetFullSyncInfo file = await GetAssetFile<AssetFullSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
+            FullAssetSyncInfo file = await GetAssetFile<FullAssetSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
 
             // SHA256
             file.SHA256 = file.SizeBytes > _options.ReadBufferSize

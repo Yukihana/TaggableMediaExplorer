@@ -33,18 +33,18 @@ public static partial class AssetRecordExtensions
         return ti.ToTitleCase(sanitized);
     }
 
-    public static AssetRecord GenerateAssetRecord(this AssetFullSyncInfo file, string localPath) => new()
+    public static AssetRecord GenerateRecord(this FullAssetSyncInfo info) => new()
     {
         ItemId = Guid.NewGuid().ToByteArray(),
 
-        FilePath = localPath,
-        SizeBytes = file.SizeBytes,
-        Crumbs = file.Crumbs,
-        SHA256 = file.SHA256 ?? throw new NullReferenceException($"Missing SHA256 when creating {nameof(AssetRecord)}"),
+        FilePath = info.LocalPath,
+        SizeBytes = info.SizeBytes,
+        Crumbs = info.Crumbs,
+        SHA256 = info.SHA256,
 
-        CreatedUtc = file.CreatedUtc,
-        ModifiedUtc = file.ModifiedUtc,
+        CreatedUtc = info.CreatedUtc,
+        ModifiedUtc = info.ModifiedUtc,
 
-        Title = GetDefaultNameFromPath(localPath),
+        Title = GetDefaultNameFromPath(info.LocalPath),
     };
 }

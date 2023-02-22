@@ -8,7 +8,7 @@ public interface IAssetAnalysisService
 {
     Task<bool> FileExists(string path, CancellationToken token = default);
 
-    Task<AssetQuickSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token = default);
+    Task<QuickAssetSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token = default);
 
-    Task<AssetFullSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
+    Task<FullAssetSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
 }

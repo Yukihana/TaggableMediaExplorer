@@ -9,7 +9,7 @@ namespace TTX.Services.AssetsIndexer;
 
 public partial class AssetsIndexerService
 {
-    private static bool ProvisionalMatch(AssetRecord rec, AssetQuickSyncInfo file)
+    private static bool ProvisionalMatch(AssetRecord rec, QuickAssetSyncInfo file)
     {
         try
         {
@@ -29,7 +29,7 @@ public partial class AssetsIndexerService
         finally { rec.Lock.ExitReadLock(); }
     }
 
-    private static bool IntegrityMatch(AssetRecord rec, AssetFullSyncInfo file)
+    private static bool IntegrityMatch(AssetRecord rec, FullAssetSyncInfo file)
     {
         try
         {

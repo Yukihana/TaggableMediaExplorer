@@ -29,9 +29,9 @@ public partial class AssetAnalysisService : IAssetAnalysisService
 
     public partial Task<bool> FileExists(string path, CancellationToken token = default);
 
-    public partial Task<AssetQuickSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token = default);
+    public partial Task<QuickAssetSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token = default);
 
-    public partial Task<AssetFullSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
+    public partial Task<FullAssetSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
 
     private partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token = default) where T : IAssetMetadata, new();
 

@@ -15,10 +15,10 @@ public partial class AssetsIndexerService
 {
     // Create
 
-    private async Task<bool> CreateRecord(AssetFullSyncInfo file, string localPath, CancellationToken token = default)
+    private async Task<bool> CreateRecord(FullAssetSyncInfo file, string localPath, CancellationToken token = default)
     {
         // Process
-        AssetRecord rec = file.GenerateAssetRecord(localPath);
+        AssetRecord rec = file.GenerateRecord();
 
         // Push to DB
         if (!await _dbsync.AddRecord(rec, token).ConfigureAwait(false))

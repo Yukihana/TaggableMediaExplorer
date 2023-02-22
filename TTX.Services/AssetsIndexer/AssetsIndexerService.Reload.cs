@@ -87,7 +87,7 @@ public partial class AssetsIndexerService
 
         // Prepare
         List<AssetRecord> recs = Snapshot();
-        AssetQuickSyncInfo? info = await _assetAnalysis.Fetch(path, _options.AssetsPathFull, token).ConfigureAwait(false);
+        QuickAssetSyncInfo? info = await _assetAnalysis.Fetch(path, _options.AssetsPathFull, token).ConfigureAwait(false);
         if (info == null)
             return false;
 
