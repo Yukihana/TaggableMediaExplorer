@@ -9,7 +9,7 @@ namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
 public partial class AssetAnalysisService
 {
-    public async Task<bool> FileExists(string path, CancellationToken token = default)
+    public async partial Task<bool> FileExists(string path, CancellationToken token)
     {
         try
         {
@@ -19,48 +19,65 @@ public partial class AssetAnalysisService
         finally { _semaphoreMetadata.Release(); }
     }
 
-    public async Task<AssetFile?> Fetch(string path, bool computeHash = false, CancellationToken token = default)
+    public async partial Task<AssetQuickSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token)
     {
+        try
+        {
+            token.ThrowIfCancellationRequested();
+            return await GetAssetFile<AssetQuickSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error reading metadata at {path}", path);
+            return null;
+        }
+    }
+
+    public async partial Task<AssetFullSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token)
+    {
+        try
+        {
+            token.ThrowIfCancellationRequested();
+            AssetFullSyncInfo file = await GetAssetFile<AssetFullSyncInfo>(path, relativeTo, token).ConfigureAwait(false);
+
+            // SHA256
+            file.SHA256 = file.SizeBytes > _options.ReadBufferSize
+                ? await ComputeSHA256Big(file.FullPath, token).ConfigureAwait(false)
+                : await ComputeSHA256Small(file.FullPath, token).ConfigureAwait(false);
+
+            return file;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error analysing file at {path}", path);
+            return null;
+        }
+    }
+
+    private async partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token) where T : IAssetMetadata, new()
+    {
+        token.ThrowIfCancellationRequested();
+
         try
         {
             await _semaphoreMetadata.WaitAsync(token).ConfigureAwait(false);
 
             // Metadata
             FileInfo info = new(path);
-            AssetFile result = new()
+            T file = new()
             {
                 FullPath = info.FullName,
+                LocalPath = Path.GetRelativePath(relativeTo, path),
                 CreatedUtc = info.CreationTimeUtc,
                 ModifiedUtc = info.LastWriteTimeUtc,
                 SizeBytes = info.Length,
             };
 
             // Crumbs
-            long[] crumbsIndices = GetSpreadIndices(result.SizeBytes, _options.CrumbsCount);
-            result.Crumbs = await GetCrumbsAsync(path, crumbsIndices, token).ConfigureAwait(false);
-
-            // Hash
-            if (computeHash && await ComputeSHA256Async(result, token).ConfigureAwait(false) is byte[] sha256)
-                result.SHA256 = sha256;
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning("Error reading metadata", ex);
-            return null;
+            long[] crumbsIndices = GetSpreadIndices(file.SizeBytes, _options.CrumbsCount);
+            file.Crumbs = await GetCrumbsAsync(path, crumbsIndices, token).ConfigureAwait(false);
+            return file;
         }
         finally { _semaphoreMetadata.Release(); }
-    }
-
-    public async Task<bool> ComputeHash(AssetFile file, CancellationToken token = default)
-    {
-        byte[]? sha256 = await ComputeSHA256Async(file, token).ConfigureAwait(false);
-
-        if (sha256 == null)
-            return false;
-
-        file.SHA256 = sha256;
-        return true;
     }
 }

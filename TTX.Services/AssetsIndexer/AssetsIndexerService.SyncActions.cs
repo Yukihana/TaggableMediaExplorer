@@ -9,7 +9,7 @@ namespace TTX.Services.AssetsIndexer;
 
 public partial class AssetsIndexerService
 {
-    private static AssetRecord? FindMatchByDataIntegrity(AssetFile file, IEnumerable<AssetRecord> recs)
+    private static AssetRecord? FindMatchByDataIntegrity(AssetFullSyncInfo file, IEnumerable<AssetRecord> recs)
     {
         ConcurrentBag<AssetRecord> results = new();
         Parallel.ForEach(recs, rec =>

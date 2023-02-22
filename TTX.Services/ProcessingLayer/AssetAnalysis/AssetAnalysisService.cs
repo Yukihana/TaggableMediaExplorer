@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading;
+using System.Threading.Tasks;
+using TTX.Data.Models;
 
 namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
@@ -22,4 +24,26 @@ public partial class AssetAnalysisService : IAssetAnalysisService
 
         _semaphoreMetadata = new SemaphoreSlim(_options.MetadataConcurrency);
     }
+
+    // API
+
+    public partial Task<bool> FileExists(string path, CancellationToken token = default);
+
+    public partial Task<AssetQuickSyncInfo?> Fetch(string path, string relativeTo, CancellationToken token = default);
+
+    public partial Task<AssetFullSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
+
+    private partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token = default) where T : IAssetMetadata, new();
+
+    // Crumbs
+
+    private static partial long[] GetSpreadIndices(long length, int count);
+
+    private partial Task<byte[]> GetCrumbsAsync(string path, long[] indices, CancellationToken token = default);
+
+    // SHA256
+
+    private partial Task<byte[]> ComputeSHA256Small(string path, CancellationToken token = default);
+
+    private partial Task<byte[]> ComputeSHA256Big(string path, CancellationToken token = default);
 }

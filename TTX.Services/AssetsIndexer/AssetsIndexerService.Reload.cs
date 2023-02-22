@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,16 +87,15 @@ public partial class AssetsIndexerService
 
         // Prepare
         List<AssetRecord> recs = Snapshot();
-        string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
-        AssetFile? file = await _assetAnalysis.Fetch(path, false, token).ConfigureAwait(false);
-        if (file == null)
+        AssetQuickSyncInfo? info = await _assetAnalysis.Fetch(path, _options.AssetsPathFull, token).ConfigureAwait(false);
+        if (info == null)
             return false;
 
         // Match
         ConcurrentBag<AssetRecord> matchedBag = new();
         Parallel.ForEach(recs, rec =>
         {
-            if (ProvisionalMatch(rec, file, localPath))
+            if (ProvisionalMatch(rec, info))
                 matchedBag.Add(rec);
         });
         List<AssetRecord> matched = matchedBag.ToHashSet().ToList();
@@ -107,7 +105,7 @@ public partial class AssetsIndexerService
             return false;
 
         // Finally register the asset on the presence registry
-        _assetPresence.Set(localPath, matched[0].ItemId);
+        _assetPresence.Set(info.LocalPath, matched[0].ItemId);
         return true;
     }
 }

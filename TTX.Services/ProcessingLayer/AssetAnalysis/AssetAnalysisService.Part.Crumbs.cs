@@ -6,7 +6,7 @@ namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
 public partial class AssetAnalysisService
 {
-    private static long[] GetSpreadIndices(long length, int count)
+    private static partial long[] GetSpreadIndices(long length, int count)
     {
         if (length <= count)
         {
@@ -26,7 +26,7 @@ public partial class AssetAnalysisService
         return indices;
     }
 
-    private async Task<byte[]> GetCrumbsAsync(string path, long[] indices, CancellationToken token = default)
+    private async partial Task<byte[]> GetCrumbsAsync(string path, long[] indices, CancellationToken token)
     {
         try
         {

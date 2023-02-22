@@ -15,7 +15,7 @@ public partial class AssetsIndexerService
 {
     // Create
 
-    private async Task<bool> CreateRecord(AssetFile file, string localPath, CancellationToken token = default)
+    private async Task<bool> CreateRecord(AssetFullSyncInfo file, string localPath, CancellationToken token = default)
     {
         // Process
         AssetRecord rec = file.GenerateAssetRecord(localPath);

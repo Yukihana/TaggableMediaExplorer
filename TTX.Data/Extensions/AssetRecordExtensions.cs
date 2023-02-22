@@ -33,7 +33,7 @@ public static partial class AssetRecordExtensions
         return ti.ToTitleCase(sanitized);
     }
 
-    public static AssetRecord GenerateAssetRecord(this AssetFile file, string localPath) => new()
+    public static AssetRecord GenerateAssetRecord(this AssetFullSyncInfo file, string localPath) => new()
     {
         ItemId = Guid.NewGuid().ToByteArray(),
 

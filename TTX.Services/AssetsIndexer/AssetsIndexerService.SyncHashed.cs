@@ -22,9 +22,9 @@ public partial class AssetsIndexerService
         List<AssetRecord> recs = Snapshot();
         bool fileExists = await _assetAnalysis.FileExists(path, token).ConfigureAwait(false);
         string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
-        AssetFile? file = null;
+        AssetFullSyncInfo? file = null;
         if (fileExists)
-            file = await _assetAnalysis.Fetch(path, true, token).ConfigureAwait(false);
+            file = await _assetAnalysis.FetchHashed(path, _options.AssetsPathFull, token).ConfigureAwait(false);
 
         // Start sync
         try
