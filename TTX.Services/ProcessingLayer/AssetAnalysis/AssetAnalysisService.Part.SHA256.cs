@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Models;
 
-namespace TTX.Services.AssetInfo;
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public partial class AssetInfoService
+public partial class AssetAnalysisService
 {
     // Implement multiread
     // files below a certain size (100MB) will be fully read, then processed

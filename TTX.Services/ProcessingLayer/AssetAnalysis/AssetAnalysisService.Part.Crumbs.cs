@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TTX.Services.AssetInfo;
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public partial class AssetInfoService
+public partial class AssetAnalysisService
 {
     private static long[] GetSpreadIndices(long length, int count)
     {

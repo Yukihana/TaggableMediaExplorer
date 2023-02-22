@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using TTX.Data.Models;
 
-namespace TTX.Services.AssetInfo;
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public interface IAssetInfoService
+public interface IAssetAnalysisService
 {
     Task<bool> FileExists(string path, CancellationToken token = default);
 

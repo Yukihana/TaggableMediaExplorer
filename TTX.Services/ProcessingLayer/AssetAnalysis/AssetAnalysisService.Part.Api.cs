@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Models;
 
-namespace TTX.Services.AssetInfo;
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public partial class AssetInfoService
+public partial class AssetAnalysisService
 {
     public async Task<bool> FileExists(string path, CancellationToken token = default)
     {

@@ -1,20 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading;
 
-namespace TTX.Services.AssetInfo;
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public partial class AssetInfoService : IAssetInfoService
+public partial class AssetAnalysisService : IAssetAnalysisService
 {
-    private readonly AssetInfoOptions _options;
-    private readonly ILogger<AssetInfoService> _logger;
+    private readonly AssetAnalysisOptions _options;
+    private readonly ILogger<AssetAnalysisService> _logger;
 
     private readonly SemaphoreSlim _semaphoreMetadata;
     private readonly SemaphoreSlim _semaphoreProc;
     private readonly SemaphoreSlim _semaphoreIO;
 
-    public AssetInfoService(ILogger<AssetInfoService> logger, IOptionsSet options)
+    public AssetAnalysisService(ILogger<AssetAnalysisService> logger, IOptionsSet options)
     {
-        _options = options.InitializeServiceOptions<AssetInfoOptions>();
+        _options = options.InitializeServiceOptions<AssetAnalysisOptions>();
         _logger = logger;
 
         _semaphoreProc = new(_options.HashProcessingConcurrency);

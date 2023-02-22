@@ -1,6 +1,6 @@
-﻿namespace TTX.Services.AssetInfo;
+﻿namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-public interface IAssetInfoOptions : IServiceOptions
+public interface IAssetAnalysisOptions : IServiceOptions
 {
     int ReadBufferSize { get; set; }
 

@@ -89,7 +89,7 @@ public partial class AssetsIndexerService
         // Prepare
         List<AssetRecord> recs = Snapshot();
         string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
-        AssetFile? file = await _assetInfo.Fetch(path, false, token).ConfigureAwait(false);
+        AssetFile? file = await _assetAnalysis.Fetch(path, false, token).ConfigureAwait(false);
         if (file == null)
             return false;
 

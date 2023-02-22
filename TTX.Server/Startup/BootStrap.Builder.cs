@@ -7,12 +7,12 @@ using System.IO;
 using System.Text.Json;
 using TTX.Data;
 using TTX.Services;
-using TTX.Services.AssetInfo;
 using TTX.Services.AssetsIndexer;
 using TTX.Services.Auxiliary;
 using TTX.Services.DbSync;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Notification;
+using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.QueryApi;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.TagsIndexer;
@@ -91,7 +91,7 @@ public static partial class BootStrap
         // Independent layer
         services.AddSingleton<IDbSyncService, DbSyncService>();
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
-        services.AddSingleton<IAssetInfoService, AssetInfoService>();
+        services.AddSingleton<IAssetAnalysisService, AssetAnalysisService>();
         services.AddSingleton<IAuxiliaryService, AuxiliaryService>();
 
         // Second layer

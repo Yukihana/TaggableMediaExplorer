@@ -1,6 +1,6 @@
-﻿namespace TTX.Services.AssetInfo;
+﻿namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
-internal class AssetInfoOptions : IAssetInfoOptions
+internal class AssetAnalysisOptions : IAssetAnalysisOptions
 {
     public int ReadBufferSize { get; set; } = 4 * 1024 * 1024; // 4 MiB
     public long SmallComputeMaximumSize { get; set; } = 100 * 1024 * 1024; // 100 MiB
