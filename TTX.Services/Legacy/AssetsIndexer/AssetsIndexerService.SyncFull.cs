@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +14,30 @@ public partial class AssetsIndexerService
 {
     private readonly SemaphoreSlim _semaphoreSync = new(1);
 
+    private async Task<IEnumerable<string>> DeepSync(string[] batch, CancellationToken token)
+    {
+        Stopwatch timer = Stopwatch.StartNew();
+        int pathCount = batch.Length;
+        int successCount = 0;
+        ConcurrentBag<string> pending = new();
+
+        await Parallel.ForEachAsync(batch, token, async (path, token) =>
+        {
+            if (!await ProcessFile(path, token).ConfigureAwait(false))
+            {
+                _logger.LogError("Failed to sync file {path}", path);
+                pending.Add(path);
+            }
+            else Interlocked.Increment(ref successCount);
+        }).ConfigureAwait(false);
+        timer.Stop();
+        _logger.LogInformation("Batch processed in {elapsed} ms. No of files: {pathCount}.", timer.Elapsed, pathCount);
+        if (successCount < pathCount)
+            _logger.LogWarning("Failed to sync {failCount} files.", pathCount - successCount);
+
+        return pending;
+    }
+
     // Add logger messages for every outcome
     private async Task<bool> ProcessFile(string path, CancellationToken token = default)
     {
@@ -19,7 +45,7 @@ public partial class AssetsIndexerService
             return false;
 
         // Prepare
-        List<AssetRecord> recs = Snapshot();
+        List<AssetRecord> recs = _assetDatabase.Snapshot();
         bool fileExists = await _assetAnalysis.FileExists(path, token).ConfigureAwait(false);
         string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
         FullAssetSyncInfo? file = null;
@@ -57,7 +83,7 @@ public partial class AssetsIndexerService
                 else
                 {
                     // TODO add old path for log
-                    await UpdateRecord(dataMatch, x => x.FilePath = localPath, token).ConfigureAwait(false);
+                    await _assetDatabase.Update(dataMatch.ItemId, x => x.FilePath = localPath, token).ConfigureAwait(false);
                     _logger.LogInformation("Updated record for file: {path}", path);
 
                     if (_assetPresence.GetAll(dataMatch.ItemId).Length > 1)
@@ -75,7 +101,14 @@ public partial class AssetsIndexerService
             }
 
             // If not already exited, then create a new record, append to local memory
-            return await CreateRecord(file, localPath, token).ConfigureAwait(false);
+            if (await _assetDatabase.Create(file, token).ConfigureAwait(false) is byte[] itemId)
+            {
+                _assetPresence.Set(localPath, itemId);
+                return true;
+            }
+
+            // If creation failed, return false.
+            return false;
         }
         finally { _semaphoreSync.Release(); }
     }

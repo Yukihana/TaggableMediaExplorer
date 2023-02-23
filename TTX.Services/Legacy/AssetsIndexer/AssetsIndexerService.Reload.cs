@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Extensions;
-using TTX.Data.Models;
 
 namespace TTX.Services.Legacy.AssetsIndexer;
 
@@ -44,7 +43,7 @@ public partial class AssetsIndexerService
     private void ScanDuplicateRecords()
     {
         ConcurrentBag<(string, AssetRecord)> unordered = new();
-        Parallel.ForEach(Snapshot(), x => unordered.Add((x.ToIdentityString(), x)));
+        Parallel.ForEach(_assetDatabase.Snapshot(), x => unordered.Add((x.ToIdentityString(), x)));
 
         HashSet<string> identities = new();
         HashSet<string> duplicateidentities = new();
@@ -62,50 +61,11 @@ public partial class AssetsIndexerService
         }
     }
 
-    private async Task<HashSet<string>> QuickSyncFiles(HashSet<string> paths, CancellationToken token = default)
+    private async Task ReloadRecords(CancellationToken token = default)
     {
-        ConcurrentBag<string> pending = new();
-        uint success = 0;
-
-        await Parallel.ForEachAsync(paths, token,
-            async (path, token) =>
-            {
-                if (await QuickSync(path, token).ConfigureAwait(false))
-                    Interlocked.Increment(ref success);
-                else
-                    pending.Add(path);
-            }).ConfigureAwait(false);
-
-        _logger.LogInformation("Provisionally synced {synced} out of {total} files.", success, paths.Count);
-        return pending.ToHashSet();
-    }
-
-    private async Task<bool> QuickSync(string path, CancellationToken token = default)
-    {
-        if (token.IsCancellationRequested)
-            return false;
-
-        // Prepare
-        List<AssetRecord> recs = Snapshot();
-        QuickAssetSyncInfo? info = await _assetAnalysis.Fetch(path, _options.AssetsPathFull, token).ConfigureAwait(false);
-        if (info == null)
-            return false;
-
-        // Match
-        ConcurrentBag<AssetRecord> matchedBag = new();
-        Parallel.ForEach(recs, rec =>
-        {
-            if (ProvisionalMatch(rec, info))
-                matchedBag.Add(rec);
-        });
-        List<AssetRecord> matched = matchedBag.ToHashSet().ToList();
-
-        // If too many matching records, fail. Possible duplicate record. Hashed sync required.
-        if (matched.Count != 1)
-            return false;
-
-        // Finally register the asset on the presence registry
-        _assetPresence.Set(info.LocalPath, matched[0].ItemId);
-        return true;
+        Stopwatch timer = Stopwatch.StartNew();
+        await _assetDatabase.Reload(token).ConfigureAwait(false);
+        timer.Stop();
+        _logger.LogInformation("Records loaded in {elapsed} ms.", timer.Elapsed);
     }
 }

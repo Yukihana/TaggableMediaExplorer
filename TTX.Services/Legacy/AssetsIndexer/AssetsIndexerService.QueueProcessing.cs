@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -125,29 +124,5 @@ public partial class AssetsIndexerService
         HashSet<string> distinct = batch.ToHashSet(PlatformNamingHelper.FilenameComparer);
 
         return distinct.ToArray();
-    }
-
-    private async Task<IEnumerable<string>> DeepSync(string[] batch, CancellationToken token)
-    {
-        Stopwatch timer = Stopwatch.StartNew();
-        int pathCount = batch.Length;
-        int successCount = 0;
-        ConcurrentBag<string> pending = new();
-
-        await Parallel.ForEachAsync(batch, token, async (path, token) =>
-        {
-            if (!await ProcessFile(path, token).ConfigureAwait(false))
-            {
-                _logger.LogError("Failed to sync file {path}", path);
-                pending.Add(path);
-            }
-            else Interlocked.Increment(ref successCount);
-        }).ConfigureAwait(false);
-        timer.Stop();
-        _logger.LogInformation("Batch processed in {elapsed} ms. No of files: {pathCount}.", timer.Elapsed, pathCount);
-        if (successCount < pathCount)
-            _logger.LogWarning("Failed to sync {failCount} files.", pathCount - successCount);
-
-        return pending;
     }
 }

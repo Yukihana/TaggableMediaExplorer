@@ -1,8 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TTX.Data.Entities;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.Auxiliary;
 using TTX.Services.Legacy.DbSync;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
+using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.Legacy.AssetsIndexer;
@@ -12,6 +17,7 @@ namespace TTX.Services.Legacy.AssetsIndexer;
 /// </summary>
 public partial class AssetsIndexerService : IAssetsIndexerService
 {
+    private readonly IAssetDatabaseService _assetDatabase;
     private readonly IAssetPresenceService _assetPresence;
 
     private readonly IAssetTrackingService _assetTracking;
@@ -25,6 +31,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
     private readonly AssetsIndexerOptions _options;
 
     public AssetsIndexerService(
+        IAssetDatabaseService assetDatabase,
         IAssetPresenceService assetPresence,
         IAssetTrackingService assetTracking,
         IDbSyncService dbsync,
@@ -33,6 +40,7 @@ public partial class AssetsIndexerService : IAssetsIndexerService
         ILogger<AssetsIndexerService> logger,
         IOptionsSet options)
     {
+        _assetDatabase = assetDatabase;
         _assetPresence = assetPresence;
         _assetTracking = assetTracking;
         _dbsync = dbsync;
@@ -47,4 +55,10 @@ public partial class AssetsIndexerService : IAssetsIndexerService
     // Readiness
 
     public bool IsReady { get; set; } = false;
+
+    // move this to another class
+    public TOutput PerformQuery<TInput, TOutput>(TInput input, Func<TInput, IEnumerable<AssetRecord>, TOutput> func)
+    {
+        return func(input, _assetDatabase.Snapshot().Where(rec => _assetPresence.GetFirst(rec.ItemId) is not null));
+    }
 }

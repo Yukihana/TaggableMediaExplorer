@@ -15,6 +15,7 @@ using TTX.Services.Legacy.QueryApi;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.QueryApi;
+using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.TagsIndexer;
 
@@ -87,6 +88,7 @@ public static partial class BootStrap
     public static void AttachDataServices(this IServiceCollection services)
     {
         // Storage Layer
+        services.AddSingleton<IAssetDatabaseService, AssetDatabaseService>();
         services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
 
         // ProcessingLayer
