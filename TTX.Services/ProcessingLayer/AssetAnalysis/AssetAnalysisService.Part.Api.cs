@@ -54,7 +54,7 @@ public partial class AssetAnalysisService
         }
     }
 
-    private async partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token) where T : IAssetMetadata, new()
+    private async partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token) where T : AssetSyncInfoBase, IAssetMetadata, new()
     {
         token.ThrowIfCancellationRequested();
 

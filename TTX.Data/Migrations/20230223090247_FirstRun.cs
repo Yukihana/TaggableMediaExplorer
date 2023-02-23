@@ -18,13 +18,13 @@ namespace TTX.Data.Migrations
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ItemId = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    FilePath = table.Column<string>(type: "TEXT", nullable: false),
+                    LocalPath = table.Column<string>(type: "TEXT", nullable: false),
+                    SizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
                     CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    SizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
-                    SHA256 = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Crumbs = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    MatchIgnore = table.Column<string>(type: "TEXT", nullable: false),
+                    VerifiedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    SHA256 = table.Column<byte[]>(type: "BLOB", nullable: false),
                     MediaWidth = table.Column<int>(type: "INTEGER", nullable: false),
                     MediaHeight = table.Column<int>(type: "INTEGER", nullable: false),
                     MediaDuration = table.Column<TimeSpan>(type: "TEXT", nullable: false),
@@ -36,7 +36,8 @@ namespace TTX.Data.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     TagsString = table.Column<string>(type: "TEXT", nullable: false),
                     AddedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    UpdatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    SimilarIgnore = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

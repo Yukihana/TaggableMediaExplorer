@@ -37,7 +37,7 @@ public static partial class AssetRecordExtensions
     {
         ItemId = Guid.NewGuid().ToByteArray(),
 
-        FilePath = info.LocalPath,
+        LocalPath = info.LocalPath,
         SizeBytes = info.SizeBytes,
         Crumbs = info.Crumbs,
         SHA256 = info.SHA256,

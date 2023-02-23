@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
+using TTX.Data.Models;
 
 namespace TTX.Data.Entities;
 
-public class AssetRecord
+public class AssetRecord : IAssetItemId, IAssetHashedMetadata
 {
     [Key]
     public int ID { get; set; } = 0;
@@ -16,19 +17,19 @@ public class AssetRecord
     // Identity
 
     public byte[] ItemId { get; set; } = Array.Empty<byte>();
-    public string FilePath { get; set; } = string.Empty;
 
     // Metadata
 
+    public string LocalPath { get; set; } = string.Empty;
+    public long SizeBytes { get; set; } = 0;
     public DateTime CreatedUtc { get; set; } = DateTime.Now;
     public DateTime ModifiedUtc { get; set; } = DateTime.Now;
-    public long SizeBytes { get; set; } = 0;
-
-    // Integrity
-
-    public byte[] SHA256 { get; set; } = Array.Empty<byte>();
     public byte[] Crumbs { get; set; } = Array.Empty<byte>();
-    public string MatchIgnore { get; set; } = string.Empty;
+
+    // Hash Info
+
+    public DateTime VerifiedUtc { get; set; } = DateTime.Now;
+    public byte[] SHA256 { get; set; } = Array.Empty<byte>();
 
     // Media Info
 
@@ -50,6 +51,10 @@ public class AssetRecord
     public string TagsString { get; set; } = string.Empty;
     public DateTime AddedUtc { get; set; } = DateTime.Now;
     public DateTime UpdatedUtc { get; set; } = DateTime.Now;
+
+    // Undecided
+
+    public string SimilarIgnore { get; set; } = string.Empty;
 
     // Not Mapped
 

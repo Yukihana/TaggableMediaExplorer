@@ -83,7 +83,7 @@ public partial class AssetsIndexerService
                 else
                 {
                     // TODO add old path for log
-                    await _assetDatabase.Update(dataMatch.ItemId, x => x.FilePath = localPath, token).ConfigureAwait(false);
+                    await _assetDatabase.Update(dataMatch.ItemId, x => x.LocalPath = localPath, token).ConfigureAwait(false);
                     _logger.LogInformation("Updated record for file: {path}", path);
 
                     if (_assetPresence.GetAll(dataMatch.ItemId).Length > 1)

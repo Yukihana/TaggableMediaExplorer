@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using TTX.Data.Entities;
+using TTX.Data.Extensions;
 using TTX.Data.Models;
 using TTX.Library.Helpers;
 
@@ -11,20 +12,11 @@ public partial class AssetsIndexerService
 {
     private static bool ProvisionalMatch(AssetRecord rec, QuickAssetSyncInfo file)
     {
+        // TODO change this to evaluate safely equivalent
         try
         {
             rec.Lock.EnterReadLock();
-
-            if (rec.SizeBytes != file.SizeBytes)
-                return false;
-            if (rec.FilePath != file.LocalPath)
-                return false;
-            if (rec.ModifiedUtc != file.ModifiedUtc)
-                return false;
-            if (!rec.Crumbs.SequenceEqual(file.Crumbs))
-                return false;
-
-            return true;
+            return rec.QuickSyncEquals(file);
         }
         finally { rec.Lock.ExitReadLock(); }
     }
@@ -34,15 +26,7 @@ public partial class AssetsIndexerService
         try
         {
             rec.Lock.EnterReadLock();
-
-            if (rec.SizeBytes != file.SizeBytes)
-                return false;
-            if (!rec.Crumbs.SequenceEqual(file.Crumbs))
-                return false;
-            if (!rec.SHA256.SequenceEqual(file.SHA256))
-                return false;
-
-            return true;
+            return rec.IntegrityEquals(file);
         }
         finally { rec.Lock.ExitReadLock(); }
     }
@@ -52,7 +36,7 @@ public partial class AssetsIndexerService
         try
         {
             rec.Lock.EnterReadLock();
-            return rec.FilePath.Equals(localPath);
+            return rec.LocalPath.Equals(localPath);
         }
         finally { rec.Lock.ExitReadLock(); }
     }

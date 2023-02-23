@@ -11,7 +11,7 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230221195147_FirstRun")]
+    [Migration("20230223090247_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
@@ -56,15 +56,11 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<byte[]>("ItemId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("MatchIgnore")
+                    b.Property<string>("LocalPath")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -84,6 +80,10 @@ namespace TTX.Data.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("SimilarIgnore")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<long>("SizeBytes")
                         .HasColumnType("INTEGER");
 
@@ -96,6 +96,9 @@ namespace TTX.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("VerifiedUtc")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
