@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTX.Data;
-using TTX.Services.AssetsIndexer;
-using TTX.Services.TagsIndexer;
+using TTX.Services.Legacy.AssetsIndexer;
+using TTX.Services.Legacy.TagsIndexer;
 
 namespace TTX.Server.Startup;
 

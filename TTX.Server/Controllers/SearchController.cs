@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Services.QueryApi;
+using TTX.Services.Legacy.QueryApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

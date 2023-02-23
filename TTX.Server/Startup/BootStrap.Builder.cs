@@ -7,11 +7,12 @@ using System.IO;
 using System.Text.Json;
 using TTX.Data;
 using TTX.Services;
-using TTX.Services.AssetsIndexer;
-using TTX.Services.Auxiliary;
-using TTX.Services.DbSync;
 using TTX.Services.IncomingLayer.AssetTracking;
-using TTX.Services.Notification;
+using TTX.Services.Legacy.AssetsIndexer;
+using TTX.Services.Legacy.Auxiliary;
+using TTX.Services.Legacy.DbSync;
+using TTX.Services.Legacy.QueryApi;
+using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.QueryApi;
 using TTX.Services.StorageLayer.AssetPresence;
@@ -88,23 +89,16 @@ public static partial class BootStrap
         // Storage Layer
         services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
 
-        // Independent layer
-        services.AddSingleton<IDbSyncService, DbSyncService>();
+        // ProcessingLayer
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
+
+        // Unimplemented / Legacy
+        services.AddSingleton<IDbSyncService, DbSyncService>();
         services.AddSingleton<IAssetAnalysisService, AssetAnalysisService>();
         services.AddSingleton<IAuxiliaryService, AuxiliaryService>();
-
-        // Second layer
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
-
-        // Third layer
-
-        // Topmost layer (Query Services)
         services.AddSingleton<IQueryApiService, QueryApiService>();
-
-        // Unimplemented
-        services.AddSingleton<INotificationService, NotificationService>();
     }
 
     // Helper methods
