@@ -1,8 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TTX.Data.Entities;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.Auxiliary;
 using TTX.Services.Legacy.DbSync;
@@ -55,10 +51,4 @@ public partial class AssetsIndexerService : IAssetsIndexerService
     // Readiness
 
     public bool IsReady { get; set; } = false;
-
-    // move this to another class
-    public TOutput PerformQuery<TInput, TOutput>(TInput input, Func<TInput, IEnumerable<AssetRecord>, TOutput> func)
-    {
-        return func(input, _assetDatabase.Snapshot().Where(rec => _assetPresence.GetFirst(rec.ItemId) is not null));
-    }
 }

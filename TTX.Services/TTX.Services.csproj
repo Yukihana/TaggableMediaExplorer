@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApiLayer\AssetCard\**" />
+    <EmbeddedResource Remove="ApiLayer\AssetCard\**" />
+    <None Remove="ApiLayer\AssetCard\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TTX.Data.Shared\TTX.Data.Shared.csproj" />
     <ProjectReference Include="..\TTX.Data\TTX.Data.csproj" />
     <ProjectReference Include="..\TTX.Library\TTX.Library.csproj" />

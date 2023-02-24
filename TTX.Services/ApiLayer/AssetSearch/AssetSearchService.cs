@@ -2,14 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using TTX.Data.Shared.QueryObjects;
+using TTX.Services.AbstractionLayer.AssetQuery;
 
-namespace TTX.Services.QueryApi;
+namespace TTX.Services.ApiLayer.AssetSearch;
 
-public partial class QueryApiService
+public partial class AssetSearchService : IAssetSearchService
 {
+    private readonly IAssetQueryService _assetQuery;
+
+    public AssetSearchService(IAssetQueryService assetQuery)
+    {
+        _assetQuery = assetQuery;
+    }
+
     public SearchResponse Search(SearchQuery query)
     {
-        var results = _assetsIndexer.PerformQuery(query.Keywords,
+        var results = _assetQuery.PerformQuery(query.Keywords,
             (keywords, list) => list.Where(x =>
             {
                 foreach (string word in keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))

@@ -7,14 +7,15 @@ using System.IO;
 using System.Text.Json;
 using TTX.Data;
 using TTX.Services;
+using TTX.Services.AbstractionLayer.AssetQuery;
+using TTX.Services.ApiLayer.AssetCardData;
+using TTX.Services.ApiLayer.AssetSearch;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.AssetsIndexer;
 using TTX.Services.Legacy.Auxiliary;
 using TTX.Services.Legacy.DbSync;
-using TTX.Services.Legacy.QueryApi;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
-using TTX.Services.QueryApi;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.TagsIndexer;
@@ -100,7 +101,13 @@ public static partial class BootStrap
         services.AddSingleton<IAuxiliaryService, AuxiliaryService>();
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
-        services.AddSingleton<IQueryApiService, QueryApiService>();
+
+        // Abstraction Layer
+        services.AddSingleton<IAssetQueryService, AssetQueryService>();
+
+        // API Layer
+        services.AddSingleton<IAssetSearchService, AssetSearchService>();
+        services.AddSingleton<IAssetCardDataService, AssetCardDataService>();
     }
 
     // Helper methods

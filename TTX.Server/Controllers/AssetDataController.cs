@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TTX.Services.Legacy.QueryApi;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using TTX.Services.ApiLayer.AssetCardData;
 
 namespace TTX.Server.Controllers;
 
@@ -9,49 +7,15 @@ namespace TTX.Server.Controllers;
 [ApiController]
 public class AssetDataController : ControllerBase
 {
-    private readonly IQueryApiService _queryApi;
+    private readonly IAssetCardDataService _assetCardData;
 
-    public AssetDataController(IQueryApiService queryApi)
+    public AssetDataController(IAssetCardDataService assetCardData)
     {
-        _queryApi = queryApi;
+        _assetCardData = assetCardData;
     }
 
     [HttpGet]
     [Route("Card")]
     public ActionResult Get([FromQuery] string id)
-        => Ok(_queryApi.GetAssetCard(id));
-
-    /*
-    // GET: api/<AssetDataController>
-    [HttpGet]
-    public IEnumerable<string> Get()
-    {
-        return new string[] { "value1", "value2" };
-    }
-
-    // GET api/<AssetDataController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
-
-    // POST api/<AssetDataController>
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
-
-    // PUT api/<AssetDataController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<AssetDataController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
-    }
-    */
+        => Ok(_assetCardData.GetAssetCardData(id));
 }

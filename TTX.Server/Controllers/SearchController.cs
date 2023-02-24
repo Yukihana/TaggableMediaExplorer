@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Services.Legacy.QueryApi;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using TTX.Services.ApiLayer.AssetSearch;
 
 namespace TTX.Server.Controllers;
 
@@ -10,34 +8,14 @@ namespace TTX.Server.Controllers;
 [ApiController]
 public class SearchController : ControllerBase
 {
-    private readonly IQueryApiService _queryApi;
+    private readonly IAssetSearchService _assetSearch;
 
-    public SearchController(IQueryApiService queryApi)
+    public SearchController(IAssetSearchService assetSearch)
     {
-        _queryApi = queryApi;
+        _assetSearch = assetSearch;
     }
 
     [HttpGet]
     public ActionResult Get([FromQuery] SearchQuery query)
-        => Ok(_queryApi.Search(query));
-
-    /*
-    // POST api/<SearchController>
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
-
-    // PUT api/<SearchController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<SearchController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
-    }
-    */
+        => Ok(_assetSearch.Search(query));
 }
