@@ -3,25 +3,24 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 
-namespace TTX.Services.Legacy.AssetsIndexer;
+namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
-public partial class AssetsIndexerService
+public partial class AssetSynchronisationService
 {
-    private readonly SemaphoreSlim _semaphoreSync = new(1);
-
-    private async Task<IEnumerable<string>> DeepSync(string[] batch, CancellationToken token)
+    public async partial Task<IEnumerable<string>> FullSync(IEnumerable<string> paths, CancellationToken ctoken)
     {
         Stopwatch timer = Stopwatch.StartNew();
-        int pathCount = batch.Length;
+        int pathCount = paths.Count();
         int successCount = 0;
         ConcurrentBag<string> pending = new();
 
-        await Parallel.ForEachAsync(batch, token, async (path, token) =>
+        await Parallel.ForEachAsync(paths, ctoken, async (path, token) =>
         {
             if (!await ProcessFile(path, token).ConfigureAwait(false))
             {
@@ -55,7 +54,7 @@ public partial class AssetsIndexerService
         // Start sync
         try
         {
-            await _semaphoreSync.WaitAsync(token).ConfigureAwait(false);
+            await _semaphore.WaitAsync(token).ConfigureAwait(false);
 
             // If file is inaccessible, invalidate
             if (file == null)
@@ -95,7 +94,7 @@ public partial class AssetsIndexerService
             // Check for modified
             if (FindMatchByPath(localPath, recs).Count > 0)
             {
-                _auxiliary.AddModifiedFiles(path);
+                //_auxiliary.AddModifiedFiles(path);
                 _logger.LogInformation("Sync mismatch. Change detected at {path}", path);
                 return true;
             }
@@ -110,6 +109,6 @@ public partial class AssetsIndexerService
             // If creation failed, return false.
             return false;
         }
-        finally { _semaphoreSync.Release(); }
+        finally { _semaphore.Release(); }
     }
 }

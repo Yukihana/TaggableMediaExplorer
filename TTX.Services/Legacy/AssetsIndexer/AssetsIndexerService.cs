@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using TTX.Services.IncomingLayer.AssetTracking;
-using TTX.Services.Legacy.Auxiliary;
-using TTX.Services.Legacy.DbSync;
-using TTX.Services.ProcessingLayer.AssetAnalysis;
-using TTX.Services.StorageLayer.AssetDatabase;
-using TTX.Services.StorageLayer.AssetPresence;
+using TTX.Services.ProcessingLayer.AssetSynchronisation;
 
 namespace TTX.Services.Legacy.AssetsIndexer;
 
@@ -13,35 +9,22 @@ namespace TTX.Services.Legacy.AssetsIndexer;
 /// </summary>
 public partial class AssetsIndexerService : IAssetsIndexerService
 {
-    private readonly IAssetDatabaseService _assetDatabase;
-    private readonly IAssetPresenceService _assetPresence;
-
     private readonly IAssetTrackingService _assetTracking;
-
-    private readonly IAssetAnalysisService _assetAnalysis;
-
-    private readonly IDbSyncService _dbsync;
-    private readonly IAuxiliaryService _auxiliary;
+    private readonly IAssetSynchronisationService _assetSynchronisation;
 
     private readonly ILogger<AssetsIndexerService> _logger;
     private readonly AssetsIndexerOptions _options;
 
     public AssetsIndexerService(
-        IAssetDatabaseService assetDatabase,
-        IAssetPresenceService assetPresence,
         IAssetTrackingService assetTracking,
-        IDbSyncService dbsync,
-        IAssetAnalysisService assetinfo,
-        IAuxiliaryService auxiliary,
+        IAssetSynchronisationService assetSynchronisation,
+
         ILogger<AssetsIndexerService> logger,
         IOptionsSet options)
     {
-        _assetDatabase = assetDatabase;
-        _assetPresence = assetPresence;
         _assetTracking = assetTracking;
-        _dbsync = dbsync;
-        _assetAnalysis = assetinfo;
-        _auxiliary = auxiliary;
+        _assetSynchronisation = assetSynchronisation;
+
         _logger = logger;
         _options = options.InitializeServiceOptions<AssetsIndexerOptions>();
 

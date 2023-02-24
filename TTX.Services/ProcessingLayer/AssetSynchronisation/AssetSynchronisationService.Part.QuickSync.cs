@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 
-namespace TTX.Services.Legacy.AssetsIndexer;
+namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
-public partial class AssetsIndexerService
+public partial class AssetSynchronisationService
 {
-    private async Task<HashSet<string>> QuickSyncFiles(HashSet<string> paths, CancellationToken token = default)
+    public async partial Task<IEnumerable<string>> QuickSync(IEnumerable<string> paths, CancellationToken ctoken)
     {
         ConcurrentBag<string> pending = new();
         uint success = 0;
 
-        await Parallel.ForEachAsync(paths, token,
+        await Parallel.ForEachAsync(paths, ctoken,
             async (path, token) =>
             {
                 if (await QuickSync(path, token).ConfigureAwait(false))
@@ -25,7 +25,7 @@ public partial class AssetsIndexerService
                     pending.Add(path);
             }).ConfigureAwait(false);
 
-        _logger.LogInformation("Provisionally synced {synced} out of {total} files.", success, paths.Count);
+        _logger.LogInformation("Provisionally synced {synced} out of {total} files.", success, paths.Count());
         return pending.ToHashSet();
     }
 

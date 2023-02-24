@@ -16,6 +16,7 @@ using TTX.Services.Legacy.Auxiliary;
 using TTX.Services.Legacy.DbSync;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
+using TTX.Services.ProcessingLayer.AssetSynchronisation;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.TagsIndexer;
@@ -92,12 +93,15 @@ public static partial class BootStrap
         services.AddSingleton<IAssetDatabaseService, AssetDatabaseService>();
         services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
 
-        // ProcessingLayer
+        // IncomingLayer
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
+
+        // ProcessingLayer
+        services.AddSingleton<IAssetSynchronisationService, AssetSynchronisationService>();
+        services.AddSingleton<IAssetAnalysisService, AssetAnalysisService>();
 
         // Unimplemented / Legacy
         services.AddSingleton<IDbSyncService, DbSyncService>();
-        services.AddSingleton<IAssetAnalysisService, AssetAnalysisService>();
         services.AddSingleton<IAuxiliaryService, AuxiliaryService>();
         services.AddSingleton<IAssetsIndexerService, AssetsIndexerService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();

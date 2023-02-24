@@ -20,84 +20,10 @@ public partial class AssetsIndexerService
 
     // Task Access : Safe
 
-    public async Task StopIndexing(CancellationToken token = default)
-    {
-        if (token.IsCancellationRequested)
-            return;
-        Stopwatch timer = Stopwatch.StartNew();
-
-        try
-        {
-            _queueProcessingEnabled = false;
-            await _semaphoreCurrent.WaitAsync(token).ConfigureAwait(false);
-
-            if (!_cts.IsCancellationRequested)
-                _cts.Cancel();
-
-            if (_processingTask != null && !_processingTask.IsCompleted)
-                await _processingTask.ConfigureAwait(false);
-        }
-        finally { _semaphoreCurrent.Release(); }
-
-        timer.Stop();
-        _logger.LogInformation("StopIndexing operation took {elapsed}.", timer.Elapsed);
-    }
-
-    public async Task StartIndexing(CancellationToken token = default)
-    {
-        if (token.IsCancellationRequested)
-            return;
-        Stopwatch timer = Stopwatch.StartNew();
-
-        try
-        {
-            _queueProcessingEnabled = false;
-            await _semaphoreCurrent.WaitAsync(token).ConfigureAwait(false);
-
-            if (!_cts.IsCancellationRequested)
-                _cts.Cancel();
-
-            if (_processingTask != null && !_processingTask.IsCompleted)
-                await _processingTask.ConfigureAwait(false);
-
-            if (token.IsCancellationRequested)
-                return;
-
-            _cts = new();
-            _processingTask = Reload(_cts.Token);
-        }
-        finally
-        {
-            _semaphoreCurrent.Release();
-            _queueProcessingEnabled = true;
-        }
-
-        timer.Stop();
-        _logger.LogInformation("StartIndexing operation took {elapsed}.", timer.Elapsed);
-    }
-
     private void IndexPending()
     {
         if (_queueProcessingEnabled)
             _ = Task.Run(async () => await ProcessPending().ConfigureAwait(false));
-    }
-
-    private async Task ProcessPending(CancellationToken token = default)
-    {
-        if (token.IsCancellationRequested)
-            return;
-
-        try
-        {
-            await _semaphoreCurrent.WaitAsync(token).ConfigureAwait(false);
-
-            if (_processingTask != null && !_processingTask.IsCompleted)
-                return;
-
-            _cts = new();
-            _processingTask = Task.Run(async () => await ProcessByBatches(_cts.Token).ConfigureAwait(false), token);
-        }
-        finally { _semaphoreCurrent.Release(); }
     }
 
     // Batch Processing
@@ -107,22 +33,25 @@ public partial class AssetsIndexerService
         ctoken.ThrowIfCancellationRequested();
         IEnumerable<string> pending = Array.Empty<string>();
 
-        while (BuildBatch(pending) is string[] { Length: > 0 } batch)
+        while (await BuildBatch(pending, ctoken).ConfigureAwait(false) is string[] { Length: > 0 } batch)
         {
             ctoken.ThrowIfCancellationRequested();
-            pending = await DeepSync(batch, ctoken).ConfigureAwait(false);
+            pending = await _assetSynchronisation.FullSync(batch, ctoken).ConfigureAwait(false);
         }
 
         _logger.LogInformation("All pending files have been processed.");
     }
 
-    private string[] BuildBatch(IEnumerable<string> pending)
+    private async Task<string[]> BuildBatch(IEnumerable<string> pending, CancellationToken ctoken = default)
     {
         List<string> batch = new(pending);
-        batch.AddRange(_assetTracking.Dequeue());
+        string[] incoming = _assetTracking.Dequeue();
 
-        HashSet<string> distinct = batch.ToHashSet(PlatformNamingHelper.FilenameComparer);
+        if (incoming.Any())
+            batch.AddRange(incoming);
+        else
+            await Task.Delay(1000, ctoken).ConfigureAwait(false);
 
-        return distinct.ToArray();
+        return batch.ToHashSet(PlatformNamingHelper.FilenameComparer).ToArray();
     }
 }

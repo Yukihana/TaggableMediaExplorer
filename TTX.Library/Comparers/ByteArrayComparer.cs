@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using TTX.Library.DataHelpers;
 
 namespace TTX.Library.Comparers;
 
@@ -19,20 +20,5 @@ public class ByteArrayComparer : IEqualityComparer<byte[]>
     }
 
     public int GetHashCode([DisallowNull] byte[] obj)
-    {
-        // Implement FNV1_32
-        unchecked
-        {
-            const int prime = (int)0x01000193;
-            int hash = (int)0x811c9dc5;
-
-            for (int i = 0; i < obj.Length; i++)
-            {
-                hash *= prime;
-                hash ^= obj[i];
-            }
-
-            return hash;
-        }
-    }
+        => obj.GetFNV1();
 }

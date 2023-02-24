@@ -5,12 +5,14 @@ using TTX.Services.Legacy.DbSync;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.Legacy.Thumbnails;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
+using TTX.Services.ProcessingLayer.AssetSynchronisation;
 
 namespace TTX.Services;
 
 public interface IOptionsSet :
     IAssetAnalysisOptions,
     IAssetsIndexerOptions,
+    IAssetSynchronisationOptions,
     IAuxiliaryOptions,
     IDbSyncOptions,
     ITagsIndexerOptions,

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 
-namespace TTX.Services.Legacy.AssetsIndexer;
+namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
-public partial class AssetsIndexerService
+public partial class AssetSynchronisationService
 {
     private static AssetRecord? FindMatchByDataIntegrity(FullAssetSyncInfo file, IEnumerable<AssetRecord> recs)
     {

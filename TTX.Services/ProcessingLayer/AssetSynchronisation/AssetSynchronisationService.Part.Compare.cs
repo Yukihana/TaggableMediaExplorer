@@ -2,13 +2,14 @@
 using TTX.Data.Entities;
 using TTX.Data.Extensions;
 using TTX.Data.Models;
+using TTX.Library.FileSystemHelpers;
 using TTX.Library.Helpers;
 
-namespace TTX.Services.Legacy.AssetsIndexer;
+namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
 // TODO Use AssetRecord.Lock and _semaphoreSync
 
-public partial class AssetsIndexerService
+public partial class AssetSynchronisationService
 {
     private static bool ProvisionalMatch(AssetRecord rec, QuickAssetSyncInfo file)
     {
@@ -36,7 +37,7 @@ public partial class AssetsIndexerService
         try
         {
             rec.Lock.EnterReadLock();
-            return rec.LocalPath.Equals(localPath);
+            return rec.LocalPath.Equals(localPath, PlatformNamingHelper.FilenameComparison);
         }
         finally { rec.Lock.ExitReadLock(); }
     }
