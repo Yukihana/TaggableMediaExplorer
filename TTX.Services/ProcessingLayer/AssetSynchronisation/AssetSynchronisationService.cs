@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TTX.Data.Entities;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
@@ -36,15 +37,17 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
 
     // Reload
 
-    public partial Task ReloadRecords(CancellationToken ctoken = default);
-
-    private partial void ScanForDuplicates(CancellationToken ctoken = default);
+    public partial Task ResetRepair(CancellationToken ctoken = default);
 
     // Quick Sync
 
     public partial Task<IEnumerable<string>> QuickSync(IEnumerable<string> paths, CancellationToken ctoken = default);
 
-    // Deep Sync
+    private partial Task<bool> TrySyncProvisionally(string path, AssetRecord[] assets, CancellationToken ctoken = default);
 
-    public partial Task<IEnumerable<string>> FullSync(IEnumerable<string> paths, CancellationToken ctoken = default);
+    // Full Sync
+
+    public partial Task<bool> FullSync(string path, bool isReloadSync = false, CancellationToken ctoken = default);
+
+    private partial Task<bool> AttemptFullSync(string path, CancellationToken ctoken = default);
 }

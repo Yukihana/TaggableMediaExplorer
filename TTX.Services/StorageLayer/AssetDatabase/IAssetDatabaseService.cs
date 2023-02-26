@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
@@ -7,30 +7,21 @@ using TTX.Data.Models;
 
 namespace TTX.Services.StorageLayer.AssetDatabase;
 
-// Combined responsibilities.
-// Handles DbSync for Assets
-// Also caches the Db in memory
-// DbSync(Assets) + AssetsStorage
-// Does not return nor expose AssetRecords in any way, even in transform actions
-
 public interface IAssetDatabaseService
 {
-    // Controls
+    // Standard Api operations
 
-    Task<bool> Reload(CancellationToken ctoken = default);
+    Task Read(Func<DbSet<AssetRecord>, Task> readAction, CancellationToken ctoken = default);
 
-    int CacheCount();
+    Task Write(Func<DbSet<AssetRecord>, Task<bool>> writeAction, CancellationToken ctoken = default);
 
-    // API : Read
+    Task<AssetRecord[]> Snapshot(CancellationToken ctoken);
 
-    // API : Write
+    // Addon operations
 
-    Task<byte[]?> Create(FullAssetSyncInfo info, CancellationToken ctoken = default);
+    Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, CancellationToken ctoken = default);
 
-    Task<bool> Update(byte[] itemId, Action<AssetRecord> updateAction, CancellationToken ctoken = default);
+    // Maintenance operations
 
-    Task<bool> Delete(byte[] itemId, CancellationToken ctoken = default);
-
-    // Temporary
-    List<AssetRecord> Snapshot();
+    Task ScanRepairAnalyse(CancellationToken ctoken);
 }

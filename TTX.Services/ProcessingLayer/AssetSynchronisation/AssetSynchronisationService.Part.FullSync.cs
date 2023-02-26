@@ -1,113 +1,80 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
 using TTX.Data.Models;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
 public partial class AssetSynchronisationService
 {
-    public async partial Task<IEnumerable<string>> FullSync(IEnumerable<string> paths, CancellationToken ctoken)
+    public async partial Task<bool> FullSync(string path, bool isReloadSync, CancellationToken ctoken)
     {
-        Stopwatch timer = Stopwatch.StartNew();
-        int pathCount = paths.Count();
-        int successCount = 0;
-        ConcurrentBag<string> pending = new();
+        TimeSpan baseRetryInterval = _options.AssetSyncAttemptBaseInterval;
+        int maxAttempts = isReloadSync ? _options.AssetFullSyncAttemptsOnReload : _options.AssetFullSyncAttemptsOnEvent;
 
-        await Parallel.ForEachAsync(paths, ctoken, async (path, token) =>
+        bool handled = false;
+        int attempts = 0;
+
+        while (attempts < maxAttempts)
         {
-            if (!await ProcessFile(path, token).ConfigureAwait(false))
-            {
-                _logger.LogError("Failed to sync file {path}", path);
-                pending.Add(path);
-            }
-            else Interlocked.Increment(ref successCount);
-        }).ConfigureAwait(false);
-        timer.Stop();
-        _logger.LogInformation("Batch processed in {elapsed} ms. No of files: {pathCount}.", timer.Elapsed, pathCount);
-        if (successCount < pathCount)
-            _logger.LogWarning("Failed to sync {failCount} files.", pathCount - successCount);
+            ctoken.ThrowIfCancellationRequested();
 
-        return pending;
+            if (await AttemptFullSync(path, ctoken).ConfigureAwait(false))
+            {
+                _logger.LogInformation("Successfully synchronized {path}, Attempts: {attempts}", path, attempts + 1);
+                handled = true;
+                break;
+            }
+
+            _logger.LogError("Failed attempt:{attempts} of trying to synchronise {path}.", ++attempts, path);
+
+            // After increment, to ensure no wait after last attempt
+            if (attempts < maxAttempts)
+                await Task.Delay(baseRetryInterval * attempts, ctoken).ConfigureAwait(false);
+        }
+
+        if (!handled)
+            _logger.LogError("Maximum attempts of {maxAttempts} reached. Unable to synchronise asset at {path}.", maxAttempts, path);
+
+        return handled;
     }
 
-    // Add logger messages for every outcome
-    private async Task<bool> ProcessFile(string path, CancellationToken token = default)
+    private async partial Task<bool> AttemptFullSync(string path, CancellationToken ctoken)
     {
-        if (token.IsCancellationRequested)
-            return false;
-
-        // Prepare
-        List<AssetRecord> recs = _assetDatabase.Snapshot();
-        bool fileExists = await _assetAnalysis.FileExists(path, token).ConfigureAwait(false);
-        string localPath = Path.GetRelativePath(_options.AssetsPathFull, path);
-        FullAssetSyncInfo? file = null;
-        if (fileExists)
-            file = await _assetAnalysis.FetchHashed(path, _options.AssetsPathFull, token).ConfigureAwait(false);
-
-        // Start sync
         try
         {
-            await _semaphore.WaitAsync(token).ConfigureAwait(false);
+            ctoken.ThrowIfCancellationRequested();
 
-            // If file is inaccessible, invalidate
-            if (file == null)
-            {
-                _assetPresence.Remove(localPath);
+            // Access denied
+            if (await _assetAnalysis.FetchHashed(path, _options.AssetsPathFull, ctoken).ConfigureAwait(false) is not FullAssetSyncInfo syncInfo)
+                return await ConfirmAssetAbsence(path, ctoken).ConfigureAwait(false);
 
-                if (fileExists)
-                {
-                    _logger.LogError("Unable to read file. Invalidating and requeueing for next batch: {path}", path);
-                    return false;
-                }
-
-                _logger.LogWarning("Invalidating removed file: {path}", path);
-                return true;
-            }
-
-            // Get first content match, validate or duplicate
-            if (FindMatchByDataIntegrity(file, recs) is AssetRecord dataMatch)
-            {
-                if (PathMatch(localPath, dataMatch))
-                {
-                    _assetPresence.Set(localPath, dataMatch.ItemId);
-                    _logger.LogInformation("Activated existing record for file: {path}", path);
-                }
-                else
-                {
-                    // TODO add old path for log
-                    await _assetDatabase.Update(dataMatch.ItemId, x => x.LocalPath = localPath, token).ConfigureAwait(false);
-                    _logger.LogInformation("Updated record for file: {path}", path);
-
-                    if (_assetPresence.GetAll(dataMatch.ItemId).Length > 1)
-                        _logger.LogInformation("Found duplicate for Id:{itemId} at {path}", dataMatch.ItemId, path);
-                }
-                return true;
-            }
-
-            // Check for modified
-            if (FindMatchByPath(localPath, recs).Count > 0)
-            {
-                //_auxiliary.AddModifiedFiles(path);
-                _logger.LogInformation("Sync mismatch. Change detected at {path}", path);
-                return true;
-            }
-
-            // If not already exited, then create a new record, append to local memory
-            if (await _assetDatabase.Create(file, token).ConfigureAwait(false) is byte[] itemId)
-            {
-                _assetPresence.Set(localPath, itemId);
-                return true;
-            }
-
-            // If creation failed, return false.
+            return await SyncByInfo(syncInfo, ctoken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Encountered an error trying to sync {path}. Message: {message}", path, ex.Message);
             return false;
+        }
+    }
+
+    private async Task<bool> SyncByInfo(FullAssetSyncInfo syncInfo, CancellationToken ctoken = default)
+    {
+        try
+        {
+            await _semaphore.WaitAsync(ctoken).ConfigureAwait(false);
+
+            _logger.LogInformation("Trying to sync {path} using its data integrity signature...", syncInfo.LocalPath);
+            if (await TryMatchByData(syncInfo, ctoken).ConfigureAwait(false))
+                return true;
+
+            // TODO: Add file health check after adding fragmented analysis hashes
+            // FindMatchByHealthCheck
+
+            _logger.LogInformation("No matches found. Creating a new record for {path}", syncInfo.LocalPath);
+            await TryCreateFromSyncInfo(syncInfo, ctoken).ConfigureAwait(false);
+            return true;
         }
         finally { _semaphore.Release(); }
     }

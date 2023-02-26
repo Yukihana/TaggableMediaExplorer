@@ -1,48 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using TTX.Data.Entities;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Services.AbstractionLayer.AssetQuery;
+using TTX.Services.StorageLayer.AssetDatabase;
+using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.ApiLayer.AssetSearch;
 
 public partial class AssetSearchService : IAssetSearchService
 {
-    private readonly IAssetQueryService _assetQuery;
+    private readonly IAssetDatabaseService _assetDatabase;
+    private readonly IAssetPresenceService _assetPresence;
 
-    public AssetSearchService(IAssetQueryService assetQuery)
+    public AssetSearchService(
+        IAssetDatabaseService assetDatabase,
+        IAssetPresenceService assetPresence)
     {
-        _assetQuery = assetQuery;
+        _assetDatabase = assetDatabase;
+        _assetPresence = assetPresence;
     }
 
-    public SearchResponse Search(SearchQuery query)
+    public async Task<SearchResponse> Search(SearchQuery query, CancellationToken ctoken)
     {
-        var results = _assetQuery.PerformQuery(query.Keywords,
-            (keywords, list) => list.Where(x =>
-            {
-                foreach (string word in keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
-                {
-                    if (!x.Title.Contains(word, StringComparison.OrdinalIgnoreCase))
-                        return false;
-                }
-                return true;
-            }));
+        string[] keywords = query.Keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-        List<string> section = results
+        AssetRecord[] assets = await _assetDatabase.Snapshot(ctoken).ConfigureAwait(false);
+
+        AssetRecord[] queryResults = assets
+            .Where(asset => asset.HasKeywords(keywords) && _assetPresence.Get(asset.LocalPath) is not null)
+            .ToArray();
+        int total = queryResults.Length;
+
+        string[] finalResults = queryResults
             .Skip(query.Page * query.Count)
             .Take(query.Count)
             .Select(x => new Guid(x.ItemId).ToString())
-            .ToList();
-
-        int total = results.Count();
-        int shown = section.Count;
+            .ToArray();
+        int shown = finalResults.Length;
 
         return new()
         {
-            Results = section.ToArray(),
+            Results = finalResults,
             TotalResults = total,
             StartIndex = shown > 0 ? query.Page * query.Count : -1,
-            EndIndex = shown > 0 ? query.Page * query.Count + section.Count - 1 : -1,
+            EndIndex = shown > 0 ? query.Page * query.Count + finalResults.Length - 1 : -1,
         };
     }
 }

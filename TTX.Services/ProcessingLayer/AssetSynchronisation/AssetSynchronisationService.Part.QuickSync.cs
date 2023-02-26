@@ -1,11 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
+using TTX.Library.EnumerableHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
@@ -13,13 +16,14 @@ public partial class AssetSynchronisationService
 {
     public async partial Task<IEnumerable<string>> QuickSync(IEnumerable<string> paths, CancellationToken ctoken)
     {
+        AssetRecord[] assets = await _assetDatabase.Snapshot(ctoken).ConfigureAwait(false);
         ConcurrentBag<string> pending = new();
         uint success = 0;
 
         await Parallel.ForEachAsync(paths, ctoken,
             async (path, token) =>
             {
-                if (await QuickSync(path, token).ConfigureAwait(false))
+                if (await TrySyncProvisionally(path, assets, token).ConfigureAwait(false))
                     Interlocked.Increment(ref success);
                 else
                     pending.Add(path);
@@ -29,32 +33,32 @@ public partial class AssetSynchronisationService
         return pending.ToHashSet();
     }
 
-    private async Task<bool> QuickSync(string path, CancellationToken token = default)
+    private async partial Task<bool> TrySyncProvisionally(string path, AssetRecord[] assets, CancellationToken ctoken)
     {
-        if (token.IsCancellationRequested)
-            return false;
-
-        // Prepare
-        List<AssetRecord> recs = _assetDatabase.Snapshot();
-        QuickAssetSyncInfo? info = await _assetAnalysis.Fetch(path, _options.AssetsPathFull, token).ConfigureAwait(false);
-        if (info == null)
-            return false;
-
-        // Match
-        ConcurrentBag<AssetRecord> matchedBag = new();
-        Parallel.ForEach(recs, rec =>
+        try
         {
-            if (ProvisionalMatch(rec, info))
-                matchedBag.Add(rec);
-        });
-        List<AssetRecord> matched = matchedBag.ToHashSet().ToList();
+            ctoken.ThrowIfCancellationRequested();
 
-        // If too many matching records, fail. Possible duplicate record. Hashed sync required.
-        if (matched.Count != 1)
+            // Fetch data
+            if (await _assetAnalysis.Fetch(path, _options.AssetsPathFull, ctoken).ConfigureAwait(false)
+                is not QuickAssetSyncInfo syncInfo)
+                throw new IOException($"Unable to read data from {path}"); // Or throw from fetch directly?
+
+            // Attempt sync
+            AssetRecord[] matches = assets.Where(rec => rec.ProvisionallyEquals(syncInfo)).ToArray();
+            AssetRecord? match = matches.SelectOneNoneOrThrow();
+
+            if (match is null)
+                return false;
+
+            // Register and finish
+            _assetPresence.Set(syncInfo.LocalPath, match.ItemId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Provisional sync failed for asset at {path}", path);
             return false;
-
-        // Finally register the asset on the presence registry
-        _assetPresence.Set(info.LocalPath, matched[0].ItemId);
-        return true;
+        }
     }
 }

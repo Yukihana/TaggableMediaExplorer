@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Server", "TTX.Server\TT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCFD2CEF-9CB3-45B8-90B4-7B5FAFA009BB}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		README.md = README.md
 	EndProjectSection
 EndProject

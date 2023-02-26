@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTX.Data;
-using TTX.Services.Legacy.AssetsIndexer;
+using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.Legacy.TagsIndexer;
 
 namespace TTX.Server.Startup;
@@ -16,7 +16,7 @@ public static partial class BootStrap
     /// Validate the database (Migration Update if applicable) and send initial data to the relevant services.
     /// </summary>
     /// <param name="app"></param>
-    public static void InitializeServices(this WebApplication app, WorkspaceProfile profile)
+    public static void InitializeServices(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 
@@ -32,15 +32,15 @@ public static partial class BootStrap
     public static void LoadData(this IServiceProvider provider)
     {
         // Assets
-        var assetsIndexer = provider.GetRequiredService<IAssetsIndexerService>();
+        var assetsIndexer = provider.GetRequiredService<IAssetIndexingService>();
         Task assetsTask = Task.Run(async () => await assetsIndexer.StartIndexing().ConfigureAwait(false));
         _loadTasks.Add(assetsTask);
-        assetsTask.ContinueWith(_loadTasks.Remove);
+        _ = assetsTask.ContinueWith(_loadTasks.Remove, TaskScheduler.Default);
 
         // Tags
         var tagsIndexer = provider.GetRequiredService<ITagsIndexerService>();
         Task tagsTask = Task.Run(async () => await tagsIndexer.Reload().ConfigureAwait(false));
         _loadTasks.Add(tagsTask);
-        tagsTask.ContinueWith(_loadTasks.Remove);
+        _ = tagsTask.ContinueWith(_loadTasks.Remove, TaskScheduler.Current);
     }
 }

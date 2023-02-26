@@ -1,29 +1,46 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using TTX.Data.Entities;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Library.Helpers;
-using TTX.Services.AbstractionLayer.AssetQuery;
+using TTX.Library.EnumerableHelpers;
+using TTX.Library.InstancingHelpers;
+using TTX.Services.StorageLayer.AssetDatabase;
+using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.ApiLayer.AssetCardData;
 
 public class AssetCardDataService : IAssetCardDataService
 {
-    private readonly IAssetQueryService _assetQuery;
+    private readonly IAssetDatabaseService _assetDatabase;
+    private readonly IAssetPresenceService _assetPresence;
 
-    public AssetCardDataService(IAssetQueryService assetQuery)
+    public AssetCardDataService(
+        IAssetDatabaseService assetDatabase,
+        IAssetPresenceService assetPresence)
     {
-        _assetQuery = assetQuery;
+        _assetDatabase = assetDatabase;
+        _assetPresence = assetPresence;
     }
 
-    public AssetCardResponse? GetAssetCardData(string id)
+    public async Task<AssetCardResponse> GetAssetCardData(string id, CancellationToken ctoken = default)
     {
         byte[] itemId = new Guid(id).ToByteArray();
-        var results = _assetQuery.PerformQuery(itemId, (id, list)
-            => list.Where(x => x.ItemId.SequenceEqual(id)));
+        AssetRecord[] queryResults = Array.Empty<AssetRecord>();
 
-        if (results.Count() != 1)
-            return null;
+        await _assetDatabase.Read(async (assets) =>
+        {
+            queryResults = await assets
+                .Where(x => x.ItemId.SequenceEqual(itemId))
+                .ToArrayAsync(ctoken)
+                .ConfigureAwait(false);
+        }, ctoken).ConfigureAwait(false);
 
-        return results.First().CopyByReflection<AssetCardResponse>();
+        return queryResults
+            .Where(x => _assetPresence.Get(x.LocalPath)?.SequenceEqual(x.ItemId) == true)
+            .SelectOneOrThrow($"Searching for presence match for {id}. ")
+            .DeserializedCopyAs<AssetCardResponse>();
     }
 }

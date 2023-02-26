@@ -21,8 +21,15 @@ public class WorkspaceProfile : IOptionsSet
     public string[] Blacklist { get; set; } = Array.Empty<string>();
     public string[] FinalAdds { get; set; } = Array.Empty<string>();
 
-    // Integrity
+    // Database
 
+    public bool EnableAssetDeletion { get; set; } = false;
+
+    // Sync
+
+    public TimeSpan AssetSyncAttemptBaseInterval { get; set; } = TimeSpan.FromSeconds(2);
+    public int AssetFullSyncAttemptsOnReload { get; set; } = 2;
+    public int AssetFullSyncAttemptsOnEvent { get; set; } = 100;
     public TimeSpan HashExpiry { get; set; } = new(30, 0, 0, 0);
 
     // Config

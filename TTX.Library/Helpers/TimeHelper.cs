@@ -11,7 +11,7 @@ public static class TimeHelper
 
     public static string GetTimeDiff(this DateTime since, bool IsAddedDate = false)
     {
-        DateTime dtNow = DateTime.Now;
+        DateTime dtNow = DateTime.UtcNow;
         var t = TimeSpan.FromTicks(dtNow.Ticks - since.Ticks);
 
         var m = t.TotalMinutes;

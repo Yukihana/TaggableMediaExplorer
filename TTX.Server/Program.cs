@@ -30,7 +30,7 @@ public class Program
         // Build
         var app = builder.Build();
 
-        app.InitializeServices(profile);
+        app.InitializeServices();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

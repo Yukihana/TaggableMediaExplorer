@@ -8,9 +8,11 @@ using TTX.Library.DataHelpers;
 
 namespace TTX.Data.Comparers;
 
-public class AssetIntegrityComparer : IEqualityComparer<IAssetHashedMetadata>
+// Not needed because we're using a concurrent dictionary to store identicals for logging
+// Keep it around anyway, incase it can be used future.
+public class AssetIntegrityComparer : IEqualityComparer<IAssetFullSyncInfo>
 {
-    public bool Equals(IAssetHashedMetadata? x, IAssetHashedMetadata? y)
+    public bool Equals(IAssetFullSyncInfo? x, IAssetFullSyncInfo? y)
     {
         if (x is null || y is null)
             return x == y;
@@ -24,6 +26,6 @@ public class AssetIntegrityComparer : IEqualityComparer<IAssetHashedMetadata>
         return x.SHA256.SequenceEqual(y.SHA256);
     }
 
-    public int GetHashCode([DisallowNull] IAssetHashedMetadata assetSyncInfo)
+    public int GetHashCode([DisallowNull] IAssetFullSyncInfo assetSyncInfo)
         => assetSyncInfo.GetIntegrityBytes().GetFNV1();
 }

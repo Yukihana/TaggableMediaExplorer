@@ -18,10 +18,8 @@ public partial class TagsIndexerService : ITagsIndexerService
 
     public async Task Reload(CancellationToken token = default)
     {
-        await Invalidate().ConfigureAwait(false);
         await Purge().ConfigureAwait(false);
         await LoadRecords().ConfigureAwait(false);
-        await Validate().ConfigureAwait(false);
     }
 
     private async Task LoadRecords()

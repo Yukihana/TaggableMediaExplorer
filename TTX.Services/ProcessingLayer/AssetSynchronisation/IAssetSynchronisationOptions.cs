@@ -1,7 +1,12 @@
-﻿namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
+﻿using System;
+
+namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
 public interface IAssetSynchronisationOptions : IServiceOptions
 {
-    public string ServerRoot { get; set; }
-    public string AssetsPath { get; set; }
+    string ServerRoot { get; set; }
+    string AssetsPath { get; set; }
+    TimeSpan AssetSyncAttemptBaseInterval { get; set; }
+    int AssetFullSyncAttemptsOnReload { get; set; }
+    int AssetFullSyncAttemptsOnEvent { get; set; }
 }

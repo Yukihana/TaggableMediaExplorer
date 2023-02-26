@@ -33,7 +33,7 @@ public partial class AssetAnalysisService : IAssetAnalysisService
 
     public partial Task<FullAssetSyncInfo?> FetchHashed(string path, string relativeTo, CancellationToken token = default);
 
-    private partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token = default) where T : AssetSyncInfoBase, IAssetMetadata, new();
+    private partial Task<T> GetAssetFile<T>(string path, string relativeTo, CancellationToken token = default) where T : AssetSyncInfoBase, IAssetQuickSyncInfo, new();
 
     // Crumbs
 
