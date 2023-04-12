@@ -6,6 +6,7 @@ using TTX.Data.Entities;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
+using TTX.Services.StorageLayer.AssetPreview;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
@@ -14,6 +15,7 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
     private readonly IAssetDatabaseService _assetDatabase;
     private readonly IAssetPresenceService _assetPresence;
     private readonly IAssetAnalysisService _assetAnalysis;
+    private readonly IAssetPreviewService _assetPreview;
 
     private readonly ILogger<AssetSynchronisationService> _logger;
     private readonly AssetSynchronisationOptions _options;
@@ -24,6 +26,7 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
         IAssetDatabaseService assetDatabase,
         IAssetPresenceService assetPresence,
         IAssetAnalysisService assetAnalysis,
+        IAssetPreviewService assetPreview,
 
         ILogger<AssetSynchronisationService> logger,
         IOptionsSet options)
@@ -31,6 +34,7 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
         _assetDatabase = assetDatabase;
         _assetPresence = assetPresence;
         _assetAnalysis = assetAnalysis;
+        _assetPreview = assetPreview;
         _logger = logger;
         _options = options.InitializeServiceOptions<AssetSynchronisationOptions>();
     }
@@ -50,4 +54,8 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
     public partial Task<bool> FullSync(string path, bool isReloadSync = false, CancellationToken ctoken = default);
 
     private partial Task<bool> AttemptFullSync(string path, CancellationToken ctoken = default);
+
+    // Post Sync
+
+    private partial Task OnSyncSuccess(AssetRecord asset, CancellationToken ctoken = default);
 }

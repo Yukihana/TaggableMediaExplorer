@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
-using TTX.Client.ViewLogic;
+using TTX.Client.ViewContext;
 
 namespace TTX.Client.ViewData;
 
@@ -8,7 +8,7 @@ public partial class BrowserData : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ItemCount))]
-    private ObservableCollection<AssetCardLogic> _items = new();
+    private ObservableCollection<AssetCardContext> _items = new();
 
     // Single Selection
 
@@ -16,19 +16,17 @@ public partial class BrowserData : ObservableObject
     private int _selectedIndex = 0;
 
     [ObservableProperty]
-    private AssetCardLogic? _selectedItem = null;
+    private AssetCardContext? _selectedItem = null;
 
     // Multiselect
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedCount))]
-    private ObservableCollection<AssetCardLogic> _selectedItems = new();
+    private ObservableCollection<AssetCardContext> _selectedItems = new();
 
     // Derived Properties
 
     public int ItemCount => Items.Count;
 
     public int SelectedCount => SelectedItems.Count;
-
-    // Ctor
 }

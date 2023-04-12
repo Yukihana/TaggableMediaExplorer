@@ -27,10 +27,10 @@ public class WorkspaceProfile : IOptionsSet
 
     // Sync
 
+    public TimeSpan AssetValidity { get; set; } = TimeSpan.FromDays(30);
     public TimeSpan AssetSyncAttemptBaseInterval { get; set; } = TimeSpan.FromSeconds(2);
     public int AssetFullSyncAttemptsOnReload { get; set; } = 2;
     public int AssetFullSyncAttemptsOnEvent { get; set; } = 100;
-    public TimeSpan HashExpiry { get; set; } = new(30, 0, 0, 0);
 
     // Config
 
@@ -45,11 +45,10 @@ public class WorkspaceProfile : IOptionsSet
     public int MetadataConcurrency { get; set; } = 4;
     public int CrumbsCount { get; set; } = 16;
 
-    // Thumbnails
+    // Previews
 
-    public string ThumbsPath { get; set; } = "Thumbnails";
-    public float ThumbnailTime { get; set; } = 0.2f;
-    public string ThumbnailFormat { get; set; } = "PNG";
+    public string PreviewsPath { get; set; } = "Previews";
+    public float AssetPreviewSnapshotTime { get; set; } = 0.2f;
 
     // Runtime
 

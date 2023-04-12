@@ -33,6 +33,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E3125B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{2FFB123E-1C07-431B-8774-CBBD8F5FAD89}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FFMPEG", "FFMPEG\FFMPEG.shproj", "{D2F64EC2-6A5C-4F76-8094-54980B9C4133}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ClientResources", "ClientResources\ClientResources.shproj", "{2DC06236-1D3F-4376-8FA5-09D4C410EA67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,8 +93,16 @@ Global
 		{2C3A5E7D-EB57-4D86-94F8-D5663F508323} = {D2C6BFFC-1109-4BCC-B8F7-A5D7098ECE12}
 		{E8AE4D6D-5540-4D64-90EA-D4312494E6AE} = {D2C6BFFC-1109-4BCC-B8F7-A5D7098ECE12}
 		{5D6D3BC5-57FF-409E-BC3F-BDDFDD137CD8} = {2FFB123E-1C07-431B-8774-CBBD8F5FAD89}
+		{D2F64EC2-6A5C-4F76-8094-54980B9C4133} = {E3125B84-5C28-4230-AB03-B9596830261C}
+		{2DC06236-1D3F-4376-8FA5-09D4C410EA67} = {D2C6BFFC-1109-4BCC-B8F7-A5D7098ECE12}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7B1B3F4C-AB8A-45B1-88C0-C9589E0D20AC}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ClientResources\ClientResources.projitems*{2c3a5e7d-eb57-4d86-94f8-d5663f508323}*SharedItemsImports = 5
+		ClientResources\ClientResources.projitems*{2dc06236-1d3f-4376-8fa5-09d4c410ea67}*SharedItemsImports = 13
+		FFMPEG\FFMPEG.projitems*{43163cb7-46b0-4079-b0f6-15b4a16442cf}*SharedItemsImports = 5
+		FFMPEG\FFMPEG.projitems*{d2f64ec2-6a5c-4f76-8094-54980b9c4133}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

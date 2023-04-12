@@ -9,6 +9,7 @@ using TTX.Data;
 using TTX.Services;
 using TTX.Services.ApiLayer.AssetCardData;
 using TTX.Services.ApiLayer.AssetSearch;
+using TTX.Services.ApiLayer.AssetSnapshotData;
 using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.TagsIndexer;
@@ -16,6 +17,7 @@ using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.ProcessingLayer.AssetSynchronisation;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
+using TTX.Services.StorageLayer.AssetPreview;
 using TTX.Services.TagsIndexer;
 
 namespace TTX.Server.Startup;
@@ -86,22 +88,22 @@ public static partial class BootStrap
     /// </summary>
     public static void AttachDataServices(this IServiceCollection services)
     {
-        // Storage Layer
+        // Independents
         services.AddSingleton<IAssetDatabaseService, AssetDatabaseService>();
         services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
-
-        // IncomingLayer
+        services.AddSingleton<IAssetPreviewService, AssetPreviewService>();
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
-
-        // ProcessingLayer
-        services.AddSingleton<IAssetSynchronisationService, AssetSynchronisationService>();
         services.AddSingleton<IAssetAnalysisService, AssetAnalysisService>();
 
-        // API Layer
+        // Intermediates
+        services.AddSingleton<IAssetSynchronisationService, AssetSynchronisationService>();
+
+        // Top layer: Api services
         services.AddSingleton<IAssetSearchService, AssetSearchService>();
         services.AddSingleton<IAssetCardDataService, AssetCardDataService>();
+        services.AddSingleton<IAssetSnapshotDataService, AssetSnapshotDataService>();
 
-        // Control Layer
+        // Top layer: Control services
         services.AddSingleton<IAssetIndexingService, AssetIndexingService>();
         services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
     }

@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
-             xmlns:viewlogic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
+             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContext;assembly=TTX.Client"
              xmlns:controls="clr-namespace:TTX.WpfControls;assembly=TTX.WpfControls"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewlogic:AssetCardLogic, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance viewcontext:AssetCardContext, IsDesignTimeCreatable=False}"
              d:DesignWidth="600" d:Background="White">
     <UserControl.InputBindings>
         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ItemLaunchCommand}" />
@@ -18,7 +18,7 @@
         <Grid Width="128" Height="128" Margin="5 5 10 5" VerticalAlignment="Top">
 
             <!--Gradient-->
-            <Rectangle  ToolTip="{Binding DataModel.ItemIdString}" Stroke="#8888" StrokeThickness="1">
+            <Rectangle  ToolTip="{Binding ItemIdString}" Stroke="#8888" StrokeThickness="1">
                 <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="Transparent" Offset="0" />
@@ -28,7 +28,7 @@
             </Rectangle>
 
             <!--Image-->
-            <Image IsHitTestVisible="False" Source="{Binding DataModel.ThumbPath}" />
+            <Image IsHitTestVisible="False" Source="{Binding ThumbPath}" />
 
             <!--Duration-->
             <Border Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" CornerRadius="5">
@@ -38,7 +38,7 @@
                         <GradientStop Offset="1" Color="#333" />
                     </LinearGradientBrush>
                 </Border.Background>
-                <TextBlock Text="{Binding DataModel.DurationConcise, FallbackValue='00:00'}"
+                <TextBlock Text="{Binding DurationConcise, FallbackValue='00:00'}"
                            FontWeight="Bold"
                            TextTrimming="CharacterEllipsis"
                            FontSize="14"
@@ -46,7 +46,7 @@
                     <TextBlock.ToolTip>
                         <TextBlock>
                             <Run Text="Duration:" />
-                            <Run Text="{Binding DataModel.MediaDuration, FallbackValue='Unknown'}" />
+                            <Run Text="{Binding MediaDuration, FallbackValue='Unknown'}" />
                         </TextBlock>
                     </TextBlock.ToolTip>
                 </TextBlock>
@@ -57,7 +57,7 @@
         <StackPanel VerticalAlignment="Top">
 
             <!--Title-->
-            <TextBlock Text="{Binding DataModel.Title, FallbackValue='Unknown Title'}"
+            <TextBlock Text="{Binding Title, FallbackValue='Unknown Title'}"
                        FontWeight="Bold" FontSize="16" Margin="0 5 0 0"
                        TextTrimming="CharacterEllipsis" />
 
@@ -75,10 +75,10 @@
             <UniformGrid Rows="2" Columns="2" Opacity="0.5">
 
                 <!--Added-->
-                <TextBlock ToolTip="{Binding DataModel.AddedUtc}"
+                <TextBlock ToolTip="{Binding AddedUtc}"
                            TextTrimming="CharacterEllipsis">
                     <Run Text="Added" />
-                    <Run Text="{Binding DataModel.AddedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
+                    <Run Text="{Binding AddedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
                 </TextBlock>
 
                 <!--Resolution-->
@@ -86,40 +86,40 @@
                     <TextBlock.ToolTip>
                         <TextBlock>
                             <Run Text="Width:" />
-                            <Run Text="{Binding DataModel.MediaWidth, FallbackValue='0'}" />
+                            <Run Text="{Binding MediaWidth, FallbackValue='0'}" />
                             <LineBreak />
                             <Run Text="Height:" />
-                            <Run Text="{Binding DataModel.MediaHeight,FallbackValue='0'}" />
+                            <Run Text="{Binding MediaHeight,FallbackValue='0'}" />
                         </TextBlock>
                     </TextBlock.ToolTip>
                     <Run Text="Resolution:" />
-                    <Run Text="{Binding DataModel.MediaWidth, FallbackValue='0'}" />
+                    <Run Text="{Binding MediaWidth, FallbackValue='0'}" />
                     <Run Text="x" />
-                    <Run Text="{Binding DataModel.MediaHeight,FallbackValue='0'}" />
+                    <Run Text="{Binding MediaHeight,FallbackValue='0'}" />
                 </TextBlock>
 
                 <!--Updated-->
-                <TextBlock ToolTip="{Binding DataModel.UpdatedUtc}"
+                <TextBlock ToolTip="{Binding UpdatedUtc}"
                            TextTrimming="CharacterEllipsis">
                     <Run Text="Updated" />
-                    <Run Text="{Binding DataModel.UpdatedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
+                    <Run Text="{Binding UpdatedDateDiff, Mode=OneWay, FallbackValue='time unknown'}" />
                 </TextBlock>
 
                 <!--Size-->
                 <TextBlock>
                     <TextBlock.ToolTip>
                         <TextBlock>
-                            <Run Text="{Binding DataModel.SizeBytes}" />
+                            <Run Text="{Binding SizeBytes}" />
                             <Run Text="bytes" />
                         </TextBlock>
                     </TextBlock.ToolTip>
                     <Run Text="Size:" />
-                    <Run Text="{Binding DataModel.SizeString, Mode=OneWay, FallbackValue='Unknown'}" />
+                    <Run Text="{Binding SizeString, Mode=OneWay, FallbackValue='Unknown'}" />
                 </TextBlock>
             </UniformGrid>
 
             <!--Tags-->
-            <ItemsControl ItemsSource="{Binding DataModel.Tags}" Background="Transparent" BorderThickness="0" Margin="0 0 0 5">
+            <ItemsControl ItemsSource="{Binding Tags}" Background="Transparent" BorderThickness="0" Margin="0 0 0 5">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel />

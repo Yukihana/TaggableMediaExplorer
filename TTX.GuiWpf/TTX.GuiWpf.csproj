@@ -13,4 +13,6 @@
     <ProjectReference Include="..\TTX.WpfControls\TTX.WpfControls.csproj" />
   </ItemGroup>
 
+  <Import Project="..\ClientResources\ClientResources.projitems" Label="Shared" />
+
 </Project>

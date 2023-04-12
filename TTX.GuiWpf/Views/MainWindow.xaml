@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
-        xmlns:viewlogic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
-        Loaded="Window_Loaded" Closed="Window_Closed"
+        xmlns:viewcontext="clr-namespace:TTX.Client.Services.MainGui;assembly=TTX.Client"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewlogic:MainLogic,IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance viewcontext:MainLogic,IsDesignTimeCreatable=True}"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>

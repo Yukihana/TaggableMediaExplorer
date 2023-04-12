@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
+             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContext;assembly=TTX.Client"
              xmlns:logic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
              xmlns:support="clr-namespace:TTX.GuiWpf.Support"
              mc:Ignorable="d"
@@ -28,7 +29,7 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
-                <DataTemplate DataType="logic:AssetCardLogic">
+                <DataTemplate DataType="viewcontext:AssetCardContext">
                     <subviews:AssetCardView />
                 </DataTemplate>
             </ListView.ItemTemplate>

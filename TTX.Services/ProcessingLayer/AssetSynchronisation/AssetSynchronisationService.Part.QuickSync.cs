@@ -49,10 +49,16 @@ public partial class AssetSynchronisationService
             AssetRecord? match = matches.SelectOneNoneOrThrow();
 
             if (match is null)
-                return false;
+                throw new ArgumentException($"No provisional match found in the database for {path}");
 
-            // Register and finish
-            _assetPresence.Set(syncInfo.LocalPath, match.ItemId);
+            // Expiry
+            DateTime hashExpiry = match.VerifiedUtc + _options.AssetValidity;
+            DateTime metaExpiry = match.UpdatedUtc + _options.AssetValidity;
+            if (DateTime.UtcNow > hashExpiry || DateTime.UtcNow > metaExpiry)
+                throw new InvalidDataException($"The validity period of the verified state is over for the asset at {path}");
+
+            // Execute post sync and finish (No need to send untracked copy since everything is already snapshotted)
+            await OnSyncSuccess(match, ctoken).ConfigureAwait(false);
             return true;
         }
         catch (Exception ex)

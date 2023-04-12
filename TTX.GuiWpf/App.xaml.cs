@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using TTX.Client;
@@ -20,18 +21,27 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // Build
-        SessionContext.SetSyncContext(
-            SynchronizationContext.Current ??
-            throw new NullReferenceException(
-                $"Require a {nameof(SynchronizationContext)}."));
-        SessionContext.SetLoginViewActivator(() => new LoginWindow());
-        SessionContext.SetMainViewActivator(() => new MainWindow());
-        SessionContext.SetExitAction(Shutdown);
+        // TODO
+        // Splash wrap the following code
+        // Task.Run the whole thing
+        // Use dispatcher to control the splash
 
-        SessionContext.Build();
+        // Prepare
+
+        string baseDirectory = Path.GetDirectoryName(
+            System.Reflection.Assembly.GetExecutingAssembly().Location) ??
+            throw new NullReferenceException("Cannot acquire base path.");
+        ClientOptions options = new(SynchronizationContext.Current ?? new())
+        {
+            ShutdownAction = Shutdown,
+            LoginViewFactoryMethod = () => new LoginWindow(),
+            MainViewFactoryMethod = () => new MainWindow(),
+            BaseDirectory = baseDirectory,
+        };
 
         // Start
-        SessionContext.Start();
+
+        ClientContextHost.BuildServices(options);
+        ClientContextHost.Start();
     }
 }

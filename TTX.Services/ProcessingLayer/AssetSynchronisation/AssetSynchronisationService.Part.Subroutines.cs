@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 using TTX.Library.EnumerableHelpers;
+using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
@@ -39,7 +40,7 @@ public partial class AssetSynchronisationService
     {
         ctoken.ThrowIfCancellationRequested();
 
-        bool result = false;
+        AssetRecord? untracked = null;
         await _assetDatabase.Write(async (assets) =>
         {
             AssetRecord[] matches = await assets
@@ -55,17 +56,23 @@ public partial class AssetSynchronisationService
                 return false;
 
             // If a match is found
-            result = true;
             match.LocalPath = syncInfo.LocalPath;
             match.CreatedUtc = syncInfo.CreatedUtc;
             match.ModifiedUtc = syncInfo.ModifiedUtc;
             match.VerifiedUtc = syncInfo.VerifiedUtc;
             match.UpdatedUtc = DateTime.UtcNow;
-            _assetPresence.Set(syncInfo.LocalPath, match.ItemId);
+
+            // Create an untracked copy for postsync and update the database
+            untracked = match.DeserializedCopy();
             return true;
         }, ctoken).ConfigureAwait(false);
 
-        return result;
+        if (untracked is null)
+            return false;
+
+        // Execute post sync operations
+        await OnSyncSuccess(untracked, ctoken).ConfigureAwait(false);
+        return true;
     }
 
     /*
@@ -92,6 +99,6 @@ public partial class AssetSynchronisationService
     private async Task TryCreateFromSyncInfo(FullAssetSyncInfo syncInfo, CancellationToken ctoken)
     {
         AssetRecord newRecord = await _assetDatabase.Create(syncInfo, ctoken).ConfigureAwait(false);
-        _assetPresence.Set(syncInfo.LocalPath, newRecord.ItemId);
+        await OnSyncSuccess(newRecord, ctoken).ConfigureAwait(false);
     }
 }

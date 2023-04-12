@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using TTX.Client.ViewHandles;
+using TTX.Client.Services.LoginGui;
 
 namespace TTX.GuiWpf.Views;
 
@@ -22,9 +22,6 @@ public partial class LoginWindow : Window, ILoginView
             _ => 0
         };
     }
-
-    public void ShowView()
-        => throw new System.NotImplementedException();
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {

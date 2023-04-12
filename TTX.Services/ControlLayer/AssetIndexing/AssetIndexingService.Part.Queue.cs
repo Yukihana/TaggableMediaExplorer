@@ -15,6 +15,7 @@ public partial class AssetIndexingService
         {
             // If indexing is not enabled, bail
             _cts.Token.ThrowIfCancellationRequested();
+            _logger.LogWarning("Recieved a file system event for the path: {path}", path);
 
             // Grab the session ID to check past ResetEvent
             int sessionId = GetSessionId();
