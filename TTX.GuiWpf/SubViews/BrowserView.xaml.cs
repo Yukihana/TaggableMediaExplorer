@@ -1,4 +1,9 @@
 ﻿using System.Windows.Controls;
+using TTX.Client.ViewContexts;
+using TTX.Client.ViewContexts.BrowserViewContext;
+using System.Linq;
+using System.Collections.Generic;
+using System.CodeDom.Compiler;
 
 namespace TTX.GuiWpf.SubViews;
 
@@ -14,5 +19,17 @@ public partial class BrowserView : UserControl
 
     private void FileView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (DataContext is BrowserContextLogic viewContext &&
+            sender is ListView container)
+        {
+            List<AssetCardContext> selected = new();
+            foreach (var item in container.SelectedItems)
+            {
+                if (item is AssetCardContext cardData)
+                    selected.Add(cardData);
+            }
+
+            viewContext.ContextData.SelectedItems = selected.ToArray();
+        }
     }
 }

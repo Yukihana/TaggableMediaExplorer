@@ -9,10 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FFME.Windows" Version="4.4.350" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TTX.Client\TTX.Client.csproj" />
     <ProjectReference Include="..\TTX.WpfControls\TTX.WpfControls.csproj" />
   </ItemGroup>
 
   <Import Project="..\ClientResources\ClientResources.projitems" Label="Shared" />
+
+  <Import Project="..\FFMPEG\FFMPEG.projitems" Label="Shared" />
 
 </Project>

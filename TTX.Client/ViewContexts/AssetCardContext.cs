@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using TTX.Library.Helpers;
 
-namespace TTX.Client.ViewContext;
+namespace TTX.Client.ViewContexts;
 
 public partial class AssetCardContext : ObservableObject
 {

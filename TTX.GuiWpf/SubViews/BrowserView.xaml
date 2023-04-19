@@ -3,12 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:views="clr-namespace:TTX.GuiWpf.Views"
              xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
-             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContext;assembly=TTX.Client"
-             xmlns:logic="clr-namespace:TTX.Client.ViewLogic;assembly=TTX.Client"
+             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContexts.BrowserViewContext;assembly=TTX.Client"
+             xmlns:commandcontext="clr-namespace:TTX.Client.ViewContexts.MainViewContext;assembly=TTX.Client"
+             xmlns:assetcardviewcontext="clr-namespace:TTX.Client.ViewContexts;assembly=TTX.Client"
              xmlns:support="clr-namespace:TTX.GuiWpf.Support"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=logic:BrowserLogic, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance Type=viewcontext:BrowserContextLogic, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <DockPanel>
@@ -19,26 +21,33 @@
                   HorizontalContentAlignment="Stretch"
                   VerticalContentAlignment="Top"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ItemsSource="{Binding DataModel.Items}"
-                  SelectedIndex="{Binding DataModel.SelectedIndex}"
-                  SelectedItem="{Binding DataModel.SelectedItem}"
-                  SelectionChanged="FileView_SelectionChanged">
+                  ItemsSource="{Binding ContextData.Items}"
+                  SelectedIndex="{Binding ContextData.SelectedIndex}"
+                  SelectedItem="{Binding ContextData.SelectedItem}"
+                  SelectionChanged="FileView_SelectionChanged"
+                  Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=ListView}, Converter={StaticResource XamlColumnMaker}}" VerticalAlignment="Top" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
-                <DataTemplate DataType="viewcontext:AssetCardContext">
-                    <subviews:AssetCardView />
+                <DataTemplate DataType="assetcardviewcontext:AssetCardContext">
+                    <subviews:AssetCardView>
+                        <subviews:AssetCardView.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}, Path=DataContext.PlayItemsCommand}" />
+                        </subviews:AssetCardView.InputBindings>
+                    </subviews:AssetCardView>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ContextMenu>
-                <ContextMenu SnapsToDevicePixels="True" UseLayoutRounding="True">
+                <ContextMenu SnapsToDevicePixels="True" UseLayoutRounding="True"
+                             d:DataContext="{d:DesignInstance Type=commandcontext:MainContextLogic}"
+                             DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
 
                     <!--Add DoubleClick default action to this-->
-                    <MenuItem Header="Queue" FontWeight="Bold" />
-                    <MenuItem Header="Watch" />
+                    <MenuItem Header="Watch" FontWeight="Bold" Command="{Binding PlayItemsCommand}" />
+                    <MenuItem Header="Queue" />
                     <MenuItem Header="Show related" />
 
                     <!--Server Actions-->

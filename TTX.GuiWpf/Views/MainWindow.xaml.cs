@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using TTX.Client.Services.MainGui;
+using TTX.Client.ViewContexts.MainViewContext;
 
 namespace TTX.GuiWpf.Views;
 
@@ -8,17 +9,17 @@ namespace TTX.GuiWpf.Views;
 /// </summary>
 public partial class MainWindow : Window, IMainView
 {
-    private MainLogic? _logic = null;
+    private MainContextLogic? _viewContext = null;
 
     public MainWindow()
         => InitializeComponent();
 
-    public void SetViewContext(MainLogic mainLogic)
-        => DataContext = _logic = mainLogic;
+    public void SetViewContext(MainContextLogic viewContext)
+        => DataContext = _viewContext = viewContext;
 
     public void ShowView()
         => ShowDialog();
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
-        => _logic?.GuiLoaded();
+        => _viewContext?.GuiLoaded();
 }

@@ -14,6 +14,8 @@ internal class PreviewLoaderService : IPreviewLoaderService
     private readonly IApiConnectionService _apiConnection;
     private readonly ILogger<PreviewLoaderService> _logger;
 
+    private readonly string _dirPath;
+
     public PreviewLoaderService(
         IClientConfigService clientConfig,
         IApiConnectionService apiConnection,
@@ -22,6 +24,8 @@ internal class PreviewLoaderService : IPreviewLoaderService
         _clientConfig = clientConfig;
         _apiConnection = apiConnection;
         _logger = logger;
+
+        _dirPath = Path.Combine(_clientConfig.BaseDirectory, _clientConfig.PreviewsPath);
     }
 
     public async Task<string> GetDefaultPreview(string idString, DateTime lastUpdatedUtc, CancellationToken ctoken = default)
@@ -35,8 +39,9 @@ internal class PreviewLoaderService : IPreviewLoaderService
         return previewPath;
     }
 
-    private static bool ValidatePreview(string previewPath, DateTime lastUpdatedUtc)
+    private bool ValidatePreview(string previewPath, DateTime lastUpdatedUtc)
     {
+        Directory.CreateDirectory(_dirPath);
         if (!File.Exists(previewPath))
             return false;
         FileInfo previewInfo = new(previewPath);
@@ -44,6 +49,7 @@ internal class PreviewLoaderService : IPreviewLoaderService
             return false;
         // Optionally add format checking without relying on System.Drawing.Common
         // Use reference:
+        // https://stackoverflow.com/questions/210650/validate-image-from-file-in-c-sharp
         return previewInfo.Length != 0;
     }
 
@@ -57,6 +63,6 @@ internal class PreviewLoaderService : IPreviewLoaderService
         _logger.LogInformation("Wrote {length} bytes to {path}.", previewData.Length, previewPath);
     }
 
-    public string GetPreviewPath(string idString)
-        => Path.Combine(_clientConfig.BaseDirectory, _clientConfig.PreviewsPath, $"{idString}.png");
+    private string GetPreviewPath(string idString)
+        => Path.Combine(_dirPath, $"{idString}{_clientConfig.DefaultPreviewsExtension}");
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TTX.Services.ApiLayer.AssetSnapshotData;
+using TTX.Services.ApiLayer.AssetContent;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,23 +8,23 @@ namespace TTX.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AssetSnapshotController : ControllerBase
+    public class AssetContentController : ControllerBase
     {
-        private readonly IAssetSnapshotDataService _assetSnapshotData;
-        private readonly ILogger<AssetSnapshotController> _logger;
+        private readonly IAssetContentService _assetContent;
+        private readonly ILogger<AssetContentController> _logger;
 
-        public AssetSnapshotController(
-            IAssetSnapshotDataService assetSnapshotData,
-            ILogger<AssetSnapshotController> logger)
+        public AssetContentController(
+            IAssetContentService assetContent,
+            ILogger<AssetContentController> logger)
         {
-            _assetSnapshotData = assetSnapshotData;
+            _assetContent = assetContent;
             _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Get([FromQuery] string id)
         {
-            if (_assetSnapshotData.GetPath(id) is string path)
+            if (_assetContent.GetPath(id) is string path)
                 return new PhysicalFileResult(path, "application/octet-stream");
 
             _logger.LogWarning("Bad request: {id}", id);

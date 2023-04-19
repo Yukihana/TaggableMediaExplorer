@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="TTX.GuiWpf.SubViews.PlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
+             xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
+             mc:Ignorable="d" Background="#000"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <!--
+        <ffme:MediaElement x:Name="PlayerControl"
+                           Background="Gray"
+                           LoadedBehavior="Play"
+                           UnloadedBehavior="Manual"
+                           MediaEnded="PlayerControl_MediaEnded"
+                           MediaFailed="PlayerControl_MediaFailed_1" />
+        -->
+        <MediaElement x:Name="PlayerControl"
+                      LoadedBehavior="Play"
+                      UnloadedBehavior="Manual"
+                      MediaEnded="PlayerControl_MediaEnded"
+                      MediaOpened="PlayerControl_MediaOpened"
+                      MediaFailed="PlayerControl_MediaFailed" />
+    </Grid>
+</UserControl>

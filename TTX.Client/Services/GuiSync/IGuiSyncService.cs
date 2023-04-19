@@ -20,7 +20,9 @@ internal interface IGuiSyncService
 
     Task<TOut?> DispatchFuncAsync<TOut>(Func<TOut> dispatchAction, CancellationToken ctoken = default);
 
-    Task<TOut?> DispatchFuncAsync<TIn, TOut>(Func<TIn, TOut> dispatchAction, TIn inputData, CancellationToken ctoken = default);
+    Task<TOut?> DispatchFuncAsync<TIn, TOut>(Func<TIn, TOut?> dispatchAction, TIn inputData, CancellationToken ctoken = default);
+
+    Task<TOut?> DispatchFuncAsyncN<TIn, TOut>(Func<TIn?, TOut?> dispatchAction, TIn inputData, CancellationToken ctoken = default);
 
     // Dispatch Post
 

@@ -3,9 +3,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TTX.Client.Services.MainGui;
+namespace TTX.Client.ViewContexts.BrowserViewContext;
 
-public partial class MainLogic
+public partial class BrowserContextLogic
 {
     public async Task SearchNew(string keywords, CancellationToken ctoken = default)
     {
@@ -13,7 +13,7 @@ public partial class MainLogic
         {
             ctoken.ThrowIfCancellationRequested();
 
-            DataModel.Keywords = keywords;
+            ContextData.Keywords = keywords;
             await SearchAsync(ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -28,7 +28,7 @@ public partial class MainLogic
         {
             ctoken.ThrowIfCancellationRequested();
 
-            DataModel.PageIndex += 1;
+            ContextData.PageIndex += 1;
             await SearchAsync(ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -43,9 +43,9 @@ public partial class MainLogic
         {
             ctoken.ThrowIfCancellationRequested();
 
-            DataModel.PageIndex = DataModel.PageIndex - 1;
-            if (DataModel.PageIndex < 0)
-                DataModel.PageIndex = 0;
+            ContextData.PageIndex = ContextData.PageIndex - 1;
+            if (ContextData.PageIndex < 0)
+                ContextData.PageIndex = 0;
             await SearchAsync(ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -60,9 +60,9 @@ public partial class MainLogic
         {
             ctoken.ThrowIfCancellationRequested();
 
-            DataModel.PageIndex = pageIndex;
-            if (DataModel.PageIndex < 0)
-                DataModel.PageIndex = 0;
+            ContextData.PageIndex = pageIndex;
+            if (ContextData.PageIndex < 0)
+                ContextData.PageIndex = 0;
             await SearchAsync(ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -77,7 +77,7 @@ public partial class MainLogic
         {
             ctoken.ThrowIfCancellationRequested();
 
-            DataModel.ItemMax = itemCountMax;
+            ContextData.ItemMax = itemCountMax;
             await SearchAsync(ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)

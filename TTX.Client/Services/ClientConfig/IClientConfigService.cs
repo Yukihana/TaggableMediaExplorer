@@ -19,6 +19,8 @@ internal interface IClientConfigService
     // Paths
 
     string BaseDirectory { get; }
-
     string PreviewsPath { get; }
+    string DefaultPreviewsExtension { get; }
+    string AssetsCachePath { get; }
+    string CachedAssetsExtension { get; }
 }

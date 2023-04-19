@@ -1,8 +1,10 @@
-﻿namespace TTX.Client.Services.MainGui;
+﻿using TTX.Client.ViewContexts.MainViewContext;
+
+namespace TTX.Client.Services.MainGui;
 
 public interface IMainView
 {
-    void SetViewContext(MainLogic mainLogic);
+    void SetViewContext(MainContextLogic viewContext);
 
     void ShowView();
 }

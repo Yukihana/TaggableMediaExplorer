@@ -53,9 +53,8 @@ internal class GuiConductorService : IGuiConductorService
         {
             await _routineLock.WaitAsync(ctoken).ConfigureAwait(false);
 
-            if (!await _loginGui.ShowModalAsync(ctoken).ConfigureAwait(false))
-                _clientConfig.Shutdown();
-            await _mainGui.ShowAsync(ctoken).ConfigureAwait(false);
+            if (await _loginGui.ShowModalAsync(ctoken).ConfigureAwait(false))
+                await _mainGui.ShowAsync(ctoken).ConfigureAwait(false);
             _guiSync.CancelActiveTasks();
             _guiSync.DispatchPost(_clientConfig.Shutdown, CancellationToken.None);
         }

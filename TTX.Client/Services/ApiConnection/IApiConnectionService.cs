@@ -17,4 +17,8 @@ internal interface IApiConnectionService
     // Previews
 
     Task<byte[]> DownloadDefaultPreview(string idString, CancellationToken ctoken = default);
+
+    // Content
+
+    Task<byte[]> DownloadAsset(string idString, CancellationToken ctoken);
 }

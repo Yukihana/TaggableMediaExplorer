@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
-        xmlns:viewcontext="clr-namespace:TTX.Client.Services.MainGui;assembly=TTX.Client"
+        xmlns:viewcontext="clr-namespace:TTX.Client.ViewContexts.MainViewContext;assembly=TTX.Client"
         Loaded="Window_Loaded"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewcontext:MainLogic,IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance viewcontext:MainContextLogic,IsDesignTimeCreatable=False}"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -17,13 +17,12 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--Splitter-->
-        <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="6" x:Name="MediaColumnSplitter"
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="6" x:Name="MediaColumnSplitter"
                       VerticalAlignment="Stretch" HorizontalAlignment="Right"
                       ResizeDirection="Columns" ResizeBehavior="PreviousAndNext">
             <GridSplitter.Style>
@@ -36,7 +35,7 @@
                 </Style>
             </GridSplitter.Style>
         </GridSplitter>
-        <Rectangle Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="2" Height="50"
+        <Rectangle Grid.Row="1" Grid.Column="1" Width="2" Height="50"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    Fill="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
                    IsHitTestVisible="False" />
@@ -49,17 +48,20 @@
         <!--Status-->
         <subviews:StatusBarView Grid.Row="3" Grid.ColumnSpan="3" />
 
-        <!--Player-->
-        <subviews:MediaView Grid.Row="1" Height="200" />
-
-        <!--Detail-->
-
-        <!--Queue-->
+        <!--SelectedView-->
+        <TabControl Grid.Row="1">
+            <TabItem Header="Player and Queue">
+                <subviews:MediaView DataContext="{Binding MediaContext}" />
+            </TabItem>
+            <TabItem Header="Details">
+                <subviews:DetailView />
+            </TabItem>
+        </TabControl>
 
         <!--Browser-->
-        <subviews:BrowserView Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding DataModel.BrowserLogic}" />
+        <subviews:BrowserView Grid.Column="3" Grid.Row="1" DataContext="{Binding BrowserContext}" />
 
         <!-- Toast Box -->
-        <subviews:ToastView Grid.ColumnSpan="3" Grid.RowSpan="4" />
+        <subviews:ToastView Grid.ColumnSpan="3" Grid.RowSpan="3" HorizontalAlignment="Center" />
     </Grid>
 </Window>

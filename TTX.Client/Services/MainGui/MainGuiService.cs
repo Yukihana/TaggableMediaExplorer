@@ -4,23 +4,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.GuiSync;
+using TTX.Client.ViewContexts.MainViewContext;
 
 namespace TTX.Client.Services.MainGui;
 
 internal class MainGuiService : IMainGuiService
 {
-    private readonly ILogger<MainLogic> _logicLogger;
+    private readonly ILogger<MainContextLogic> _contextLogger;
     private readonly IGuiSyncService _guiSync;
     private readonly IClientConfigService _clientConfig;
     private readonly ILogger<MainGuiService> _logger;
 
     public MainGuiService(
-        ILogger<MainLogic> logicLogger,
+        ILogger<MainContextLogic> logicLogger,
         IGuiSyncService guiSync,
         IClientConfigService clientConfig,
         ILogger<MainGuiService> logger)
     {
-        _logicLogger = logicLogger;
+        _contextLogger = logicLogger;
         _guiSync = guiSync;
         _clientConfig = clientConfig;
         _logger = logger;
@@ -34,12 +35,12 @@ internal class MainGuiService : IMainGuiService
         try
         {
             // Create view
-            MainLogic mainLogic = new()
+            MainContextLogic mainContext = new()
             {
-                Logger = _logicLogger,
+                Logger = _contextLogger,
             };
             IMainView mainView = _clientConfig.CreateMainView();
-            mainView.SetViewContext(mainLogic);
+            mainView.SetViewContext(mainContext);
 
             // Show and wait for finish
             mainView.ShowView();

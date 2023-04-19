@@ -32,14 +32,4 @@ internal partial class ClientConfigService : IClientConfigService
 
     public IMainView CreateMainView()
         => _options.MainViewFactoryMethod();
-
-    // Properties : Paths
-
-    public string BaseDirectory
-        => _options.BaseDirectory;
-
-    public string PreviewsPath
-        => _options.PreviewsPath;
-
-    // Thread helper
 }

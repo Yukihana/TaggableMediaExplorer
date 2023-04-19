@@ -32,7 +32,9 @@ public class ClientOptions : IClientOptions
 
     public string BaseDirectory { get; init; } = string.Empty;
     public string PreviewsPath { get; init; } = "Previews";
-    public string PreviewsExtension { get; init; } = "*.png";
+    public string DefaultPreviewsExtension { get; init; } = ".png"; // Change to cdp? (cached default preview)
+    public string AssetsCachePath { get; init; } = "AssetsCache";
+    public string CachedAssetsExtension { get; init; } = ".mp4";
 
     // Connection parameters
 

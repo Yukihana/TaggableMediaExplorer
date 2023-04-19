@@ -21,7 +21,9 @@ public interface IClientOptions
 
     string BaseDirectory { get; init; }
     string PreviewsPath { get; init; }
-    string PreviewsExtension { get; init; }
+    string DefaultPreviewsExtension { get; init; }
+    string AssetsCachePath { get; init; }
+    string CachedAssetsExtension { get; init; }
 
     // Connection parameters
 

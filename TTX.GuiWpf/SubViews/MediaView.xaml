@@ -3,9 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
-             mc:Ignorable="d" Background="#000"
+             xmlns:subviews="clr-namespace:TTX.GuiWpf.SubViews"
+             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContexts.MediaViewContext;assembly=TTX.Client"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewcontext:MediaContextLogic, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-    </Grid>
+    <DockPanel>
+        <subviews:PlayerView DockPanel.Dock="Top"
+                          MinHeight="100"
+                          ActiveMedia="{Binding ContextData.ActiveMedia}"
+                          MessageInputPipe="{Binding ContextData.ControlCommandsPipe}"
+                          MessageOutputPipe="{Binding ContextData.ControlEventsPipe, Mode=OneWayToSource}" />
+        <TextBlock DockPanel.Dock="Top" Text="{Binding ContextData.ActiveMedia}" />
+        <ListView ItemsSource="{Binding ContextData.Items}"
+                  HorizontalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectionMode="Extended"
+                  SelectionChanged="ListView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="viewcontext:QueueItemContext">
+                    <subviews:QueueItemView>
+                        <subviews:QueueItemView.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=subviews:MediaView}, Path=DataContext.PlaySelectedCommand}" />
+                        </subviews:QueueItemView.InputBindings>
+                    </subviews:QueueItemView>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
 </UserControl>

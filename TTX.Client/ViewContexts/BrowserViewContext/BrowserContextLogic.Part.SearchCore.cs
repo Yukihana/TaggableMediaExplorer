@@ -5,19 +5,32 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Client.ViewContext;
 using TTX.Data.Shared.QueryObjects;
 using TTX.Library.InstancingHelpers;
 
-namespace TTX.Client.Services.MainGui;
+namespace TTX.Client.ViewContexts.BrowserViewContext;
 
-public partial class MainLogic
+public partial class BrowserContextLogic
 {
     private async Task SearchAsync(CancellationToken ctoken = default)
     {
+        ctoken.ThrowIfCancellationRequested();
+
+        // Make query
         SearchResponse response = await MakeSearchQuery(ctoken).ConfigureAwait(false);
-        (string ItemId, AssetCardContext Context)[] cards = await PrepareResults(response, ctoken).ConfigureAwait(false);
-        await PopulateResults(cards, ctoken).ConfigureAwait(false);
+
+        try
+        {
+            await _semaphoreResultsDispatch.WaitAsync(ctoken).ConfigureAwait(false);
+            ctoken.ThrowIfCancellationRequested();
+
+            // Allocate
+            (string ItemId, AssetCardContext Context)[] cards = await PrepareResults(response, ctoken).ConfigureAwait(false);
+
+            // Load items
+            await Parallel.ForEachAsync(cards, ctoken, PopulateContext).ConfigureAwait(false);
+        }
+        finally { _semaphoreResultsDispatch.Release(); }
     }
 
     // Query
@@ -28,9 +41,9 @@ public partial class MainLogic
 
         SearchQuery request = new()
         {
-            Keywords = DataModel.Keywords,
-            Count = DataModel.ItemMax,
-            Page = DataModel.PageIndex,
+            Keywords = ContextData.Keywords,
+            Count = ContextData.ItemMax,
+            Page = ContextData.PageIndex,
         };
 
         return await _apiConnection
@@ -38,26 +51,20 @@ public partial class MainLogic
             .ConfigureAwait(false);
     }
 
-    // Prepare the contexts for the results
+    // Allocate
 
     private async Task<(string, AssetCardContext)[]> PrepareResults(SearchResponse response, CancellationToken ctoken = default)
     {
         ctoken.ThrowIfCancellationRequested();
 
-        try
-        {
-            await _semaphoreResultsDispatch.WaitAsync(ctoken).ConfigureAwait(false);
+        // Add empty results
+        List<(string, AssetCardContext)>? results = await _guiSync
+            .DispatchFuncAsync(SetResults, response, ctoken).ConfigureAwait(false);
 
-            // Add empty results
-            List<(string, AssetCardContext)>? results = await _guiSync
-                .DispatchFuncAsync(SetResults, response, ctoken).ConfigureAwait(false);
+        if (results == null)
+            throw new NullReferenceException($"Internal error. Search results collection of {nameof(AssetCardContext)} is null.");
 
-            if (results == null)
-                throw new NullReferenceException($"Internal error. Search results collection of {nameof(AssetCardContext)} is null.");
-
-            return results.ToArray();
-        }
-        finally { _semaphoreResultsDispatch.Release(); }
+        return results.ToArray();
     }
 
     private List<(string, AssetCardContext)> SetResults(SearchResponse response)
@@ -78,7 +85,7 @@ public partial class MainLogic
                 collection.Add(context);
             }
 
-            DataModel.BrowserLogic.DataModel.Items = collection;
+            ContextData.Items = collection;
         }
         catch (Exception ex)
         {
@@ -88,12 +95,6 @@ public partial class MainLogic
     }
 
     // Query and populate cards
-
-    private async Task PopulateResults((string, AssetCardContext)[] cards, CancellationToken ctoken = default)
-    {
-        await Parallel.ForEachAsync(cards, ctoken, PopulateContext).ConfigureAwait(false);
-        //foreach (AssetCardContext card in cards)
-    }
 
     private async ValueTask PopulateContext((string ItemId, AssetCardContext Context) contextInfo, CancellationToken ctoken = default)
     {

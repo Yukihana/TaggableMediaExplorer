@@ -1,4 +1,5 @@
-﻿using TTX.Services.ControlLayer.AssetIndexing;
+﻿using TTX.Services.ApiLayer.AssetContent;
+using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
@@ -23,6 +24,9 @@ public interface IOptionsSet :
 
     // Control
     IAssetIndexingOptions,
-    ITagsIndexerOptions
+    ITagsIndexerOptions,
+
+    // Api
+    IAssetContentOptions
 {
 }

@@ -8,6 +8,7 @@ using System.Text.Json;
 using TTX.Data;
 using TTX.Services;
 using TTX.Services.ApiLayer.AssetCardData;
+using TTX.Services.ApiLayer.AssetContent;
 using TTX.Services.ApiLayer.AssetSearch;
 using TTX.Services.ApiLayer.AssetSnapshotData;
 using TTX.Services.ControlLayer.AssetIndexing;
@@ -102,6 +103,7 @@ public static partial class BootStrap
         services.AddSingleton<IAssetSearchService, AssetSearchService>();
         services.AddSingleton<IAssetCardDataService, AssetCardDataService>();
         services.AddSingleton<IAssetSnapshotDataService, AssetSnapshotDataService>();
+        services.AddSingleton<IAssetContentService, AssetContentService>();
 
         // Top layer: Control services
         services.AddSingleton<IAssetIndexingService, AssetIndexingService>();

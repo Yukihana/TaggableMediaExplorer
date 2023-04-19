@@ -31,6 +31,13 @@ public partial class App : Application
         string baseDirectory = Path.GetDirectoryName(
             System.Reflection.Assembly.GetExecutingAssembly().Location) ??
             throw new NullReferenceException("Cannot acquire base path.");
+
+        // FFME
+
+        Unosquare.FFME.Library.FFmpegDirectory = Path.Combine(baseDirectory, "ffmpeg", "Win64");
+
+        // Options
+
         ClientOptions options = new(SynchronizationContext.Current ?? new())
         {
             ShutdownAction = Shutdown,

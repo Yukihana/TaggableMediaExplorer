@@ -4,14 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
-             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContext;assembly=TTX.Client"
+             xmlns:viewcontext="clr-namespace:TTX.Client.ViewContexts;assembly=TTX.Client"
              xmlns:controls="clr-namespace:TTX.WpfControls;assembly=TTX.WpfControls"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewcontext:AssetCardContext, IsDesignTimeCreatable=False}"
              d:DesignWidth="600" d:Background="White">
-    <UserControl.InputBindings>
-        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ItemLaunchCommand}" />
-    </UserControl.InputBindings>
     <DockPanel Margin="5">
 
         <!--ImageBox-->

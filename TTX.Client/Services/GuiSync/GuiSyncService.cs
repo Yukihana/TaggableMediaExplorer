@@ -59,22 +59,39 @@ internal class GuiSyncService : IGuiSyncService
         TOut? result = default;
         await _options.SyncContext.SendAsync(state =>
         {
-            var r = dispatchAction();
-            result = r;
+            result = dispatchAction();
         }, null).ConfigureAwait(false);
 
         return result;
     }
 
-    public async Task<TOut?> DispatchFuncAsync<TIn, TOut>(Func<TIn, TOut> dispatchAction, TIn inputData, CancellationToken ctoken = default)
+    public async Task<TOut?> DispatchFuncAsync<TIn, TOut>(Func<TIn, TOut?> dispatchAction, TIn inputData, CancellationToken ctoken = default)
     {
         ctoken.ThrowIfCancellationRequested();
 
         TOut? result = default;
+
         await _options.SyncContext.SendAsync(state =>
         {
             if (state is TIn t)
                 result = dispatchAction(t);
+        }, inputData).ConfigureAwait(false);
+
+        return result;
+    }
+
+    public async Task<TOut?> DispatchFuncAsyncN<TIn, TOut>(Func<TIn?, TOut?> dispatchAction, TIn inputData, CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
+
+        TOut? result = default;
+
+        await _options.SyncContext.SendAsync(state =>
+        {
+            if (state is TIn t)
+                result = dispatchAction(t);
+            else
+                result = dispatchAction(default);
         }, inputData).ConfigureAwait(false);
 
         return result;

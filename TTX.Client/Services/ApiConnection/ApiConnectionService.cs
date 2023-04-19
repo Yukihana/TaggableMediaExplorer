@@ -48,4 +48,9 @@ internal class ApiConnectionService : IApiConnectionService
 
     public async Task<byte[]> DownloadDefaultPreview(string idString, CancellationToken ctoken = default)
         => await _clientSession.DownloadUsingGet("api/AssetSnapshot", $"id={idString}", ctoken).ConfigureAwait(false);
+
+    // Api : Asset Content
+
+    public async Task<byte[]> DownloadAsset(string idString, CancellationToken ctoken = default)
+        => await _clientSession.DownloadUsingGet("api/AssetContent", $"id={idString}", ctoken).ConfigureAwait(false);
 }
