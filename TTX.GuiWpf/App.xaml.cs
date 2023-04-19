@@ -32,9 +32,7 @@ public partial class App : Application
             System.Reflection.Assembly.GetExecutingAssembly().Location) ??
             throw new NullReferenceException("Cannot acquire base path.");
 
-        // FFME
-
-        Unosquare.FFME.Library.FFmpegDirectory = Path.Combine(baseDirectory, "ffmpeg", "Win64");
+        // VLC
 
         // Options
 

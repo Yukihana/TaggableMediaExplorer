@@ -1,10 +1,9 @@
-﻿using System;
+﻿using LibVLCSharp.Shared;
+using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TTX.Client.ViewContexts.MediaViewContext;
-using TTX.Client.ViewContexts.PlayerViewContext;
 
 namespace TTX.GuiWpf.SubViews;
 
@@ -16,13 +15,20 @@ public partial class PlayerView : UserControl
     public PlayerView()
     {
         InitializeComponent();
+
+        Core.Initialize();
+        _libVLC = new LibVLC();
+        _mediaPlayer = new MediaPlayer(_libVLC);
+        _mediaPlayer.EndReached += MediaPlayer_EndReached;
     }
 
-    private void PerformContextAction(Action<PlayerContextLogic> contextAction)
-    {
-        if (DataContext is PlayerContextLogic contextLogic)
-            contextAction(contextLogic);
-    }
+    // Load
+
+    private readonly LibVLC _libVLC;
+    private readonly MediaPlayer _mediaPlayer;
+
+    private void PlayerControl_Loaded(object sender, RoutedEventArgs e)
+        => PlayerControl.MediaPlayer = _mediaPlayer;
 
     // Active Media - Source change handler
 
@@ -46,12 +52,7 @@ public partial class PlayerView : UserControl
             && !string.IsNullOrEmpty(item.CachePath)
             && File.Exists(item.CachePath))
         {
-            // FFME
-            //_ = Task.Run(async () => await playerView.PlayerControl.Open(new Uri(path)));
-
-            // Inbuilt ME
-            playerView.PlayerControl.Source = new Uri(item.CachePath);
-            playerView.PlayerControl.Play();
+            playerView._mediaPlayer.Play(new Media(playerView._libVLC, new Uri(item.CachePath)));
         }
     }
 
@@ -87,11 +88,11 @@ public partial class PlayerView : UserControl
         switch (input)
         {
             case "play":
-                PlayerControl.Play();
+                _mediaPlayer.Play();
                 break;
 
             case "stop":
-                PlayerControl.Stop();
+                _mediaPlayer.Stop();
                 break;
 
             default:
@@ -116,8 +117,8 @@ public partial class PlayerView : UserControl
 
     // Outputs
 
-    private void PlayerControl_MediaEnded(object sender, EventArgs e)
-        => MessageOutputPipe = "ended";
+    private void MediaPlayer_EndReached(object? sender, EventArgs e)
+        => Dispatcher.Invoke(() => MessageOutputPipe = "ended");
 
     private void PlayerControl_MediaOpened(object sender, RoutedEventArgs e)
         => MessageOutputPipe = "opened";

@@ -10,10 +10,10 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <subviews:PlayerView DockPanel.Dock="Top"
-                          MinHeight="100"
-                          ActiveMedia="{Binding ContextData.ActiveMedia}"
-                          MessageInputPipe="{Binding ContextData.ControlCommandsPipe}"
-                          MessageOutputPipe="{Binding ContextData.ControlEventsPipe, Mode=OneWayToSource}" />
+                             MinHeight="100"
+                             ActiveMedia="{Binding ContextData.ActiveMedia}"
+                             MessageInputPipe="{Binding ContextData.ControlCommandsPipe}"
+                             MessageOutputPipe="{Binding ContextData.ControlEventsPipe, Mode=OneWayToSource}" />
         <TextBlock DockPanel.Dock="Top" Text="{Binding ContextData.ActiveMedia}" />
         <ListView ItemsSource="{Binding ContextData.Items}"
                   HorizontalContentAlignment="Stretch"
