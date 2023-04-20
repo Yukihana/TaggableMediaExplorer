@@ -20,12 +20,12 @@ public partial class AssetDatabaseService : IAssetDatabaseService
     public AssetDatabaseService(
         IDbContextFactory<AssetsContext> dbContextFactory,
         ILogger<AssetDatabaseService> logger,
-        IOptionsSet options)
+        IWorkspaceProfile profile)
     {
         _dbContextFactory = dbContextFactory;
 
         _logger = logger;
-        _options = options.InitializeServiceOptions<AssetDatabaseOptions>();
+        _options = profile.InitializeServiceOptions<AssetDatabaseOptions>();
     }
 
     // Standard Api operations
@@ -38,7 +38,7 @@ public partial class AssetDatabaseService : IAssetDatabaseService
 
     // Addon operations
 
-    public partial Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, CancellationToken ctoken = default);
+    public partial Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken = default);
 
     // Repair
 

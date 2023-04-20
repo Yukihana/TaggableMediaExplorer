@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using TTX.Services;
 
 namespace TTX.Server.Startup;
 
-public class WorkspaceProfile : IOptionsSet
+public class WorkspaceProfile : IWorkspaceProfile
 {
     // Database
 
@@ -50,13 +49,11 @@ public class WorkspaceProfile : IOptionsSet
     public string PreviewsPath { get; set; } = "Previews";
     public float AssetPreviewSnapshotTime { get; set; } = 0.2f;
 
-    // Runtime
-
-    [JsonIgnore]
-    public string ServerRoot { get; set; } = string.Empty;
-
-    // Unused : IServiceOptions
+    // Unused : IServiceProfile
 
     public void Initialize()
+    { }
+
+    public void Initialize(IRuntimeConfig runtimeConfig)
     { }
 }

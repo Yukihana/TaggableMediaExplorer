@@ -7,6 +7,7 @@ using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.StorageLayer.AssetPreview;
+using TTX.Services.StorageLayer.MediaCodec;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
@@ -16,6 +17,7 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
     private readonly IAssetPresenceService _assetPresence;
     private readonly IAssetAnalysisService _assetAnalysis;
     private readonly IAssetPreviewService _assetPreview;
+    private readonly IMediaCodecService _mediaCodec;
 
     private readonly ILogger<AssetSynchronisationService> _logger;
     private readonly AssetSynchronisationOptions _options;
@@ -27,16 +29,19 @@ public partial class AssetSynchronisationService : IAssetSynchronisationService
         IAssetPresenceService assetPresence,
         IAssetAnalysisService assetAnalysis,
         IAssetPreviewService assetPreview,
+        IMediaCodecService mediaCodec,
 
         ILogger<AssetSynchronisationService> logger,
-        IOptionsSet options)
+        IWorkspaceProfile profile,
+        IRuntimeConfig config)
     {
         _assetDatabase = assetDatabase;
         _assetPresence = assetPresence;
         _assetAnalysis = assetAnalysis;
         _assetPreview = assetPreview;
+        _mediaCodec = mediaCodec;
         _logger = logger;
-        _options = options.InitializeServiceOptions<AssetSynchronisationOptions>();
+        _options = profile.InitializeServiceOptions<AssetSynchronisationOptions>(config);
     }
 
     // Reload

@@ -50,7 +50,10 @@ public partial class AssetSynchronisationService
             if (await _assetAnalysis.FetchHashed(path, _options.AssetsPathFull, ctoken).ConfigureAwait(false) is not FullAssetSyncInfo syncInfo)
                 return await ConfirmAssetAbsence(path, ctoken).ConfigureAwait(false);
 
-            return await SyncByInfo(syncInfo, ctoken).ConfigureAwait(false);
+            // Additionally fetch media analysis info to avoid long pause during database operations
+            AssetMediaInfo mediaInfo = await _mediaCodec.GetMediaAnalysisInfo(path, ctoken).ConfigureAwait(false);
+
+            return await SyncByInfo(syncInfo, mediaInfo, ctoken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -59,21 +62,21 @@ public partial class AssetSynchronisationService
         }
     }
 
-    private async Task<bool> SyncByInfo(FullAssetSyncInfo syncInfo, CancellationToken ctoken = default)
+    private async Task<bool> SyncByInfo(FullAssetSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken = default)
     {
         try
         {
             await _semaphore.WaitAsync(ctoken).ConfigureAwait(false);
 
             _logger.LogInformation("Trying to sync {path} using its data integrity signature...", syncInfo.LocalPath);
-            if (await TryMatchByData(syncInfo, ctoken).ConfigureAwait(false))
+            if (await TryMatchByData(syncInfo, mediaInfo, ctoken).ConfigureAwait(false))
                 return true;
 
             // TODO: Add file health check after adding fragmented analysis hashes
             // FindMatchByHealthCheck
 
             _logger.LogInformation("No matches found. Creating a new record for {path}", syncInfo.LocalPath);
-            await TryCreateFromSyncInfo(syncInfo, ctoken).ConfigureAwait(false);
+            await TryCreateFromSyncInfo(syncInfo, mediaInfo, ctoken).ConfigureAwait(false);
             return true;
         }
         finally { _semaphore.Release(); }

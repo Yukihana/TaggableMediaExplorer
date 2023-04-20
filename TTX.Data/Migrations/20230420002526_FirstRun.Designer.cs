@@ -11,14 +11,14 @@ using TTX.Data;
 namespace TTX.Data.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    [Migration("20230224020900_FirstRun")]
+    [Migration("20230420002526_FirstRun")]
     partial class FirstRun
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
 
             modelBuilder.Entity("TTX.Data.Entities.AssetRecord", b =>
                 {
@@ -29,28 +29,12 @@ namespace TTX.Data.Migrations
                     b.Property<DateTime>("AddedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Container")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Crumbs")
                         .IsRequired()
                         .HasColumnType("BLOB");
-
-                    b.Property<string>("DefaultAudioTrackCodec")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DefaultSubtitlesFormat")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DefaultVideoTrackCodec")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -67,14 +51,36 @@ namespace TTX.Data.Migrations
                     b.Property<TimeSpan>("MediaDuration")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MediaHeight")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MediaWidth")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("MediaFormat")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ModifiedUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<long>("PrimaryAudioBitRate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PrimaryAudioCodec")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PrimarySubtitleCodec")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("PrimaryVideoBitRate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PrimaryVideoCodec")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PrimaryVideoHeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrimaryVideoWidth")
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("SHA256")
                         .IsRequired()

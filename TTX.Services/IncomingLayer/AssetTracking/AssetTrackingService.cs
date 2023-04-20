@@ -13,10 +13,13 @@ public sealed partial class AssetTrackingService : IAssetTrackingService, IDispo
     private readonly FileSystemWatcher _watcher;
     private Action<string, DateTime>? _watcherAction = null;
 
-    public AssetTrackingService(ILogger<AssetTrackingService> logger, IOptionsSet options)
+    public AssetTrackingService(
+        ILogger<AssetTrackingService> logger,
+        IWorkspaceProfile profile,
+        IRuntimeConfig config)
     {
         _logger = logger;
-        _options = options.InitializeServiceOptions<AssetTrackingOptions>();
+        _options = profile.InitializeServiceOptions<AssetTrackingOptions>(config);
 
         _watcher = new(_options.AssetsPathFull);
         SetupWatcher();

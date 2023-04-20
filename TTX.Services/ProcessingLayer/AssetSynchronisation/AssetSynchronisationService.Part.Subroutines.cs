@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 using TTX.Library.EnumerableHelpers;
+using TTX.Library.Helpers;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
@@ -36,7 +37,7 @@ public partial class AssetSynchronisationService
         return true;
     }
 
-    private async Task<bool> TryMatchByData(FullAssetSyncInfo syncInfo, CancellationToken ctoken)
+    private async Task<bool> TryMatchByData(FullAssetSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken)
     {
         ctoken.ThrowIfCancellationRequested();
 
@@ -56,11 +57,16 @@ public partial class AssetSynchronisationService
                 return false;
 
             // If a match is found
+
+            // Update dates
             match.LocalPath = syncInfo.LocalPath;
             match.CreatedUtc = syncInfo.CreatedUtc;
             match.ModifiedUtc = syncInfo.ModifiedUtc;
             match.VerifiedUtc = syncInfo.VerifiedUtc;
             match.UpdatedUtc = DateTime.UtcNow;
+
+            // Update media info
+            mediaInfo.CopyConstrainedTo<IMediaInfo>(match);
 
             // Create an untracked copy for postsync and update the database
             untracked = match.DeserializedCopy();
@@ -81,24 +87,17 @@ public partial class AssetSynchronisationService
         // TODO after hashed fragments is implemented
         //
         // If health signature by hashed-fragments is over 90% match:
-        // Notify in log, set it as handled
-        // Return true to prevent creating a new record of a broken file
-
-        // Legacy: Check for modified
-        if (FindMatchByPath(syncInfo.LocalPath, recs).Count > 0)
-        {
-            //_auxiliary.AddModifiedFiles(path);
-            _logger.LogInformation("Sync mismatch. Change detected at {path}", syncInfo.LocalPath);
-            return true;
-        }
-
-        // Additionally, figure out where best to put this subroutine
+        // _logger.LogInformation("Sync mismatch. Change detected at {path}", syncInfo.LocalPath);
+        // set it as handled to prevent creating a new record of a broken file
     }
     */
 
-    private async Task TryCreateFromSyncInfo(FullAssetSyncInfo syncInfo, CancellationToken ctoken)
+    private async Task TryCreateFromSyncInfo(FullAssetSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken)
     {
-        AssetRecord newRecord = await _assetDatabase.Create(syncInfo, ctoken).ConfigureAwait(false);
+        // TODO figure out how to add mediaAnalysis
+        // Create record first, then send to _assetDatabase.
+
+        AssetRecord newRecord = await _assetDatabase.Create(syncInfo, mediaInfo, ctoken).ConfigureAwait(false);
         await OnSyncSuccess(newRecord, ctoken).ConfigureAwait(false);
     }
 }

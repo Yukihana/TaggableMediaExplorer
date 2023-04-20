@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using TTX.Client.ViewContexts;
 using TTX.Client.ViewContexts.MediaViewContext;
 
 namespace TTX.GuiWpf.SubViews;

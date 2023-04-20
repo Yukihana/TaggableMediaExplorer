@@ -1,11 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace TTX.Services.StorageLayer.AssetPreview;
 
 public class AssetPreviewOptions : IAssetPreviewOptions
 {
-    public string ServerRoot { get; set; } = string.Empty;
     public string AssetsPath { get; set; } = "Assets";
     public string PreviewsPath { get; set; } = "Previews";
     public float AssetPreviewSnapshotTime { get; set; } = 0.2f;
@@ -18,9 +18,14 @@ public class AssetPreviewOptions : IAssetPreviewOptions
     [JsonIgnore]
     public string PreviewsPathFull { get; set; } = string.Empty;
 
+    // Init
+
     public void Initialize()
+        => throw new NotImplementedException();
+
+    public void Initialize(IRuntimeConfig runtimeConfig)
     {
-        AssetsPathFull = Path.Combine(ServerRoot, AssetsPath);
-        PreviewsPathFull = Path.Combine(ServerRoot, PreviewsPath);
+        AssetsPathFull = Path.Combine(runtimeConfig.ProfileRoot, AssetsPath);
+        PreviewsPathFull = Path.Combine(runtimeConfig.ProfileRoot, PreviewsPath);
     }
 }

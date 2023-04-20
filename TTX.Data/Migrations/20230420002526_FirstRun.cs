@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -25,13 +25,15 @@ namespace TTX.Data.Migrations
                     Crumbs = table.Column<byte[]>(type: "BLOB", nullable: false),
                     VerifiedUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
                     SHA256 = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    MediaWidth = table.Column<int>(type: "INTEGER", nullable: false),
-                    MediaHeight = table.Column<int>(type: "INTEGER", nullable: false),
+                    MediaFormat = table.Column<string>(type: "TEXT", nullable: false),
                     MediaDuration = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    Container = table.Column<string>(type: "TEXT", nullable: false),
-                    DefaultVideoTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
-                    DefaultAudioTrackCodec = table.Column<string>(type: "TEXT", nullable: false),
-                    DefaultSubtitlesFormat = table.Column<string>(type: "TEXT", nullable: false),
+                    PrimaryVideoCodec = table.Column<string>(type: "TEXT", nullable: false),
+                    PrimaryVideoWidth = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrimaryVideoHeight = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrimaryVideoBitRate = table.Column<long>(type: "INTEGER", nullable: false),
+                    PrimaryAudioCodec = table.Column<string>(type: "TEXT", nullable: false),
+                    PrimaryAudioBitRate = table.Column<long>(type: "INTEGER", nullable: false),
+                    PrimarySubtitleCodec = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     TagsString = table.Column<string>(type: "TEXT", nullable: false),

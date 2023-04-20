@@ -74,16 +74,6 @@ public partial class AssetIndexingService
 
     // Queue Actions
 
-    private partial Task[] GetActiveTasks(CancellationToken ctoken)
-    {
-        try
-        {
-            _lockTasks.EnterReadLock();
-            return _tasks.Where(x => !x.IsCompleted).ToArray();
-        }
-        finally { _lockTasks.ExitReadLock(); }
-    }
-
     private partial void QueueSynchronisationTask(string path, int sessionId)
     {
         try

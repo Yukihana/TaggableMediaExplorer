@@ -24,10 +24,10 @@ public partial class AssetCardContext : ObservableObject
     private TimeSpan _mediaDuration = TimeSpan.Zero;
 
     [ObservableProperty]
-    private uint _mediaWidth = 0;
+    private int _primaryVideoWidth = 0;
 
     [ObservableProperty]
-    private uint _mediaHeight = 0;
+    private int _primaryVideoHeight = 0;
 
     // User Data
 

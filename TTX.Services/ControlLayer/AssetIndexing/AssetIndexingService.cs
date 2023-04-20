@@ -21,7 +21,6 @@ public partial class AssetIndexingService : IAssetIndexingService
     private readonly IAssetSynchronisationService _assetSynchronisation;
     private readonly IAssetTrackingService _assetTracking;
     private readonly ILogger<AssetIndexingService> _logger;
-    private readonly AssetIndexingOptions _options;
 
     // Control
 
@@ -30,8 +29,8 @@ public partial class AssetIndexingService : IAssetIndexingService
     // Tasks
 
     private CancellationTokenSource _cts = new();
-    private List<Task> _tasks = new();
-    private ReaderWriterLockSlim _lockTasks = new();
+    private readonly List<Task> _tasks = new();
+    private readonly ReaderWriterLockSlim _lockTasks = new();
 
     // Processing
 
@@ -48,13 +47,11 @@ public partial class AssetIndexingService : IAssetIndexingService
     public AssetIndexingService(
         IAssetSynchronisationService assetSynchronisation,
         IAssetTrackingService assetTracking,
-        ILogger<AssetIndexingService> logger,
-        IOptionsSet options)
+        ILogger<AssetIndexingService> logger)
     {
         _assetSynchronisation = assetSynchronisation;
         _assetTracking = assetTracking;
         _logger = logger;
-        _options = options.InitializeServiceOptions<AssetIndexingOptions>();
 
         _concurrency = Environment.ProcessorCount;
         _semaphoreSync = new(_concurrency);
@@ -70,8 +67,6 @@ public partial class AssetIndexingService : IAssetIndexingService
     public partial Task StopIndexing(CancellationToken ctoken = default);
 
     // Queue Access
-
-    private partial Task[] GetActiveTasks(CancellationToken ctoken = default);
 
     private partial void QueueSynchronisationTask(string path, int sessionId);
 

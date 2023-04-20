@@ -23,4 +23,15 @@ public static partial class CopyHelper
 
         return target;
     }
+
+    public static T CopyConstrainedTo<T>(this T source, T target)
+    {
+        if (source is null || target is null)
+            throw new NullReferenceException();
+
+        foreach (PropertyInfo prop in typeof(T).GetProperties().Where(x => x.CanRead && x.CanWrite))
+            prop.SetValue(target, prop.GetValue(source));
+
+        return target;
+    }
 }

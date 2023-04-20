@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using TTX.Services.ProcessingLayer.AssetSynchronisation;
 using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.ApiLayer.AssetContent;
@@ -12,10 +11,11 @@ public partial class AssetContentService : IAssetContentService
 
     public AssetContentService(
         IAssetPresenceService assetPresence,
-        IOptionsSet options)
+        IWorkspaceProfile profile,
+        IRuntimeConfig config)
     {
         _assetPresence = assetPresence;
-        _options = options.InitializeServiceOptions<AssetContentOptions>();
+        _options = profile.InitializeServiceOptions<AssetContentOptions>(config);
     }
 
     public string? GetPath(string id)

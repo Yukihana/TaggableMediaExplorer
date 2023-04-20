@@ -1,7 +1,6 @@
 ﻿namespace TTX.Services.ApiLayer.AssetContent;
 
-public interface IAssetContentOptions : IServiceOptions
+public interface IAssetContentOptions : IServiceProfile
 {
-    string ServerRoot { get; set; }
     string AssetsPath { get; set; }
 }

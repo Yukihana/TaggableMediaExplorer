@@ -8,7 +8,7 @@ using TTX.Data.Models;
 
 namespace TTX.Data.Entities;
 
-public class AssetRecord : IAssetItemId, IAssetFullSyncInfo
+public class AssetRecord : IAssetItemId, IAssetFullSyncInfo, IMediaInfo
 {
     [Key]
     public int ID { get; set; } = 0;
@@ -32,16 +32,24 @@ public class AssetRecord : IAssetItemId, IAssetFullSyncInfo
 
     // Media Info
 
-    public int MediaWidth { get; set; } = 0;
-    public int MediaHeight { get; set; } = 0;
+    public string MediaFormat { get; set; } = string.Empty;
     public TimeSpan MediaDuration { get; set; } = TimeSpan.Zero;
 
-    // Codecs
+    // Media Info : Primary video track
 
-    public string Container { get; set; } = string.Empty;
-    public string DefaultVideoTrackCodec { get; set; } = string.Empty;
-    public string DefaultAudioTrackCodec { get; set; } = string.Empty;
-    public string DefaultSubtitlesFormat { get; set; } = string.Empty;
+    public string PrimaryVideoCodec { get; set; } = string.Empty;
+    public int PrimaryVideoWidth { get; set; } = 0;
+    public int PrimaryVideoHeight { get; set; } = 0;
+    public long PrimaryVideoBitRate { get; set; } = 0;
+
+    // Media Info : Primary audio track
+
+    public string PrimaryAudioCodec { get; set; } = string.Empty;
+    public long PrimaryAudioBitRate { get; set; } = 0;
+
+    // Media Info : Primary subtitle track
+
+    public string PrimarySubtitleCodec { get; set; } = string.Empty;
 
     // User Data
 

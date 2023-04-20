@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;
 

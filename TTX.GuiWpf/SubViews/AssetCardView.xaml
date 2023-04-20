@@ -83,16 +83,16 @@
                     <TextBlock.ToolTip>
                         <TextBlock>
                             <Run Text="Width:" />
-                            <Run Text="{Binding MediaWidth, FallbackValue='0'}" />
+                            <Run Text="{Binding PrimaryVideoWidth, FallbackValue='0'}" />
                             <LineBreak />
                             <Run Text="Height:" />
-                            <Run Text="{Binding MediaHeight,FallbackValue='0'}" />
+                            <Run Text="{Binding PrimaryVideoHeight, FallbackValue='0'}" />
                         </TextBlock>
                     </TextBlock.ToolTip>
                     <Run Text="Resolution:" />
-                    <Run Text="{Binding MediaWidth, FallbackValue='0'}" />
+                    <Run Text="{Binding PrimaryVideoWidth, FallbackValue='0'}" />
                     <Run Text="x" />
-                    <Run Text="{Binding MediaHeight,FallbackValue='0'}" />
+                    <Run Text="{Binding PrimaryVideoHeight, FallbackValue='0'}" />
                 </TextBlock>
 
                 <!--Updated-->

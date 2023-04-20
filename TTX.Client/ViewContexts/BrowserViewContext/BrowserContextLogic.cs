@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.Services.ApiConnection;

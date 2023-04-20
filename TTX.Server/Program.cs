@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 using TTX.Server.Startup;
 
 namespace TTX.Server;
@@ -12,14 +11,13 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        // Load runtime workspace profile
-        var profile = builder.Configuration.LoadWorkspaceProfile();
-        if (profile == null)
-            throw new InvalidDataException("Unable to load profile. If this is a first run, then a new profile would have been created. Please run the program again after configuring the values in the profile.");
+        // Attach parameters
+        string profilePath = builder.Configuration.GetProfilePath();
+        RuntimeConfig runtimeConfig = builder.Services.AttachRuntimeConfig(profilePath);
+        WorkspaceProfile workspaceProfile = builder.Services.AttachWorkspaceProfile(profilePath);
 
         // Add services to the container.
-        builder.AttachDatabase(profile);
-        builder.Services.AttachOptions(profile);
+        builder.AttachAssetsDatabase(workspaceProfile, runtimeConfig);
         builder.Services.AttachDataServices();
 
         // Add core services

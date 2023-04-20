@@ -1,4 +1,6 @@
-﻿namespace TTX.Services.ProcessingLayer.AssetAnalysis;
+﻿using System;
+
+namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 
 internal class AssetAnalysisOptions : IAssetAnalysisOptions
 {
@@ -9,6 +11,11 @@ internal class AssetAnalysisOptions : IAssetAnalysisOptions
     public int MetadataConcurrency { get; set; } = 4;
     public int CrumbsCount { get; set; } = 16;
 
+    // Init
+
     public void Initialize()
     { }
+
+    public void Initialize(IRuntimeConfig runtimeConfig)
+        => throw new NotImplementedException();
 }

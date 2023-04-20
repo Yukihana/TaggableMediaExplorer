@@ -1,9 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
 using TTX.Client.ViewContexts;
 using TTX.Client.ViewContexts.BrowserViewContext;
-using System.Linq;
-using System.Collections.Generic;
-using System.CodeDom.Compiler;
 
 namespace TTX.GuiWpf.SubViews;
 

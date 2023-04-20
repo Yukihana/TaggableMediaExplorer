@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using TTX.Data.Entities;
 using TTX.Data.Models;
+using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.StorageLayer.AssetDatabase;
 
@@ -18,18 +19,26 @@ internal static partial class AssetDatabaseHelper
         return ti.ToTitleCase(sanitized);
     }
 
-    public static AssetRecord GenerateRecord(this IAssetFullSyncInfo info) => new()
+    public static AssetRecord GenerateRecord(this IAssetFullSyncInfo syncInfo, AssetMediaInfo mediaInfo)
     {
-        ItemId = Guid.NewGuid().ToByteArray(),
+        AssetRecord rec = new()
+        {
+            ItemId = Guid.NewGuid().ToByteArray(),
 
-        LocalPath = info.LocalPath,
-        SizeBytes = info.SizeBytes,
-        Crumbs = info.Crumbs,
-        SHA256 = info.SHA256,
+            LocalPath = syncInfo.LocalPath,
+            SizeBytes = syncInfo.SizeBytes,
+            Crumbs = syncInfo.Crumbs,
+            SHA256 = syncInfo.SHA256,
 
-        CreatedUtc = info.CreatedUtc,
-        ModifiedUtc = info.ModifiedUtc,
+            CreatedUtc = syncInfo.CreatedUtc,
+            ModifiedUtc = syncInfo.ModifiedUtc,
 
-        Title = info.LocalPath.GetDefaultNameFromPath(),
-    };
+            Title = syncInfo.LocalPath.GetDefaultNameFromPath(),
+        };
+
+        // Copy media info
+        mediaInfo.CopyConstrainedTo<IMediaInfo>(rec);
+
+        return rec;
+    }
 }

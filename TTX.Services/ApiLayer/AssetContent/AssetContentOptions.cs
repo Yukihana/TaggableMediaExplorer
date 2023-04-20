@@ -1,11 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace TTX.Services.ApiLayer.AssetContent;
 
 internal class AssetContentOptions : IAssetContentOptions
 {
-    public string ServerRoot { get; set; } = string.Empty;
     public string AssetsPath { get; set; } = "Assets";
 
     // Derived
@@ -13,8 +13,13 @@ internal class AssetContentOptions : IAssetContentOptions
     [JsonIgnore]
     public string AssetsPathFull { get; set; } = string.Empty;
 
+    // Init
+
     public void Initialize()
+        => throw new NotImplementedException();
+
+    public void Initialize(IRuntimeConfig runtimeConfig)
     {
-        AssetsPathFull = Path.Combine(ServerRoot, AssetsPath);
+        AssetsPathFull = Path.Combine(runtimeConfig.ProfileRoot, AssetsPath);
     }
 }

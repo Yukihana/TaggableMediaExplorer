@@ -14,9 +14,11 @@ public partial class AssetAnalysisService : IAssetAnalysisService
     private readonly SemaphoreSlim _semaphoreProc;
     private readonly SemaphoreSlim _semaphoreIO;
 
-    public AssetAnalysisService(ILogger<AssetAnalysisService> logger, IOptionsSet options)
+    public AssetAnalysisService(
+        ILogger<AssetAnalysisService> logger,
+        IWorkspaceProfile profile)
     {
-        _options = options.InitializeServiceOptions<AssetAnalysisOptions>();
+        _options = profile.InitializeServiceOptions<AssetAnalysisOptions>();
         _logger = logger;
 
         _semaphoreProc = new(_options.HashProcessingConcurrency);

@@ -11,9 +11,9 @@ public partial class TagsIndexerService : ITagsIndexerService
 {
     private readonly TagsIndexerOptions _options;
 
-    public TagsIndexerService(IOptionsSet options)
+    public TagsIndexerService(IWorkspaceProfile profile)
     {
-        _options = options.InitializeServiceOptions<TagsIndexerOptions>();
+        _options = profile.InitializeServiceOptions<TagsIndexerOptions>();
     }
 
     public async Task Reload(CancellationToken token = default)

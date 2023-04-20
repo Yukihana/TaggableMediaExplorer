@@ -1,8 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System.Threading.Tasks;
-
-namespace TTX.Client.ViewContexts.MediaViewContext;
+﻿namespace TTX.Client.ViewContexts.MediaViewContext;
 
 public partial class MediaContextLogic
 {

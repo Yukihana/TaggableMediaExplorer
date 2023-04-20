@@ -2,9 +2,8 @@
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
-public interface IAssetSynchronisationOptions : IServiceOptions
+public interface IAssetSynchronisationOptions : IServiceProfile
 {
-    string ServerRoot { get; set; }
     string AssetsPath { get; set; }
     TimeSpan AssetValidity { get; set; }
     TimeSpan AssetSyncAttemptBaseInterval { get; set; }

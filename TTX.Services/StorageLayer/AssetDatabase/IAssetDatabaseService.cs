@@ -19,7 +19,7 @@ public interface IAssetDatabaseService
 
     // Addon operations
 
-    Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, CancellationToken ctoken = default);
+    Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken = default);
 
     // Maintenance operations
 

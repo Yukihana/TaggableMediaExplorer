@@ -1,40 +1,30 @@
-﻿using FFMpegCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
+using TTX.Services.StorageLayer.MediaCodec;
 
 namespace TTX.Services.StorageLayer.AssetPreview;
 
 public partial class AssetPreviewService : IAssetPreviewService
 {
+    private readonly IMediaCodecService _mediaCodec;
     private readonly ILogger<AssetPreviewService> _logger;
     private readonly AssetPreviewOptions _options;
 
     // Options needs AssetValidity
 
-    public AssetPreviewService(ILogger<AssetPreviewService> logger, IOptionsSet options)
+    public AssetPreviewService(
+        IMediaCodecService mediaCodec,
+        ILogger<AssetPreviewService> logger,
+        IWorkspaceProfile profile,
+        IRuntimeConfig config)
     {
-#if DEBUG
-        string basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-            ?? throw new NullReferenceException("Cannot acquire path to FFMPEG.");
-#else
-        string basePath = Environment.CurrentDirectory;
-#endif
-
-        string cachePath = Path.Combine(basePath, "ffmpeg", "cache");
-        Directory.CreateDirectory(cachePath);
-
-        GlobalFFOptions.Configure(ffmpegoptions =>
-        {
-            ffmpegoptions.BinaryFolder = Path.Combine(basePath, "ffmpeg", "win64");
-            ffmpegoptions.TemporaryFilesFolder = cachePath;
-        });
-
+        _mediaCodec = mediaCodec;
         _logger = logger;
-        _options = options.InitializeServiceOptions<AssetPreviewOptions>();
+        _options = profile.InitializeServiceOptions<AssetPreviewOptions>(config);
     }
 
     // Set
@@ -69,14 +59,11 @@ public partial class AssetPreviewService : IAssetPreviewService
 
         string assetPath = Path.Combine(_options.AssetsPathFull, asset.LocalPath);
 
-        // Temporarily get media length here directly (before MediaAnalysisService is added)
-        var mediainfo = FFProbe.Analyse(assetPath);
-        TimeSpan mediaLength = mediainfo.Duration;
+        // Change this to TimeSpan AssetRecord.SnapshotTime,
+        // which should default to medialength * PreviewSnapshotTime when creating the record itself
+        TimeSpan snapTime = asset.MediaDuration * _options.AssetPreviewSnapshotTime;
 
-        // Change this to TimeSpan AssetRecord.SnapshotTime, which should default to medialength * PreviewSnapshotTime when creating the record itself
-        TimeSpan snapTime = mediaLength * _options.AssetPreviewSnapshotTime;
-
-        if (!await FFMpeg.SnapshotAsync(assetPath, snapshotPath, captureTime: snapTime).ConfigureAwait(false))
+        if (!await _mediaCodec.SnapshotAsync(assetPath, snapshotPath, snapTime, ctoken).ConfigureAwait(false))
         {
             _logger.LogError("Failed to create preview snapshot for {path}", asset.LocalPath);
             return false;

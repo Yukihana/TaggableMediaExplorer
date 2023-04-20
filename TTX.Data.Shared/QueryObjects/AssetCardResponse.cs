@@ -14,8 +14,8 @@ public class AssetCardResponse
     // Codec Information
 
     public TimeSpan MediaDuration { get; set; } = TimeSpan.Zero;
-    public int MediaWidth { get; set; } = 0;
-    public int MediaHeight { get; set; } = 0;
+    public int PrimaryVideoWidth { get; set; } = 0;
+    public int PrimaryVideoHeight { get; set; } = 0;
 
     // User Data
 

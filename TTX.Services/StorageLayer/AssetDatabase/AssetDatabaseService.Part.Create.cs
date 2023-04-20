@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data;
@@ -15,13 +16,13 @@ namespace TTX.Services.StorageLayer.AssetDatabase;
 
 public partial class AssetDatabaseService
 {
-    public async partial Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, CancellationToken ctoken)
+    public async partial Task<AssetRecord> Create(IAssetFullSyncInfo syncInfo, AssetMediaInfo mediaInfo, CancellationToken ctoken)
     {
         ctoken.ThrowIfCancellationRequested();
 
         // Create
-        AssetRecord newRecord = syncInfo.GenerateRecord();
-        byte[] itemId;
+        AssetRecord newRecord = syncInfo.GenerateRecord(mediaInfo);
+        byte[] itemId; // TODO add this id first to hashset. if any 'no' hits, only then generate new.
 
         using (AssetsContext assetsContext = await _dbContextFactory.CreateDbContextAsync(ctoken).ConfigureAwait(false))
         {

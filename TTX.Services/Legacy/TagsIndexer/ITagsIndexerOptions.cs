@@ -1,4 +1,4 @@
 ﻿namespace TTX.Services.Legacy.TagsIndexer;
 
-public interface ITagsIndexerOptions : IServiceOptions
+public interface ITagsIndexerOptions : IServiceProfile
 { }
