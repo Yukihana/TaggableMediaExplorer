@@ -1,5 +1,7 @@
 ﻿using System;
 using TTX.Data.Entities;
+using TTX.Data.Shared.QueryObjects;
+using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ApiLayer.AssetSearch;
 
@@ -16,5 +18,12 @@ internal static class AssetSearchHelper
             return false;
         }
         return true;
+    }
+
+    public static AssetCardState CreateAssetCardState(this AssetRecord rec)
+    {
+        AssetCardState result = new() { ItemIdString = new Guid(rec.ItemId).ToString() };
+        rec.CopyPropertiesTo(result);
+        return result;
     }
 }

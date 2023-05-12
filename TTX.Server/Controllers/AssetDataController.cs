@@ -19,6 +19,8 @@ public class AssetDataController : ControllerBase
         _logger = logger;
     }
 
+    // No longer used since search already delivers asset card data
+    // Keep it for asset data edit
     [HttpGet]
     [Route("Card")]
     public async Task<IActionResult> Get([FromQuery] string id)

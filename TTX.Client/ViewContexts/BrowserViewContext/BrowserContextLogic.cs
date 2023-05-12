@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.Services.ApiConnection;
+using TTX.Client.Services.AssetCardCache;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.GuiSync;
 using TTX.Client.Services.PreviewLoader;
@@ -16,6 +17,7 @@ public partial class BrowserContextLogic : ObservableObject
     private readonly IGuiSyncService _guiSync;
     private readonly IClientConfigService _clientConfig;
     private readonly IApiConnectionService _apiConnection;
+    private readonly IAssetCardCacheService _assetCardCache;
     private readonly IPreviewLoaderService _previewLoader;
 
     // Addons
@@ -38,6 +40,7 @@ public partial class BrowserContextLogic : ObservableObject
         _guiSync = ClientContextHost.GetService<IGuiSyncService>();
         _clientConfig = ClientContextHost.GetService<IClientConfigService>();
         _apiConnection = ClientContextHost.GetService<IApiConnectionService>();
+        _assetCardCache = ClientContextHost.GetService<IAssetCardCacheService>();
         _previewLoader = ClientContextHost.GetService<IPreviewLoaderService>();
     }
 

@@ -8,11 +8,7 @@ internal interface IApiConnectionService
 {
     // Search
 
-    Task<SearchResponse> QuerySearch(SearchQuery searchRequest, CancellationToken token = default);
-
-    // Asset Info
-
-    Task<AssetCardResponse> GetAssetCardData(string idString, CancellationToken token = default);
+    Task<SearchResponse> QuerySearch(SearchRequest searchRequest, CancellationToken token = default);
 
     // Previews
 

@@ -12,6 +12,7 @@ using TTX.Services.StorageLayer.AssetPresence;
 
 namespace TTX.Services.ApiLayer.AssetCardData;
 
+// This class is unused and marked for deletion
 public class AssetCardDataService : IAssetCardDataService
 {
     private readonly IAssetDatabaseService _assetDatabase;

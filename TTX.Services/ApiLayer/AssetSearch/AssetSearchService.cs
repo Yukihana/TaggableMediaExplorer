@@ -22,30 +22,34 @@ public partial class AssetSearchService : IAssetSearchService
         _assetPresence = assetPresence;
     }
 
-    public async Task<SearchResponse> Search(SearchQuery query, CancellationToken ctoken)
+    public async Task<SearchResponse> Search(SearchRequest query, CancellationToken ctoken = default)
     {
-        string[] keywords = query.Keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        ctoken.ThrowIfCancellationRequested();
 
+        // Prepare materials
+        string[] keywords = query.Keywords.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         AssetRecord[] assets = await _assetDatabase.Snapshot(ctoken).ConfigureAwait(false);
 
+        // Isolate targets
         AssetRecord[] queryResults = assets
+            // Check keywords first, then check prescence which might require a thread sync wait
             .Where(asset => asset.HasKeywords(keywords) && _assetPresence.Get(asset.LocalPath) is not null)
             .ToArray();
         int total = queryResults.Length;
 
-        string[] finalResults = queryResults
+        // Prepare results
+        AssetCardState[] finalResults = queryResults
             .Skip(query.Page * query.Count)
             .Take(query.Count)
-            .Select(x => new Guid(x.ItemId).ToString())
+            .Select(x => x.CreateAssetCardState())
             .ToArray();
         int shown = finalResults.Length;
 
-        return new()
-        {
-            Results = finalResults,
-            TotalResults = total,
-            StartIndex = shown > 0 ? query.Page * query.Count : -1,
-            EndIndex = shown > 0 ? query.Page * query.Count + finalResults.Length - 1 : -1,
-        };
+        return new(
+            Results: finalResults,
+            TotalResults: total,
+            StartIndex: shown > 0 ? query.Page * query.Count : -1,
+            EndIndex: shown > 0 ? query.Page * query.Count + finalResults.Length - 1 : -1
+            );
     }
 }

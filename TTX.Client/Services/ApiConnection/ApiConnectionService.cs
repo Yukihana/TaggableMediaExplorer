@@ -36,13 +36,8 @@ internal class ApiConnectionService : IApiConnectionService
 
     // Api : Search requests
 
-    public async Task<SearchResponse> QuerySearch(SearchQuery searchRequest, CancellationToken token = default)
+    public async Task<SearchResponse> QuerySearch(SearchRequest searchRequest, CancellationToken token = default)
         => await Get<SearchResponse>("api/Search", searchRequest.ToQuery(), token).ConfigureAwait(false);
-
-    // Api : Asset Infos
-
-    public async Task<AssetCardResponse> GetAssetCardData(string idString, CancellationToken ctoken = default)
-        => await Get<AssetCardResponse>("api/AssetData/Card", $"id={idString}", ctoken).ConfigureAwait(false);
 
     // Api : Previews
 

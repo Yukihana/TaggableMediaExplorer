@@ -6,5 +6,5 @@ namespace TTX.Services.ApiLayer.AssetSearch;
 
 public interface IAssetSearchService
 {
-    Task<SearchResponse> Search(SearchQuery query, CancellationToken ctoken = default);
+    Task<SearchResponse> Search(SearchRequest query, CancellationToken ctoken = default);
 }

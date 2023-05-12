@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using System;
 using TTX.Client.Services.ApiConnection;
+using TTX.Client.Services.AssetCardCache;
 using TTX.Client.Services.AssetLoader;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.ClientSession;
@@ -40,6 +41,7 @@ public static partial class ClientContextHost
         // Content services
         builder.Services.AddSingleton<IPreviewLoaderService, PreviewLoaderService>();
         builder.Services.AddSingleton<IAssetLoaderService, AssetLoaderService>();
+        builder.Services.AddSingleton<IAssetCardCacheService, AssetCardCacheService>();
 
         // Gui logic
         builder.Services.AddSingleton<ILoginGuiService, LoginGuiService>();

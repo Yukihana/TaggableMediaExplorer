@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Library.InstancingHelpers;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;
 
@@ -14,38 +13,45 @@ public partial class BrowserContextLogic
 {
     private async Task SearchAsync(CancellationToken ctoken = default)
     {
-        ctoken.ThrowIfCancellationRequested();
-
         // Make query
-        SearchResponse response = await MakeSearchQuery(ctoken).ConfigureAwait(false);
+        SearchRequest request = await PrepareSearch(ctoken).ConfigureAwait(false);
+        SearchResponse response = await SendSearch(request, ctoken).ConfigureAwait(false);
 
-        try
-        {
-            await _semaphoreResultsDispatch.WaitAsync(ctoken).ConfigureAwait(false);
-            ctoken.ThrowIfCancellationRequested();
+        // Fetch placeholder results
+        string[] idStrings = response.Results.Select(x => x.ItemIdString).ToArray();
+        Dictionary<string, AssetCardContext> contexts = _assetCardCache.Get(idStrings);
+        ObservableCollection<AssetCardContext> collection = new(contexts.Values);
 
-            // Allocate
-            (string ItemId, AssetCardContext Context)[] cards = await PrepareResults(response, ctoken).ConfigureAwait(false);
+        // Set placeholders using new or stale results
+        await UpdateItems(collection, ctoken).ConfigureAwait(false);
 
-            // Load items
-            await Parallel.ForEachAsync(cards, ctoken, PopulateContext).ConfigureAwait(false);
-        }
-        finally { _semaphoreResultsDispatch.Release(); }
+        // Refresh context data from the server
+        await _assetCardCache.Set(response.Results, ctoken).ConfigureAwait(false);
+
+        // Update thumbnails
+        await UpdateThumbnails(contexts, ctoken).ConfigureAwait(false);
     }
 
-    // Query
+    // Prepare request
 
-    private async Task<SearchResponse> MakeSearchQuery(CancellationToken ctoken)
+    private async Task<SearchRequest> PrepareSearch(CancellationToken ctoken = default)
     {
         ctoken.ThrowIfCancellationRequested();
 
-        SearchQuery request = new()
+        return await _guiSync.DispatchFuncAsync(() =>
         {
-            Keywords = ContextData.Keywords,
-            Count = ContextData.ItemMax,
-            Page = ContextData.PageIndex,
-        };
+            return new SearchRequest(
+                Keywords: ContextData.Keywords,
+                Page: ContextData.PageIndex,
+                Count: ContextData.ItemMax);
+        }, ctoken).ConfigureAwait(false)
+        ?? throw new InvalidOperationException("Search preparation failed to prepare query object.");
+    }
 
+    // Send request
+
+    private async Task<SearchResponse> SendSearch(SearchRequest request, CancellationToken ctoken)
+    {
         return await _apiConnection
             .QuerySearch(request, ctoken)
             .ConfigureAwait(false);
@@ -53,62 +59,59 @@ public partial class BrowserContextLogic
 
     // Allocate
 
-    private async Task<(string, AssetCardContext)[]> PrepareResults(SearchResponse response, CancellationToken ctoken = default)
+    private async Task UpdateItems(ObservableCollection<AssetCardContext> collection, CancellationToken ctoken = default)
     {
-        ctoken.ThrowIfCancellationRequested();
-
-        // Add empty results
-        List<(string, AssetCardContext)>? results = await _guiSync
-            .DispatchFuncAsync(SetResults, response, ctoken).ConfigureAwait(false);
-
-        if (results == null)
-            throw new NullReferenceException($"Internal error. Search results collection of {nameof(AssetCardContext)} is null.");
-
-        return results.ToArray();
-    }
-
-    private List<(string, AssetCardContext)> SetResults(SearchResponse response)
-    {
-        List<(string, AssetCardContext)> results = new();
         try
         {
-            ObservableCollection<AssetCardContext> collection = new();
-            foreach (var result in response.Results)
+            await _semaphoreResultsDispatch.WaitAsync(ctoken).ConfigureAwait(false);
+            ctoken.ThrowIfCancellationRequested();
+
+            await _guiSync.DispatchActionAsync(state =>
             {
-                AssetCardContext context = new()
-                {
-                    ItemIdString = result,
-                    ThumbPath = Path.Combine(_clientConfig.BaseDirectory, "Resources", "imgwait.png"),
-                };
+                ContextData.Items = state;
+            }, collection, ctoken).ConfigureAwait(false);
+        }
+        finally { _semaphoreResultsDispatch.Release(); }
+    }
 
-                results.Add((result, context));
-                collection.Add(context);
-            }
+    // Thumbnails
 
-            ContextData.Items = collection;
+    private async Task UpdateThumbnails(Dictionary<string, AssetCardContext> contexts, CancellationToken ctoken)
+        => await Parallel.ForEachAsync(contexts, ctoken, GetDefaultPreview).ConfigureAwait(false);
+
+    private async ValueTask GetDefaultPreview(KeyValuePair<string, AssetCardContext> state, CancellationToken ctoken = default)
+    {
+        string idString = state.Key;
+        AssetCardContext context = state.Value;
+
+        try
+        {
+            ctoken.ThrowIfCancellationRequested();
+
+            string thumbPath = await _previewLoader
+                .GetDefaultPreview(idString, context.UpdatedUtc, ctoken)
+                .ConfigureAwait(false);
+
+            SetDefaultPreviewPath(context, thumbPath, ctoken);
         }
         catch (Exception ex)
         {
-            Logger?.LogError(ex, "Failed to set up search results for display.", ex.Source);
+            Logger?.LogError(ex, "An error occured while trying to acquire and update the default preview for {id}", idString);
         }
-        return results;
     }
 
-    // Query and populate cards
-
-    private async ValueTask PopulateContext((string ItemId, AssetCardContext Context) contextInfo, CancellationToken ctoken = default)
+    private void SetDefaultPreviewPath(AssetCardContext context, string thumbPath, CancellationToken ctoken = default)
     {
-        // Card data
-        AssetCardResponse cardData = await _apiConnection.GetAssetCardData(contextInfo.ItemId, ctoken).ConfigureAwait(false);
-        _guiSync.DispatchPost(LoadDataFrom, (contextInfo.Context, cardData), ctoken);
-
-        string thumbPath = await _previewLoader.GetDefaultPreview(contextInfo.ItemId, cardData.UpdatedUtc, ctoken).ConfigureAwait(false);
-        _guiSync.DispatchPost(LoadSnapshotFrom, (contextInfo.Context, thumbPath), ctoken);
+        _guiSync.DispatchPost(state =>
+        {
+            try
+            {
+                state.context.ThumbPath = state.thumbPath;
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError(ex, "Failed to update the default preview path: {path}", thumbPath);
+            }
+        }, (context, thumbPath), ctoken);
     }
-
-    public static void LoadDataFrom((AssetCardContext Context, AssetCardResponse Response) data)
-        => data.Response.CopyPropertiesTo(data.Context);
-
-    public static void LoadSnapshotFrom((AssetCardContext Context, string snapshotPath) data)
-        => data.Context.ThumbPath = data.snapshotPath;
 }

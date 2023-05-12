@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace TTX.Data.Shared.QueryObjects;
 
-public class AssetCardResponse
+public class AssetCardState
 {
-    public byte[] ItemId { get; set; } = Array.Empty<byte>();
+    public string ItemIdString { get; set; } = string.Empty;
 
     // Metadata
 
@@ -24,3 +24,6 @@ public class AssetCardResponse
     public DateTime AddedUtc { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
 }
+
+public record AssetCardRequest(string[] IdStrings);
+public record AssetCardResponse(Dictionary<string, AssetCardState?> Cards);

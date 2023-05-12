@@ -21,7 +21,7 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] SearchQuery query)
+    public async Task<IActionResult> Get([FromQuery] SearchRequest query)
     {
         try
         {
