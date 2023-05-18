@@ -1,6 +1,6 @@
 ﻿using System;
 using TTX.Data.Entities;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetMetadata;

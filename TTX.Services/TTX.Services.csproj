@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTX.Data.Shared\TTX.Data.Shared.csproj" />
+    <ProjectReference Include="..\TTX.Data.SharedData\TTX.Data.SharedData.csproj" />
     <ProjectReference Include="..\TTX.Data\TTX.Data.csproj" />
     <ProjectReference Include="..\TTX.Library\TTX.Library.csproj" />
   </ItemGroup>

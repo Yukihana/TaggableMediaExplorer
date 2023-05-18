@@ -8,7 +8,7 @@ using TTX.Client.Services.ApiConnection;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.GuiSync;
 using TTX.Client.ViewContexts;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Client.Services.TagCardCache;

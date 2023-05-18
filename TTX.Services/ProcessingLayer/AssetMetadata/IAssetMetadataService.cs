@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using TTX.Data.Entities;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Services.ProcessingLayer.AssetMetadata;
 

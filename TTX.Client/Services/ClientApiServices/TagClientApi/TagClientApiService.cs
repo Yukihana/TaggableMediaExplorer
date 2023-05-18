@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.Services.ApiConnection;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Client.Services.ClientApiServices.TagClientApi;
 

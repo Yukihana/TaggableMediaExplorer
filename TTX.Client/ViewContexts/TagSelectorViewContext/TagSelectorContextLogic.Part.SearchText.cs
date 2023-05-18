@@ -2,7 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Client.ViewContexts.TagSelectorViewContext;
 

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;

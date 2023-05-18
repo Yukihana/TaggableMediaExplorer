@@ -1,4 +1,4 @@
-﻿namespace TTX.Data.Shared.QueryObjects;
+﻿namespace TTX.Data.SharedData.QueryObjects;
 
 public class TagCardState
 {

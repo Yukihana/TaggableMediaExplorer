@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.Helpers.CollectionHelpers;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;

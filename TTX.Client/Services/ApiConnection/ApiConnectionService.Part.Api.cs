@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Client.Services.ApiConnection;
 

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.Helpers.StringHelpers;
 using TTX.Services.StorageLayer.TagDatabase;
 

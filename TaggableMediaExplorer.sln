@@ -9,8 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		README.md = README.md
 		Nomenclature.txt = Nomenclature.txt
+		README.md = README.md
 		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.GuiWpf", "TTX.GuiWpf\TT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.WpfControls", "TTX.WpfControls\TTX.WpfControls.csproj", "{E8AE4D6D-5540-4D64-90EA-D4312494E6AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Data.Shared", "TTX.Data.Shared\TTX.Data.Shared.csproj", "{5D6D3BC5-57FF-409E-BC3F-BDDFDD137CD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Data.SharedData", "TTX.Data.SharedData\TTX.Data.SharedData.csproj", "{5D6D3BC5-57FF-409E-BC3F-BDDFDD137CD8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E3125B84-5C28-4230-AB03-B9596830261C}"
 EndProject

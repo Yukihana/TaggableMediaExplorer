@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.FileSystemHelpers;
 using TTX.Library.Helpers.EnumerableHelpers;
 using TTX.Library.Helpers.StringHelpers;

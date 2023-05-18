@@ -1,4 +1,6 @@
-﻿namespace TTX.Data.Shared.QueryObjects;
+﻿using TTX.Data.SharedData.QueryObjects;
+
+namespace TTX.Data.Shared.QueryObjects;
 
 public record SearchRequest(
     string Keywords = "",
