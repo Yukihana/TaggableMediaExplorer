@@ -34,14 +34,4 @@ internal partial class ClientSessionService : IClientSessionService
 
         return uri.Uri;
     }
-
-    private static T ProcessResponse<T>(string? responseString)
-    {
-        if (string.IsNullOrEmpty(responseString))
-            throw new InvalidDataException("Cannot deserialize empty response data.");
-        T response = responseString.DeserializeJsonResponse<T>() ??
-            throw new NullReferenceException("Deserialization failed.");
-
-        return response;
-    }
 }

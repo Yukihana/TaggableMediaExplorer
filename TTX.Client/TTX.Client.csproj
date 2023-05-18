@@ -17,4 +17,9 @@
     <ProjectReference Include="..\TTX.Library\TTX.Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\ConnectionServices\" />
+    <Folder Include="Services\ConfigurationServices\" />
+  </ItemGroup>
+
 </Project>

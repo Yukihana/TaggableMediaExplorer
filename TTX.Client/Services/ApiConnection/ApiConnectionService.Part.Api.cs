@@ -10,12 +10,12 @@ internal partial class ApiConnectionService
     // Search requests
 
     public async Task<SearchResponse> QuerySearch(SearchRequest searchRequest, CancellationToken token = default)
-        => await Get<SearchResponse>("api/Search", searchRequest.ToQuery(), token).ConfigureAwait(false);
+        => await _clientSession.GetState<SearchResponse>("api/Search", searchRequest.ToQuery(), token).ConfigureAwait(false);
 
     // Asset Infos
 
     public async Task<AssetCardResponse> GetAssetCardData(string idString, CancellationToken ctoken = default)
-        => await Get<AssetCardResponse>("api/AssetData/Card", $"id={idString}", ctoken).ConfigureAwait(false);
+        => await _clientSession.GetState<AssetCardResponse>("api/AssetData/Card", $"id={idString}", ctoken).ConfigureAwait(false);
 
     // Previews
 
@@ -35,8 +35,8 @@ internal partial class ApiConnectionService
     // Tags
 
     public async Task<TagCardResponse> GetTagCardData(TagCardRequest request, CancellationToken ctoken = default)
-        => await Post<TagCardRequest, TagCardResponse>("api/TagCard", request, null, ctoken).ConfigureAwait(false);
+        => await _clientSession.PostStateToState<TagCardRequest, TagCardResponse>("api/TagCard", request, ctoken).ConfigureAwait(false);
 
     public async Task<RelatedTagsResponse> GetRelatedTags(string searchText, CancellationToken ctoken = default)
-        => await Get<RelatedTagsResponse>("api/RelatedTags", $"searchtext={searchText}", ctoken).ConfigureAwait(false);
+        => await _clientSession.GetState<RelatedTagsResponse>("api/RelatedTags", $"searchtext={searchText}", ctoken).ConfigureAwait(false);
 }
