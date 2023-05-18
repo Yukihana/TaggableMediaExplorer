@@ -13,7 +13,13 @@ public interface IAssetDatabaseService
 
     Task Read(Func<DbSet<AssetRecord>, Task> readAction, CancellationToken ctoken = default);
 
-    Task Write(Func<DbSet<AssetRecord>, Task<bool>> writeAction, CancellationToken ctoken = default);
+    // Write
+
+    Task Write(Func<DbSet<AssetRecord>, bool> writeAction, CancellationToken ctoken = default);
+
+    Task WriteAsync(Func<DbSet<AssetRecord>, CancellationToken, Task<bool>> writeAction, CancellationToken ctoken = default);
+
+    // Snapshot
 
     Task<AssetRecord[]> Snapshot(CancellationToken ctoken);
 

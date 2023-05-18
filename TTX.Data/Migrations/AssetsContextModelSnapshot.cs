@@ -90,7 +90,7 @@ namespace TTX.Data.Migrations
                     b.Property<long>("SizeBytes")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("TagsString")
+                    b.Property<string>("Tags")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -115,14 +115,7 @@ namespace TTX.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AllowAssign")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Color0")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Color1")
+                    b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -138,10 +131,6 @@ namespace TTX.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VectorIcon")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

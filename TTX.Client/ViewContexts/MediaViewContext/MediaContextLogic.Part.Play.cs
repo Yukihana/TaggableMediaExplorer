@@ -49,7 +49,7 @@ public partial class MediaContextLogic
 
     private void StartPlayback(QueueItemContext item)
     {
-        string id = item.Card.ItemIdString;
+        string id = item.Card.ItemId;
         DateTime updatedUtc = item.Card.UpdatedUtc;
         _ = Task.Run(async () => await StartPlaybackAsync(id, updatedUtc, item, _guiSync.CancellationToken).ConfigureAwait(false));
     }

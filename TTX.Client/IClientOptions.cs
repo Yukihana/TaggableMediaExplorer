@@ -2,6 +2,7 @@
 using System.Threading;
 using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
+using TTX.Client.Services.TagSelectorGui;
 
 namespace TTX.Client;
 
@@ -16,6 +17,7 @@ public interface IClientOptions
 
     Func<ILoginView> LoginViewFactoryMethod { get; init; }
     Func<IMainView> MainViewFactoryMethod { get; init; }
+    Func<ITagSelectorView> TagSelectorViewFactoryMethod { get; init; }
 
     // Paths
 

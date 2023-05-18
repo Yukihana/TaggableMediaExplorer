@@ -1,11 +1,15 @@
-1.
-Set up media analysis service on the backend
-Update AssetCard to include video resolution and file size
-Use resolution for videoplayer size, create wpf converter where necessary
-Use file size for asset cache verification
+Add Tags
 
-2.
-Separate Server settings and Profile settings into two separate services
-Add BasePath and ServerRoot to Server Config instead
-Combining ServerRoot with profile parameters can be done by
-passing ServerRoot during options initialization for each service.
+Misc:
+ Use resolution for videoplayer size, create wpf converter where necessary
+ Use file size for asset cache verification
+
+Do full cleanup of obsolete code once Tagging is implemented
+
+Centralizing Comparers
+
+ Create configs for Comparers
+ ClientSessionService can retrieve the comparers from the server on login
+ May have to move the comparer dependency out of extension methods who don't have access to client session
+ same for server side
+

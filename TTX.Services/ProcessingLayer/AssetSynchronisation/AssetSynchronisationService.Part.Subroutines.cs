@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
 using TTX.Library.EnumerableHelpers;
-using TTX.Library.Helpers;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
@@ -42,7 +41,7 @@ public partial class AssetSynchronisationService
         ctoken.ThrowIfCancellationRequested();
 
         AssetRecord? untracked = null;
-        await _assetDatabase.Write(async (assets) =>
+        await _assetDatabase.WriteAsync(async (assets, ct) =>
         {
             AssetRecord[] matches = await assets
                 .Where(asset =>

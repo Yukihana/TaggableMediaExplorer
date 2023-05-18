@@ -16,12 +16,21 @@ public partial class AssetDatabaseService
         await readAction(assetsContext.Assets).ConfigureAwait(false);
     }
 
-    public async partial Task Write(Func<DbSet<AssetRecord>, Task<bool>> writeAction, CancellationToken ctoken)
+    public async partial Task Write(Func<DbSet<AssetRecord>, bool> writeAction, CancellationToken ctoken)
     {
         ctoken.ThrowIfCancellationRequested();
         using AssetsContext assetContext = _dbContextFactory.CreateDbContext();
 
-        if (await writeAction(assetContext.Assets).ConfigureAwait(false))
+        if (writeAction(assetContext.Assets))
+            await assetContext.SaveChangesAsync(ctoken).ConfigureAwait(false);
+    }
+
+    public async partial Task WriteAsync(Func<DbSet<AssetRecord>, CancellationToken, Task<bool>> writeAction, CancellationToken ctoken)
+    {
+        ctoken.ThrowIfCancellationRequested();
+        using AssetsContext assetContext = _dbContextFactory.CreateDbContext();
+
+        if (await writeAction(assetContext.Assets, ctoken).ConfigureAwait(false))
             await assetContext.SaveChangesAsync(ctoken).ConfigureAwait(false);
     }
 

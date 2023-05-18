@@ -4,13 +4,12 @@ namespace TTX.Client.Services.AssetCardCache;
 
 internal static class AssetCardCacheHelper
 {
-    public static AssetCardContext CreateContext(this string idString, string defaultThumbPath)
+    public static AssetCardContext CreateAssetCardContext(this string itemId, string defaultPreviewPath)
     {
         AssetCardContext result = new()
         {
-            ItemIdString = idString,
-            ThumbPath = defaultThumbPath,
-            //ThumbPath =
+            ItemId = itemId,
+            ThumbPath = defaultPreviewPath,
         };
         return result;
     }

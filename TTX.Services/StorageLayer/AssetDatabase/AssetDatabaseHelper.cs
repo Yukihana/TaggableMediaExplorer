@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using TTX.Data.Entities;
 using TTX.Data.Models;
+using TTX.Library.Helpers.StringHelpers;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.StorageLayer.AssetDatabase;
@@ -10,14 +10,7 @@ namespace TTX.Services.StorageLayer.AssetDatabase;
 internal static partial class AssetDatabaseHelper
 {
     public static string GetDefaultNameFromPath(this string path)
-    {
-        string rawname = Path.GetFileNameWithoutExtension(path);
-        TextInfo ti = new CultureInfo("en-GB", false).TextInfo;
-        string sanitized = rawname
-            .Replace('-', ' ')
-            .Replace('_', ' ');
-        return ti.ToTitleCase(sanitized);
-    }
+        => Path.GetFileNameWithoutExtension(path).ToTitleFormat();
 
     public static AssetRecord GenerateRecord(this IAssetFullSyncInfo syncInfo, AssetMediaInfo mediaInfo)
     {

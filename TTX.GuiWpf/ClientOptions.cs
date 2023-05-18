@@ -3,6 +3,7 @@ using System.Threading;
 using TTX.Client;
 using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
+using TTX.Client.Services.TagSelectorGui;
 
 namespace TTX.GuiWpf;
 
@@ -26,6 +27,9 @@ public class ClientOptions : IClientOptions
         = () => throw new NotImplementedException();
 
     public Func<IMainView> MainViewFactoryMethod { get; init; }
+        = () => throw new NotImplementedException();
+
+    public Func<ITagSelectorView> TagSelectorViewFactoryMethod { get; init; }
         = () => throw new NotImplementedException();
 
     // Paths

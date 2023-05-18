@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TTX.Data.Shared.QueryObjects;
+using TTX.Services.ApiLayer.TagData;
 
 namespace TTX.Server.Controllers;
 
@@ -9,35 +12,31 @@ namespace TTX.Server.Controllers;
 [ApiController]
 public class TagsController : ControllerBase
 {
-    // GET: api/<TagsController>
-    [HttpGet]
-    public IEnumerable<string> Get()
+    private readonly ITagDataService _tagData;
+    private readonly ILogger<TagsController> _logger;
+
+    public TagsController(
+        ITagDataService tagData,
+        ILogger<TagsController> logger
+        ) : base()
     {
-        return new string[] { "value1", "value2" };
+        _tagData = tagData;
+        _logger = logger;
     }
 
-    // GET api/<TagsController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
-
-    // POST api/<TagsController>
+    // POST: api/tags
+    // Request contains array. Can be large.
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<IActionResult> Post([FromBody] TagCardRequest request, CancellationToken ctoken = default)
     {
-    }
-
-    // PUT api/<TagsController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<TagsController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
+        try
+        {
+            return Ok(await _tagData.GetCards(request, ctoken).ConfigureAwait(false));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogRequestError(ex, request);
+            return BadRequest();
+        }
     }
 }

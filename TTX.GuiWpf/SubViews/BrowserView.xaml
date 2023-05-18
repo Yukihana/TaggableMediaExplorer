@@ -50,6 +50,11 @@
                     <MenuItem Header="Queue" />
                     <MenuItem Header="Show related" />
 
+                    <!--Tags-->
+                    <Separator />
+                    <MenuItem Header="Add tag..." Command="{Binding TagItemsCommand}" />
+                    <MenuItem Header="Remove tag..." Command="{Binding UntagItemsCommand}" />
+
                     <!--Server Actions-->
                     <Separator />
                     <MenuItem Header="Details" />

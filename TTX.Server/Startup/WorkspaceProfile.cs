@@ -49,6 +49,11 @@ public class WorkspaceProfile : IWorkspaceProfile
     public string PreviewsPath { get; set; } = "Previews";
     public float AssetPreviewSnapshotTime { get; set; } = 0.2f;
 
+    // Asset Metadata Api
+
+    public bool IgnoreTagIdCasing { get; set; } = true;
+    public char TagSeparator { get; set; } = ' ';
+
     // Unused : IServiceProfile
 
     public void Initialize()

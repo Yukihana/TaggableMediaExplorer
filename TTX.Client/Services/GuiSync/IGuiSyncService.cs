@@ -10,6 +10,8 @@ internal interface IGuiSyncService
 
     void CancelActiveTasks();
 
+    void ThrowIfNotOnMainThread();
+
     // Dispatch Action
 
     Task DispatchActionAsync(Action dispatchAction, CancellationToken ctoken = default);

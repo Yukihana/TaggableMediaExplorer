@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text.Json.Serialization;
 using TTX.Data.Models;
 
 namespace TTX.Data.Entities;
@@ -55,21 +51,11 @@ public class AssetRecord : IAssetItemId, IAssetFullSyncInfo, IMediaInfo
 
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string TagsString { get; set; } = string.Empty;
+    public string Tags { get; set; } = string.Empty;
     public DateTime AddedUtc { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedUtc { get; set; } = DateTime.UtcNow;
 
     // Undecided
 
     public string SimilarIgnore { get; set; } = string.Empty;
-
-    // Not Mapped
-
-    [NotMapped]
-    [JsonIgnore]
-    public HashSet<string> Tags
-    {
-        get => TagsString.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToHashSet();
-        set => TagsString = string.Join(' ', value).ToLowerInvariant();
-    }
 }

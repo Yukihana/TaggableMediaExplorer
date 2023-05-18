@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:TTX.GuiWpf.SubViews"
              xmlns:viewcontext="clr-namespace:TTX.Client.ViewContexts;assembly=TTX.Client"
-             xmlns:controls="clr-namespace:TTX.WpfControls;assembly=TTX.WpfControls"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewcontext:AssetCardContext, IsDesignTimeCreatable=False}"
              d:DesignWidth="600" d:Background="White">
@@ -15,7 +14,7 @@
         <Grid Width="128" Height="128" Margin="5 5 10 5" VerticalAlignment="Top">
 
             <!--Gradient-->
-            <Rectangle  ToolTip="{Binding ItemIdString}" Stroke="#8888" StrokeThickness="1">
+            <Rectangle  ToolTip="{Binding ItemId}" Stroke="#8888" StrokeThickness="1">
                 <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="Transparent" Offset="0" />
@@ -124,7 +123,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <ItemContainerTemplate DataType="string">
-                        <local:TagButtonView />
+                        <local:TagCardView />
                     </ItemContainerTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

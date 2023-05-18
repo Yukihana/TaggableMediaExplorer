@@ -2,6 +2,7 @@
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
+using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.ProcessingLayer.AssetSynchronisation;
 using TTX.Services.ProcessingLayer.MediaAnalysis;
 using TTX.Services.StorageLayer.AssetDatabase;
@@ -16,6 +17,7 @@ public interface IWorkspaceProfile :
     IAssetPreviewOptions,
 
     // Processing
+    IAssetMetadataOptions,
     IAssetAnalysisOptions,
     IAssetSynchronisationOptions,
     IMediaAnalysisOptions,

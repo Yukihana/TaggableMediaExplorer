@@ -41,6 +41,7 @@ public partial class App : Application
             ShutdownAction = Shutdown,
             LoginViewFactoryMethod = () => new LoginWindow(),
             MainViewFactoryMethod = () => new MainWindow(),
+            TagSelectorViewFactoryMethod = () => new TagSelectorWindow(),
             BaseDirectory = baseDirectory,
         };
 

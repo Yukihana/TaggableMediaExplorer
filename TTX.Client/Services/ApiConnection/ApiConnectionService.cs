@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Client.Extensions;
 using TTX.Client.Services.ClientSession;
-using TTX.Data.Shared.QueryObjects;
+using TTX.Library.Configurations;
 using TTX.Library.Helpers;
 
 namespace TTX.Client.Services.ApiConnection;
 
-internal class ApiConnectionService : IApiConnectionService
+internal partial class ApiConnectionService : IApiConnectionService
 {
     private readonly IClientSessionService _clientSession;
 
@@ -20,12 +20,8 @@ internal class ApiConnectionService : IApiConnectionService
 
     // Base methods
 
-    private async Task<T> Get<T>(string path, string query, CancellationToken token = default)
+    private static T ProcessResponse<T>(string? responseString)
     {
-        token.ThrowIfCancellationRequested();
-
-        string? responseString = await _clientSession.Get(path, query, token).ConfigureAwait(false);
-
         if (string.IsNullOrEmpty(responseString))
             throw new InvalidDataException("Cannot deserialize empty response data.");
         T response = responseString.DeserializeJsonResponse<T>() ??
@@ -34,18 +30,29 @@ internal class ApiConnectionService : IApiConnectionService
         return response;
     }
 
-    // Api : Search requests
+    private async Task<T> Get<T>(string path, string query, CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
 
-    public async Task<SearchResponse> QuerySearch(SearchRequest searchRequest, CancellationToken token = default)
-        => await Get<SearchResponse>("api/Search", searchRequest.ToQuery(), token).ConfigureAwait(false);
+        string responseString = await _clientSession.Get(path, query, ctoken).ConfigureAwait(false);
+        return ProcessResponse<T>(responseString);
+    }
 
-    // Api : Previews
+    private async Task<TOut> Patch<TIn, TOut>(string path, TIn request, string? query, CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
 
-    public async Task<byte[]> DownloadDefaultPreview(string idString, CancellationToken ctoken = default)
-        => await _clientSession.DownloadUsingGet("api/AssetSnapshot", $"id={idString}", ctoken).ConfigureAwait(false);
+        string requestString = JsonSerializer.Serialize(request, JsonHelper.ApiEgressOptions);
+        string responseString = await _clientSession.Patch(path, requestString, query, ctoken).ConfigureAwait(false);
+        return ProcessResponse<TOut>(responseString);
+    }
 
-    // Api : Asset Content
+    private async Task<TOut> Post<TIn, TOut>(string path, TIn request, string? query, CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
 
-    public async Task<byte[]> DownloadAsset(string idString, CancellationToken ctoken = default)
-        => await _clientSession.DownloadUsingGet("api/AssetContent", $"id={idString}", ctoken).ConfigureAwait(false);
+        string requestString = JsonSerializer.Serialize(request, JsonHelper.ApiEgressOptions);
+        string responseString = await _clientSession.Post(path, requestString, query, ctoken).ConfigureAwait(false);
+        return ProcessResponse<TOut>(responseString);
+    }
 }

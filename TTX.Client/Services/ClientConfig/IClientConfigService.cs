@@ -1,5 +1,6 @@
 ﻿using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
+using TTX.Client.Services.TagSelectorGui;
 
 namespace TTX.Client.Services.ClientConfig;
 
@@ -13,6 +14,8 @@ internal interface IClientConfigService
     ILoginView CreateLoginView();
 
     IMainView CreateMainView();
+
+    ITagSelectorView CreateTagSelectorView();
 
     void Shutdown();
 

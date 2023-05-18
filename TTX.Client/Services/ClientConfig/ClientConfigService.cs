@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
+using TTX.Client.Services.TagSelectorGui;
 
 namespace TTX.Client.Services.ClientConfig;
 
@@ -32,4 +33,7 @@ internal partial class ClientConfigService : IClientConfigService
 
     public IMainView CreateMainView()
         => _options.MainViewFactoryMethod();
+
+    public ITagSelectorView CreateTagSelectorView()
+        => _options.TagSelectorViewFactoryMethod();
 }

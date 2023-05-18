@@ -1,0 +1,32 @@
+Service naming rules
+
+Service directory : <ServiceName> (PascalCase)
+Service class : <ServiceName>Service (PascalCase)
+Service interface : I<ServiceName>Service (PascalCase)
+
+service as fields : _<serviceName> (camelCase with preceding underscore)
+ctor parameters : <serviceName> (camelCase)
+
+Gui naming rules
+
+Context namespace : <Name>Context (PascalCase)
+Abridged context : <Name>Context (PascalCase)
+
+Control : <Name>View (PascalCase)
+Logic : <Name>ContextLogic (PascalCase)
+Data : <Name>ContextData (PascalCase)
+
+Data naming rules
+
+Database entry : <Name>Record
+Database service : <Name>DatabaseService
+
+Item gui : <Name>CardView
+Context : <Name>CardContext
+TransmittedData : <Name>State
+Request : <Name>CardRequest
+Response : <Name>CardResponse
+
+Full data : <Name>Content
+Request : <Name>ContentRequest
+Response : <Name>ContentResponse

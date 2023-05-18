@@ -4,6 +4,7 @@ using System;
 using TTX.Client.Services.ApiConnection;
 using TTX.Client.Services.AssetCardCache;
 using TTX.Client.Services.AssetLoader;
+using TTX.Client.Services.ClientApiServices.TagClientApi;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.ClientSession;
 using TTX.Client.Services.GuiConductor;
@@ -11,6 +12,8 @@ using TTX.Client.Services.GuiSync;
 using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
 using TTX.Client.Services.PreviewLoader;
+using TTX.Client.Services.TagCardCache;
+using TTX.Client.Services.TagSelectorGui;
 using TTX.Library.ObjectHelpers;
 
 namespace TTX.Client;
@@ -35,17 +38,22 @@ public static partial class ClientContextHost
         builder.Services.AddSingleton<IClientConfigService, ClientConfigService>();
         builder.Services.AddSingleton<IClientSessionService, ClientSessionService>();
 
+        // Independent services : Don't require web-api services
+        builder.Services.AddSingleton<IAssetCardCacheService, AssetCardCacheService>();
+        builder.Services.AddSingleton<ITagCardCacheService, TagCardCacheService>();
+
         // Core services
         builder.Services.AddSingleton<IApiConnectionService, ApiConnectionService>();
 
-        // Content services
+        // Content services : Require api connections
+        builder.Services.AddSingleton<ITagClientApiService, TagClientApiService>();
         builder.Services.AddSingleton<IPreviewLoaderService, PreviewLoaderService>();
         builder.Services.AddSingleton<IAssetLoaderService, AssetLoaderService>();
-        builder.Services.AddSingleton<IAssetCardCacheService, AssetCardCacheService>();
 
         // Gui logic
         builder.Services.AddSingleton<ILoginGuiService, LoginGuiService>();
         builder.Services.AddSingleton<IMainGuiService, MainGuiService>();
+        builder.Services.AddSingleton<ITagSelectorGuiService, TagSelectorGuiService>();
 
         // Control
         builder.Services.AddSingleton<IGuiConductorService, GuiConductorService>();

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Client.Services.ApiConnection;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.GuiSync;
 using TTX.Client.ViewContexts;
@@ -18,7 +17,6 @@ internal partial class AssetCardCacheService : IAssetCardCacheService
 {
     private readonly IClientConfigService _clientConfig;
     private readonly IGuiSyncService _guiSync;
-    private readonly IApiConnectionService _apiConnection;
     private readonly ILogger<AssetCardCacheService> _logger;
 
     private readonly ConcurrentDictionary<string, AssetCardContext> _cache = new(StringComparer.OrdinalIgnoreCase);
@@ -26,28 +24,28 @@ internal partial class AssetCardCacheService : IAssetCardCacheService
     public AssetCardCacheService(
         IClientConfigService clientConfig,
         IGuiSyncService guiSync,
-        IApiConnectionService apiConnection,
         ILogger<AssetCardCacheService> logger)
     {
         _clientConfig = clientConfig;
         _guiSync = guiSync;
-        _apiConnection = apiConnection;
         _logger = logger;
     }
 
-    public Dictionary<string, AssetCardContext> Get(string[] idStrings)
+    public Dictionary<string, AssetCardContext> Get(string[] itemIds)
     {
-        string defaultThumbPath = Path.Combine(_clientConfig.BaseDirectory, "Resources", "imgwait.png");
+        string defaultPreviewPath = Path.Combine(_clientConfig.BaseDirectory, "Resources", "imgwait.png");
         Dictionary<string, AssetCardContext> results = new();
-        foreach (string idString in idStrings)
+        foreach (string itemId in itemIds)
         {
             // Get or create in cache
             // Then add it to the results to be returned
-            results[idString] = _cache.GetOrAdd(
-                key: idString,
-                valueFactory: (idStr, thumbPath) => idStr.CreateContext(thumbPath),
-                factoryArgument: defaultThumbPath);
+            results[itemId] = _cache.GetOrAdd(
+                key: itemId,
+                valueFactory: (id, dp) => id.CreateAssetCardContext(dp),
+                factoryArgument: defaultPreviewPath);
         }
+
+        LogCacheInfo();
         return results;
     }
 
@@ -58,7 +56,7 @@ internal partial class AssetCardCacheService : IAssetCardCacheService
             ctoken.ThrowIfCancellationRequested();
 
             // Get the context (previously created by 'Get', or just create one here)
-            AssetCardContext target = _cache.GetOrAdd(card.ItemIdString, x => new() { ItemIdString = x });
+            AssetCardContext target = _cache.GetOrAdd(card.ItemId, x => new() { ItemId = x });
 
             // Update the data on the gui thread
             await _guiSync.DispatchActionAsync(
@@ -67,5 +65,10 @@ internal partial class AssetCardCacheService : IAssetCardCacheService
                 ctoken
                 ).ConfigureAwait(false);
         }
+
+        LogCacheInfo();
     }
+
+    private void LogCacheInfo()
+        => _logger.LogInformation("Current asset card cache size: {count}", _cache.Count);
 }

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using TTX.Library.Helpers;
 
@@ -9,7 +9,7 @@ namespace TTX.Client.ViewContexts;
 public partial class AssetCardContext : ObservableObject
 {
     [ObservableProperty]
-    private byte[] _itemId = Array.Empty<byte>();
+    private string _itemId = string.Empty;
 
     // Metadata
 
@@ -35,23 +35,12 @@ public partial class AssetCardContext : ObservableObject
     private string _title = string.Empty;
 
     [ObservableProperty]
-    private HashSet<string> _tags = new();
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AddedDateDiff))]
     private DateTime _addedUtc = DateTime.UtcNow;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(UpdatedDateDiff))]
     private DateTime _updatedUtc = DateTime.UtcNow;
-
-    // ------- //
-    // Startup //
-    // ------- //
-
-    [JsonIgnore]
-    [ObservableProperty]
-    private string _itemIdString = string.Empty;
 
     // ------- //
     // Derived //
@@ -82,4 +71,8 @@ public partial class AssetCardContext : ObservableObject
     [ObservableProperty]
     [JsonIgnore]
     private string _thumbPath = string.Empty;
+
+    [ObservableProperty]
+    [JsonIgnore]
+    private ObservableCollection<TagCardContext> _tags = new();
 }

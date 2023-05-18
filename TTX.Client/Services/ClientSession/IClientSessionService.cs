@@ -5,7 +5,19 @@ namespace TTX.Client.Services.ClientSession;
 
 internal interface IClientSessionService
 {
-    Task<string?> Get(string path, string query, CancellationToken token);
+    // Get
 
-    Task<byte[]> DownloadUsingGet(string v1, string v2, CancellationToken ctoken);
+    Task<string> Get(string path, string? query, CancellationToken token = default);
+
+    Task<byte[]> GetOctet(string path, string? query, CancellationToken ctoken = default);
+
+    // Patch
+
+    Task<string> Patch(string path, string content, string? query, CancellationToken token = default);
+
+    // Post
+
+    Task<string> Post(string path, string content, string? query, CancellationToken ctoken = default);
+
+    Task<TOut> PostStateToState<TIn, TOut>(string path, TIn request, CancellationToken ctoken = default);
 }

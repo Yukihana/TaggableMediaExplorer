@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Shared.QueryObjects;
+using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 
@@ -13,13 +14,16 @@ public partial class AssetSearchService : IAssetSearchService
 {
     private readonly IAssetDatabaseService _assetDatabase;
     private readonly IAssetPresenceService _assetPresence;
+    private readonly IAssetMetadataService _assetMetadata;
 
     public AssetSearchService(
         IAssetDatabaseService assetDatabase,
-        IAssetPresenceService assetPresence)
+        IAssetPresenceService assetPresence,
+        IAssetMetadataService assetMetadata)
     {
         _assetDatabase = assetDatabase;
         _assetPresence = assetPresence;
+        _assetMetadata = assetMetadata;
     }
 
     public async Task<SearchResponse> Search(SearchRequest query, CancellationToken ctoken = default)
@@ -33,7 +37,7 @@ public partial class AssetSearchService : IAssetSearchService
         // Isolate targets
         AssetRecord[] queryResults = assets
             // Check keywords first, then check prescence which might require a thread sync wait
-            .Where(asset => asset.HasKeywords(keywords) && _assetPresence.Get(asset.LocalPath) is not null)
+            .Where(asset => _assetMetadata.Contains(asset, keywords) && _assetPresence.Get(asset.LocalPath) is not null)
             .ToArray();
         int total = queryResults.Length;
 
@@ -41,7 +45,7 @@ public partial class AssetSearchService : IAssetSearchService
         AssetCardState[] finalResults = queryResults
             .Skip(query.Page * query.Count)
             .Take(query.Count)
-            .Select(x => x.CreateAssetCardState())
+            .Select(_assetMetadata.CreateAssetCardState)
             .ToArray();
         int shown = finalResults.Length;
 

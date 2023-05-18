@@ -10,15 +10,19 @@ using TTX.Services.ApiLayer.AssetCardData;
 using TTX.Services.ApiLayer.AssetContent;
 using TTX.Services.ApiLayer.AssetSearch;
 using TTX.Services.ApiLayer.AssetSnapshotData;
+using TTX.Services.ApiLayer.AssetTagging;
+using TTX.Services.ApiLayer.TagData;
 using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.IncomingLayer.AssetTracking;
 using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
+using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.ProcessingLayer.AssetSynchronisation;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.StorageLayer.AssetPreview;
 using TTX.Services.StorageLayer.MediaCodec;
+using TTX.Services.StorageLayer.TagDatabase;
 using TTX.Services.TagsIndexer;
 
 namespace TTX.Server.Startup;
@@ -64,8 +68,14 @@ public static partial class BootStrap
     /// </summary>
     public static void AttachDataServices(this IServiceCollection services)
     {
-        // Independents
+        // Configuration
+
+        // Database abstraction
         services.AddSingleton<IAssetDatabaseService, AssetDatabaseService>();
+        services.AddSingleton<ITagDatabaseService, TagDatabaseService>();
+
+        // Independent layers
+        services.AddSingleton<IAssetMetadataService, AssetMetadataService>();
         services.AddSingleton<IAssetPresenceService, AssetPresenceService>();
         services.AddSingleton<IAssetPreviewService, AssetPreviewService>();
         services.AddSingleton<IAssetTrackingService, AssetTrackingService>();
@@ -80,6 +90,8 @@ public static partial class BootStrap
         services.AddSingleton<IAssetCardDataService, AssetCardDataService>();
         services.AddSingleton<IAssetSnapshotDataService, AssetSnapshotDataService>();
         services.AddSingleton<IAssetContentService, AssetContentService>();
+        services.AddSingleton<IAssetTaggingService, AssetTaggingService>();
+        services.AddSingleton<ITagDataService, TagDataService>();
 
         // Top layer: Control services
         services.AddSingleton<IAssetIndexingService, AssetIndexingService>();

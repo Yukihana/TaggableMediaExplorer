@@ -20,6 +20,7 @@ public class SearchController : ControllerBase
         _logger = logger;
     }
 
+    // GET: api/Search
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] SearchRequest query)
     {

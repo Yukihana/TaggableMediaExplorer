@@ -14,7 +14,17 @@ internal interface IApiConnectionService
 
     Task<byte[]> DownloadDefaultPreview(string idString, CancellationToken ctoken = default);
 
-    // Content
+    // Asset Content
 
     Task<byte[]> DownloadAsset(string idString, CancellationToken ctoken);
+
+    // Tagging
+
+    Task<TaggingResponse> BulkApplyTag(TaggingRequest request, CancellationToken ctoken = default);
+
+    // Tags
+
+    Task<TagCardResponse> GetTagCardData(TagCardRequest request, CancellationToken ctoken = default);
+
+    Task<RelatedTagsResponse> GetRelatedTags(string searchString, CancellationToken ctoken = default);
 }

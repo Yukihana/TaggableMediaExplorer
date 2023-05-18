@@ -18,7 +18,7 @@ public partial class BrowserContextLogic
         SearchResponse response = await SendSearch(request, ctoken).ConfigureAwait(false);
 
         // Fetch placeholder results
-        string[] idStrings = response.Results.Select(x => x.ItemIdString).ToArray();
+        string[] idStrings = response.Results.Select(x => x.ItemId).ToArray();
         Dictionary<string, AssetCardContext> contexts = _assetCardCache.Get(idStrings);
         ObservableCollection<AssetCardContext> collection = new(contexts.Values);
 

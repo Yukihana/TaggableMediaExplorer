@@ -32,7 +32,9 @@ public partial class AssetDatabaseService : IAssetDatabaseService
 
     public partial Task Read(Func<DbSet<AssetRecord>, Task> readAction, CancellationToken ctoken = default);
 
-    public partial Task Write(Func<DbSet<AssetRecord>, Task<bool>> writeAction, CancellationToken ctoken = default);
+    public partial Task Write(Func<DbSet<AssetRecord>, bool> writeAction, CancellationToken ctoken = default);
+
+    public partial Task WriteAsync(Func<DbSet<AssetRecord>, CancellationToken, Task<bool>> writeAction, CancellationToken ctoken = default);
 
     public partial Task<AssetRecord[]> Snapshot(CancellationToken ctoken = default);
 

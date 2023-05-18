@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using TTX.Client.Services.GuiSync;
 using TTX.Client.ViewContexts.BrowserViewContext;
 using TTX.Client.ViewContexts.MediaViewContext;
 
@@ -10,6 +11,7 @@ public partial class MainContextLogic : ObservableObject
 {
     // Addons
 
+    private readonly IGuiSyncService _guiSync;
     public ILogger<MainContextLogic>? Logger { get; init; } = null;
 
     // Data and SubContexts
@@ -25,13 +27,19 @@ public partial class MainContextLogic : ObservableObject
 
     // Commands
 
-    public RelayCommand PlayItemsCommand { get; set; }
+    public RelayCommand PlayItemsCommand { get; private set; }
+    public RelayCommand TagItemsCommand { get; private set; }
+    public RelayCommand UntagItemsCommand { get; private set; }
 
     // Initialize
 
     public MainContextLogic() : base()
     {
+        _guiSync = ClientContextHost.GetService<IGuiSyncService>();
+
         PlayItemsCommand = new(PlayItems);
+        TagItemsCommand = new(TagItems);
+        UntagItemsCommand = new(UntagItems);
     }
 
     // Gui Events
