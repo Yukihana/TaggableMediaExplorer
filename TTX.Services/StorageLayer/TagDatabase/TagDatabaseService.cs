@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TTX.Data;
+using TTX.Data.ServerData;
 
 namespace TTX.Services.StorageLayer.TagDatabase;
 

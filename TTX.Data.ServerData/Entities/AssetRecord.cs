@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Models;
 
-namespace TTX.Data.Entities;
+namespace TTX.Data.ServerData.Entities;
 
 public class AssetRecord : IAssetItemId, IAssetFullSyncInfo, IMediaInfo
 {

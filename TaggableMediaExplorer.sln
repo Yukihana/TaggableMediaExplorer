@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Data", "TTX.Data\TTX.Data.csproj", "{8FE45502-5983-4038-AE5D-F96236C6756E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Data.ServerData", "TTX.Data.ServerData\TTX.Data.ServerData.csproj", "{8FE45502-5983-4038-AE5D-F96236C6756E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTX.Tests", "TTX.Tests\TTX.Tests.csproj", "{6C354A04-EF0D-4CA1-A0B4-37F367E70682}"
 EndProject

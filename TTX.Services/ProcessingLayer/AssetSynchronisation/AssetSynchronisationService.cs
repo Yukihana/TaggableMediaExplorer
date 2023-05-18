@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;

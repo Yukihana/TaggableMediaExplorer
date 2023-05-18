@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TTX.Data.Models;
+namespace TTX.Data.ServerData.Models;
 
 public class AssetMediaInfo : IMediaInfo
 {

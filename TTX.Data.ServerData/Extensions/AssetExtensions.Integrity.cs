@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Models;
 
-namespace TTX.Data.Extensions;
+namespace TTX.Data.ServerData.Extensions;
 
 public static partial class AssetRecordExtensions
 {

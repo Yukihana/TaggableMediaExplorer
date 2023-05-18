@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Services.ProcessingLayer.AssetMetadata;

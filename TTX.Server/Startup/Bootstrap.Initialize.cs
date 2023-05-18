@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TTX.Data;
+using TTX.Data.ServerData;
 using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.Legacy.TagsIndexer;
 

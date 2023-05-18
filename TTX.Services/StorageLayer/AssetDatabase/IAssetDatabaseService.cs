@@ -2,8 +2,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Entities;
+using TTX.Data.ServerData.Models;
 
 namespace TTX.Services.StorageLayer.AssetDatabase;
 

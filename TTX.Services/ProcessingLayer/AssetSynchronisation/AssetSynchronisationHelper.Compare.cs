@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Models;
 using TTX.Library.FileSystemHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;

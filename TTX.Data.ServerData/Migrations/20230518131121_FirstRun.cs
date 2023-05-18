@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace TTX.Data.Migrations
+namespace TTX.Data.ServerData.Migrations
 {
     /// <inheritdoc />
     public partial class FirstRun : Migration

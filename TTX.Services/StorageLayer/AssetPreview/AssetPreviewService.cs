@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Services.StorageLayer.MediaCodec;
 
 namespace TTX.Services.StorageLayer.AssetPreview;

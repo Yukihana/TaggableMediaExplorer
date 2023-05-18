@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TTX.Data.Entities;
+namespace TTX.Data.ServerData.Entities;
 
 public class TagRecord
 {

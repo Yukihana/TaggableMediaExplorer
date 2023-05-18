@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Services.ApiLayer.TagData;

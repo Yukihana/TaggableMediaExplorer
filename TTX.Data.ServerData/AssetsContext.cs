@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 
-namespace TTX.Data;
+namespace TTX.Data.ServerData;
 
 public class AssetsContext : DbContext
 {

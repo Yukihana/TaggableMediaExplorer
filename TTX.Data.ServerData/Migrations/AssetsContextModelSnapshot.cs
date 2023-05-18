@@ -3,11 +3,11 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TTX.Data;
+using TTX.Data.ServerData;
 
 #nullable disable
 
-namespace TTX.Data.Migrations
+namespace TTX.Data.ServerData.Migrations
 {
     [DbContext(typeof(AssetsContext))]
     partial class AssetsContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace TTX.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
 
-            modelBuilder.Entity("TTX.Data.Entities.AssetRecord", b =>
+            modelBuilder.Entity("TTX.Data.ServerData.Entities.AssetRecord", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace TTX.Data.Migrations
                     b.ToTable("Assets");
                 });
 
-            modelBuilder.Entity("TTX.Data.Entities.TagRecord", b =>
+            modelBuilder.Entity("TTX.Data.ServerData.Entities.TagRecord", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()

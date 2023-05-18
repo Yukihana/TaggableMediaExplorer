@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Library.Comparers;
 using TTX.Library.DataHelpers;
 

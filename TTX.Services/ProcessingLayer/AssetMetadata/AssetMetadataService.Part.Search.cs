@@ -1,5 +1,5 @@
 ﻿using System;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 
 namespace TTX.Services.ProcessingLayer.AssetMetadata;
 

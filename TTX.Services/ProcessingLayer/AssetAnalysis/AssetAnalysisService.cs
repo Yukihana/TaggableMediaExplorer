@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Models;
 
 namespace TTX.Services.ProcessingLayer.AssetAnalysis;
 

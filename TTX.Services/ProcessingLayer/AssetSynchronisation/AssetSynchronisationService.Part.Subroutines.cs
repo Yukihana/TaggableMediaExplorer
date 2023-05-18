@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Entities;
+using TTX.Data.ServerData.Models;
 using TTX.Library.Helpers.EnumerableHelpers;
 using TTX.Library.InstancingHelpers;
 

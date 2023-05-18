@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TTX.Data.Entities;
-using TTX.Data.Extensions;
+using TTX.Data.ServerData.Entities;
+using TTX.Data.ServerData.Extensions;
 using TTX.Library.Comparers;
 using TTX.Library.Helpers;
 

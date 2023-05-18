@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data;
-using TTX.Data.Entities;
+using TTX.Data.ServerData;
+using TTX.Data.ServerData.Entities;
 
 namespace TTX.Services.StorageLayer.AssetDatabase;
 

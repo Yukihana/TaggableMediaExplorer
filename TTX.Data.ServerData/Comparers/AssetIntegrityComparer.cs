@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using TTX.Data.Extensions;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Extensions;
+using TTX.Data.ServerData.Models;
 using TTX.Library.DataHelpers;
 
-namespace TTX.Data.Comparers;
+namespace TTX.Data.ServerData.Comparers;
 
 // Not needed because we're using a concurrent dictionary to store identicals for logging
 // Keep it around anyway, incase it can be used future.

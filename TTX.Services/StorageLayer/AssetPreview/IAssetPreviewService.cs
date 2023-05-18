@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 
 namespace TTX.Services.StorageLayer.AssetPreview;
 

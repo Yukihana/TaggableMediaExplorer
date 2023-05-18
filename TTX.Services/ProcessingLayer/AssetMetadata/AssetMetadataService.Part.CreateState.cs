@@ -1,5 +1,5 @@
 ﻿using System;
-using TTX.Data.Entities;
+using TTX.Data.ServerData.Entities;
 using TTX.Data.SharedData.QueryObjects;
 using TTX.Library.InstancingHelpers;
 

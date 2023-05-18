@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using TTX.Data.Entities;
-using TTX.Data.Models;
+using TTX.Data.ServerData.Entities;
+using TTX.Data.ServerData.Models;
 using TTX.Library.Helpers.StringHelpers;
 using TTX.Library.InstancingHelpers;
 

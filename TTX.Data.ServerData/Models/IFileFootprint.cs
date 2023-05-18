@@ -1,4 +1,4 @@
-﻿namespace TTX.Data.Models;
+﻿namespace TTX.Data.ServerData.Models;
 
 public interface IFileFootprint
 {
