@@ -14,7 +14,6 @@ using TTX.Services.ApiLayer.AssetTagging;
 using TTX.Services.ApiLayer.TagData;
 using TTX.Services.ControlLayer.AssetIndexing;
 using TTX.Services.IncomingLayer.AssetTracking;
-using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.ProcessingLayer.AssetSynchronisation;
@@ -23,7 +22,6 @@ using TTX.Services.StorageLayer.AssetPresence;
 using TTX.Services.StorageLayer.AssetPreview;
 using TTX.Services.StorageLayer.MediaCodec;
 using TTX.Services.StorageLayer.TagDatabase;
-using TTX.Services.TagsIndexer;
 
 namespace TTX.Server.Startup;
 
@@ -95,7 +93,6 @@ public static partial class BootStrap
 
         // Top layer: Control services
         services.AddSingleton<IAssetIndexingService, AssetIndexingService>();
-        services.AddSingleton<ITagsIndexerService, TagsIndexerService>();
     }
 
     // Helper methods

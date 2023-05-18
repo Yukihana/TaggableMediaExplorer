@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using TTX.Data.ServerData;
 using TTX.Services.ControlLayer.AssetIndexing;
-using TTX.Services.Legacy.TagsIndexer;
 
 namespace TTX.Server.Startup;
 
@@ -24,23 +24,20 @@ public static partial class BootStrap
         scope.ServiceProvider.GetRequiredService<AssetsContext>().Database.Migrate();
 
         // Load
-        app.Services.LoadData();
+        _ = app.Services.LoadData();
     }
 
-    private static readonly List<Task> _loadTasks = new();
-
-    public static void LoadData(this IServiceProvider provider)
+    public static async Task LoadData(this IServiceProvider provider)
     {
-        // Assets
-        var assetsIndexer = provider.GetRequiredService<IAssetIndexingService>();
-        Task assetsTask = Task.Run(async () => await assetsIndexer.StartIndexing().ConfigureAwait(false));
-        _loadTasks.Add(assetsTask);
-        _ = assetsTask.ContinueWith(_loadTasks.Remove, TaskScheduler.Default);
-
-        // Tags
-        var tagsIndexer = provider.GetRequiredService<ITagsIndexerService>();
-        Task tagsTask = Task.Run(async () => await tagsIndexer.Reload().ConfigureAwait(false));
-        _loadTasks.Add(tagsTask);
-        _ = tagsTask.ContinueWith(_loadTasks.Remove, TaskScheduler.Current);
+        try
+        {
+            // Assets
+            var assetsIndexer = provider.GetRequiredService<IAssetIndexingService>();
+            await assetsIndexer.StartIndexing().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Encountered an error trying to initialize services.", ex);
+        }
     }
 }

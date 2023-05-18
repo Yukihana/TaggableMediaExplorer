@@ -1,6 +1,5 @@
 ﻿using TTX.Services.ApiLayer.AssetContent;
 using TTX.Services.IncomingLayer.AssetTracking;
-using TTX.Services.Legacy.TagsIndexer;
 using TTX.Services.ProcessingLayer.AssetAnalysis;
 using TTX.Services.ProcessingLayer.AssetMetadata;
 using TTX.Services.ProcessingLayer.AssetSynchronisation;
@@ -24,9 +23,6 @@ public interface IWorkspaceProfile :
 
     // Incoming
     IAssetTrackingOptions,
-
-    // Control
-    ITagsIndexerOptions,
 
     // Api
     IAssetContentOptions
