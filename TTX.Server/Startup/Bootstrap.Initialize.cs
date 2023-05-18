@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TTX.Data.ServerData;
 using TTX.Services.ControlLayer.AssetIndexing;
@@ -37,7 +36,7 @@ public static partial class BootStrap
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("Encountered an error trying to initialize services.", ex);
+            Log.Logger.Error(ex, "Encountered an error trying to initialize services.");
         }
     }
 }
