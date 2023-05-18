@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
-using TTX.Library.EnumerableHelpers;
+using TTX.Library.Helpers.EnumerableHelpers;
 using TTX.Library.InstancingHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;

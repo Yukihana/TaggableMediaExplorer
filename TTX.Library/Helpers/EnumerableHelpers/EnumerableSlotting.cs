@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TTX.Library.EnumerableHelpers;
+namespace TTX.Library.Helpers.EnumerableHelpers;
 
 public static class EnumerableSlotting
 {

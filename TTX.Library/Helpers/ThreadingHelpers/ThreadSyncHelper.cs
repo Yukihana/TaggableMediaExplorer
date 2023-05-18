@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TTX.Library.ThreadingHelpers;
+namespace TTX.Library.Helpers.ThreadingHelpers;
 
 public static class ThreadSyncHelper
 {

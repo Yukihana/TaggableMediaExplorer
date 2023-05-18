@@ -2,7 +2,7 @@
 
 namespace TTX.Library.Helpers;
 
-public static class TimeHelper
+public static class TimeHelpers
 {
     // private static readonly string[] dtype = { "Added", "Added on", "Updated", "Updated on" };
     private static readonly string[] verbs = { "just now", "minutes ago", "an hour ago", "hours ago", "yesterday", "days ago", "in the future", "unknown" };

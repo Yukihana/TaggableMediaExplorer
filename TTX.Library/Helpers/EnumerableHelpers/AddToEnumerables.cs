@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TTX.Library.Helpers;
+namespace TTX.Library.Helpers.EnumerableHelpers;
 
-public static class EnumerableHelpers
+public static class AddToEnumerables
 {
     public static void AddTo<T>(this T item, ICollection<T> collection)
         => collection.Add(item);

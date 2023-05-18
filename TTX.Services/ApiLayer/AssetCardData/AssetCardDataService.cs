@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Shared.QueryObjects;
-using TTX.Library.EnumerableHelpers;
+using TTX.Library.Helpers.EnumerableHelpers;
 using TTX.Library.InstancingHelpers;
 using TTX.Services.StorageLayer.AssetDatabase;
 using TTX.Services.StorageLayer.AssetPresence;

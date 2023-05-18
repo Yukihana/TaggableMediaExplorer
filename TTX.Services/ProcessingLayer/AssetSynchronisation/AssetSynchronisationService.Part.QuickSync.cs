@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Entities;
 using TTX.Data.Models;
-using TTX.Library.EnumerableHelpers;
+using TTX.Library.Helpers.EnumerableHelpers;
 
 namespace TTX.Services.ProcessingLayer.AssetSynchronisation;
 
@@ -46,10 +46,8 @@ public partial class AssetSynchronisationService
 
             // Attempt sync
             AssetRecord[] matches = assets.Where(rec => rec.ProvisionallyEquals(syncInfo)).ToArray();
-            AssetRecord? match = matches.SelectOneNoneOrThrow();
-
-            if (match is null)
-                throw new ArgumentException($"No provisional match found in the database for {path}");
+            AssetRecord? match = matches.SelectOneNoneOrThrow()
+                ?? throw new ArgumentException($"No provisional match found in the database for {path}");
 
             // Expiry
             DateTime hashExpiry = match.VerifiedUtc + _options.AssetValidity;
