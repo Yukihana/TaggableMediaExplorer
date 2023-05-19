@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.Shared.QueryObjects;
+using TTX.Data.SharedData.QueryObjects;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;
 
@@ -17,6 +18,13 @@ public partial class BrowserContextLogic
         SearchRequest request = await PrepareSearch(ctoken).ConfigureAwait(false);
         SearchResponse response = await SendSearch(request, ctoken).ConfigureAwait(false);
 
+        // Create contexts
+        Dictionary<AssetCardState, AssetCardContext> contexts
+            = _assetCardCache.Get(response.Results);
+
+        // Set results in the gui
+
+        // Legacy
         // Fetch placeholder results
         string[] idStrings = response.Results.Select(x => x.ItemId).ToArray();
         Dictionary<string, AssetCardContext> contexts = _assetCardCache.Get(idStrings);
