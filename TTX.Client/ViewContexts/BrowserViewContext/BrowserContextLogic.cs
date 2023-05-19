@@ -1,15 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TTX.Client.Services.ApiConnection;
-using TTX.Client.Services.AssetCardCache;
+using TTX.Client.Services.ClientApiServices.AssetClientApi;
 using TTX.Client.Services.ClientApiServices.TagClientApi;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.GuiSync;
 using TTX.Client.Services.PreviewLoader;
-using TTX.Client.Services.TagCardCache;
 using TTX.Client.Services.TagSelectorGui;
+using TTX.Library.Helpers.EnumerableHelpers;
+using TTX.Library.InstancingHelpers;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;
 
@@ -20,9 +23,8 @@ public partial class BrowserContextLogic : ObservableObject
     private readonly IGuiSyncService _guiSync;
     private readonly IClientConfigService _clientConfig;
     private readonly IApiConnectionService _apiConnection;
-    private readonly IAssetCardCacheService _assetCardCache;
     private readonly IPreviewLoaderService _previewLoader;
-    private readonly ITagCardCacheService _tagCardCache;
+    private readonly IAssetClientApiService _assetClientApi;
     private readonly ITagClientApiService _tagClientApi;
     private readonly ITagSelectorGuiService _tagSelectorGui;
 
@@ -35,10 +37,6 @@ public partial class BrowserContextLogic : ObservableObject
     [ObservableProperty]
     private BrowserContextData _contextData = new();
 
-    // Internal
-
-    private readonly SemaphoreSlim _semaphoreResultsDispatch = new(1);
-
     // Init
 
     public BrowserContextLogic()
@@ -46,9 +44,8 @@ public partial class BrowserContextLogic : ObservableObject
         _guiSync = ClientContextHost.GetService<IGuiSyncService>();
         _clientConfig = ClientContextHost.GetService<IClientConfigService>();
         _apiConnection = ClientContextHost.GetService<IApiConnectionService>();
-        _assetCardCache = ClientContextHost.GetService<IAssetCardCacheService>();
         _previewLoader = ClientContextHost.GetService<IPreviewLoaderService>();
-        _tagCardCache = ClientContextHost.GetService<ITagCardCacheService>();
+        _assetClientApi = ClientContextHost.GetService<IAssetClientApiService>();
         _tagClientApi = ClientContextHost.GetService<ITagClientApiService>();
         _tagSelectorGui = ClientContextHost.GetService<ITagSelectorGuiService>();
     }
@@ -58,5 +55,23 @@ public partial class BrowserContextLogic : ObservableObject
     public void GuiLoaded()
         => _ = Task.Run(async () => await SearchNew(string.Empty, _guiSync.CancellationToken).ConfigureAwait(false));
 
-    // Api
+    // Updates
+
+    private async Task UpdateContexts<TState, TContext>(List<(TState State, TContext Context)> resultPairs, int batchSize, CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
+
+        foreach (var batch in resultPairs.InBatches(batchSize))
+        {
+            // dispatch updates for each batch
+            await _guiSync.DispatchActionAsync(pairs =>
+            {
+                foreach (var (state, context) in pairs)
+                {
+                    try { state.CopyPropertiesTo(context); }
+                    catch (Exception ex) { Logger?.LogError(ex, "Failed to update the context from: {state}", state); }
+                }
+            }, batch, ctoken).ConfigureAwait(false);
+        }
+    }
 }

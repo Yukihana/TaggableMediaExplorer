@@ -27,15 +27,7 @@ internal partial class ApiConnectionService
     public async Task<byte[]> DownloadAsset(string idString, CancellationToken ctoken = default)
         => await _clientSession.GetOctet("api/AssetContent", $"id={idString}", ctoken).ConfigureAwait(false);
 
-    // Asset Tagging
-
-    public async Task<TaggingResponse> BulkApplyTag(TaggingRequest request, CancellationToken ctoken = default)
-        => await _clientSession.PostStateToState<TaggingRequest, TaggingResponse>("api/Tagging", request, ctoken).ConfigureAwait(false);
-
-    // Tags
-
-    public async Task<TagCardResponse> GetTagCardData(TagCardRequest request, CancellationToken ctoken = default)
-        => await _clientSession.PostStateToState<TagCardRequest, TagCardResponse>("api/Tags/Cards", request, ctoken).ConfigureAwait(false);
+    // Tagging
 
     public async Task<RelatedTagsResponse> GetRelatedTags(string searchText, CancellationToken ctoken = default)
         => await _clientSession.GetState<RelatedTagsResponse>("api/RelatedTags", $"searchtext={searchText}", ctoken).ConfigureAwait(false);

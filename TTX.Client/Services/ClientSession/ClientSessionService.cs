@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Net.Http;
-using TTX.Library.Helpers;
 
 namespace TTX.Client.Services.ClientSession;
 

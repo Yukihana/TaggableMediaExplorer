@@ -2,11 +2,42 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TTX.Data.Shared.QueryObjects;
 
 namespace TTX.Client.ViewContexts.BrowserViewContext;
 
 public partial class BrowserContextLogic
 {
+    private async Task SearchAsync(CancellationToken ctoken = default)
+    {
+        SearchRequest request = await PrepareSearch(ctoken).ConfigureAwait(false);
+        SearchResponse response = await SendSearch(request, ctoken).ConfigureAwait(false);
+        await SetSearchResults(response, ctoken).ConfigureAwait(false);
+    }
+
+    private async Task<SearchRequest> PrepareSearch(CancellationToken ctoken = default)
+    {
+        ctoken.ThrowIfCancellationRequested();
+
+        return await _guiSync.DispatchFuncAsync(() =>
+        {
+            return new SearchRequest(
+                Keywords: ContextData.Keywords,
+                Page: ContextData.PageIndex,
+                Count: ContextData.ItemMax);
+        }, ctoken).ConfigureAwait(false)
+        ?? throw new InvalidOperationException("Search preparation failed to prepare query object.");
+    }
+
+    private async Task<SearchResponse> SendSearch(SearchRequest request, CancellationToken ctoken)
+    {
+        return await _apiConnection
+            .QuerySearch(request, ctoken)
+            .ConfigureAwait(false);
+    }
+
+    // Specialized wrappers
+
     public async Task SearchNew(string keywords, CancellationToken ctoken = default)
     {
         try

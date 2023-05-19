@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TTX.Data.SharedData.QueryObjects;
+using TTX.Client.ViewContexts;
 
 namespace TTX.Client.Services.ClientApiServices.TagClientApi;
 
 internal interface ITagClientApiService
 {
-    Task<Dictionary<string, string[]>> BulkApplyTags(string[] itemIds, string tagId, bool untag, CancellationToken ctoken = default);
+    TagCardContext GetCard(string id);
 
-    Task<TagCardState[]> GetTagStates(string[] tagIds, CancellationToken ctoken = default);
+    Task Update(IEnumerable<string> tagIds, CancellationToken ctoken = default);
+
+    Task<Dictionary<string, string[]>> BulkApplyTags(string[] itemIds, string tagId, bool untag, CancellationToken ctoken = default);
 }

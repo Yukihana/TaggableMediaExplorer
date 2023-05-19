@@ -13,3 +13,5 @@ Centralizing Comparers
  May have to move the comparer dependency out of extension methods who don't have access to client session
  same for server side
 
+Housekeeping
+	Create Import, Export systems for the server to allow version upgrades without losing data.

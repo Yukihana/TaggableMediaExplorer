@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Services\ClientApiServices\SearchClientApi\" />
     <Folder Include="Services\ConnectionServices\" />
     <Folder Include="Services\ConfigurationServices\" />
   </ItemGroup>

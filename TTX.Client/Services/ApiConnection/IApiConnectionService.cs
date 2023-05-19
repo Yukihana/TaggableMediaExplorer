@@ -21,11 +21,5 @@ internal interface IApiConnectionService
 
     // Tagging
 
-    Task<TaggingResponse> BulkApplyTag(TaggingRequest request, CancellationToken ctoken = default);
-
-    // Tags
-
-    Task<TagCardResponse> GetTagCardData(TagCardRequest request, CancellationToken ctoken = default);
-
     Task<RelatedTagsResponse> GetRelatedTags(string searchString, CancellationToken ctoken = default);
 }

@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using System;
 using TTX.Client.Services.ApiConnection;
-using TTX.Client.Services.AssetCardCache;
 using TTX.Client.Services.AssetLoader;
+using TTX.Client.Services.ClientApiServices.AssetClientApi;
 using TTX.Client.Services.ClientApiServices.TagClientApi;
 using TTX.Client.Services.ClientConfig;
 using TTX.Client.Services.ClientSession;
@@ -12,7 +12,6 @@ using TTX.Client.Services.GuiSync;
 using TTX.Client.Services.LoginGui;
 using TTX.Client.Services.MainGui;
 using TTX.Client.Services.PreviewLoader;
-using TTX.Client.Services.TagCardCache;
 using TTX.Client.Services.TagSelectorGui;
 using TTX.Library.ObjectHelpers;
 
@@ -38,15 +37,12 @@ public static partial class ClientContextHost
         builder.Services.AddSingleton<IClientConfigService, ClientConfigService>();
         builder.Services.AddSingleton<IClientSessionService, ClientSessionService>();
 
-        // Independent services : Don't require web-api services
-        builder.Services.AddSingleton<IAssetCardCacheService, AssetCardCacheService>();
-        builder.Services.AddSingleton<ITagCardCacheService, TagCardCacheService>();
-
-        // Core services
+        // Api services
         builder.Services.AddSingleton<IApiConnectionService, ApiConnectionService>();
-
-        // Content services : Require api connections
+        builder.Services.AddSingleton<IAssetClientApiService, AssetClientApiService>();
         builder.Services.AddSingleton<ITagClientApiService, TagClientApiService>();
+
+        // Content services : Require api connections [Move these out]
         builder.Services.AddSingleton<IPreviewLoaderService, PreviewLoaderService>();
         builder.Services.AddSingleton<IAssetLoaderService, AssetLoaderService>();
 
