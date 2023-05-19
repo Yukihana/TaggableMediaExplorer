@@ -35,7 +35,7 @@ internal partial class ApiConnectionService
     // Tags
 
     public async Task<TagCardResponse> GetTagCardData(TagCardRequest request, CancellationToken ctoken = default)
-        => await _clientSession.PostStateToState<TagCardRequest, TagCardResponse>("api/TagCard", request, ctoken).ConfigureAwait(false);
+        => await _clientSession.PostStateToState<TagCardRequest, TagCardResponse>("api/Tags/Cards", request, ctoken).ConfigureAwait(false);
 
     public async Task<RelatedTagsResponse> GetRelatedTags(string searchText, CancellationToken ctoken = default)
         => await _clientSession.GetState<RelatedTagsResponse>("api/RelatedTags", $"searchtext={searchText}", ctoken).ConfigureAwait(false);

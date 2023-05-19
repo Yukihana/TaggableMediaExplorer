@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using TTX.Client.Services.TagSelectorGui;
 using TTX.Client.ViewContexts.TagSelectorViewContext;
 
@@ -43,5 +44,15 @@ public partial class TagSelectorWindow : Window, ITagSelectorView
             DialogResult = true;
         }
         Close();
+    }
+
+    private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListBox listBox &&
+            listBox.SelectedItem is null &&
+            listBox.Items.Count > 0)
+        {
+            listBox.SelectedIndex = 0;
+        }
     }
 }

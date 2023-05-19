@@ -2,7 +2,7 @@
 
 namespace TTX.Library.Helpers.StringHelpers;
 
-public static partial class IdNamingHelper
+public static partial class FormattingHelper
 {
     private static TextInfo? _textInfo = null;
 
@@ -24,12 +24,12 @@ public static partial class IdNamingHelper
         return GetTextInfo().ToTitleCase(spacedName);
     }
 
-    public static string ToTagFormat(this string id)
+    public static string ToTagFormat(this string text)
     {
         return RegexHelpers
-            .EnglishAlphanumerics()
-            .Replace(id, "-")
-            .ToLowerInvariant()
-            .Trim('-');
+            .EnglishAlphanumerics()     // Cleaned
+            .Replace(text, "-")         // Skewered
+            .Trim()                     // Sized
+            .ToLowerInvariant();        // Shaped
     }
 }

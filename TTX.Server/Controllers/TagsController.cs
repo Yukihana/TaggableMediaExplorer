@@ -24,9 +24,10 @@ public class TagsController : ControllerBase
         _logger = logger;
     }
 
-    // POST: api/tags
+    // POST: api/Tags/Cards
     // Request contains array. Can be large.
     [HttpPost]
+    [Route("Cards")]
     public async Task<IActionResult> Post([FromBody] TagCardRequest request, CancellationToken ctoken = default)
     {
         try

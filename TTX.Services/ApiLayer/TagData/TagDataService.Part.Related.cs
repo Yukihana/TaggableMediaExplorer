@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TTX.Data.ServerData.Entities;
 using TTX.Data.SharedData.QueryObjects;
+using TTX.Library.Helpers.StringHelpers;
 
 namespace TTX.Services.ApiLayer.TagData;
 
@@ -12,6 +13,7 @@ public partial class TagDataService
 {
     public async Task<RelatedTagsResponse> GetRelatedTags(string searchText, CancellationToken ctoken = default)
     {
+        string sanitized = searchText.ToTagFormat();
         string[] related = Array.Empty<string>();
 
         // Todo make a 'state' version of this.

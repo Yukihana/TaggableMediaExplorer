@@ -24,11 +24,11 @@ public class RelatedTagsController : ControllerBase
 
     // GET: api/RelatedTags
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string searchtext, CancellationToken ctoken = default)
+    public async Task<IActionResult> Get(string? searchtext, CancellationToken ctoken = default)
     {
         try
         {
-            return Ok(await _tagData.GetRelatedTags(searchtext, ctoken).ConfigureAwait(false));
+            return Ok(await _tagData.GetRelatedTags(searchtext ?? string.Empty, ctoken).ConfigureAwait(false));
         }
         catch (Exception ex)
         {
