@@ -22,7 +22,9 @@ Project to recreate what used to be a standalone WPF app into two components and
 
 <b>Alpha-</b>
 
-Add Features (Current)
+Add Features
+Concern separations (Current)
+Upgrade to XenoFx (Current)
 
 <b>Beta-</b>
 
